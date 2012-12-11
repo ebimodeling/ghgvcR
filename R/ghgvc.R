@@ -4,6 +4,7 @@
 ##' @title GHGVC
 ##' @param options 
 ##' @param ecosystems 
+##' @export
 ##' @return GHGVC result
 ##' @author Chris Schauer, David LeBauer
 ghgvc <- function(options, ecosystem_data){
