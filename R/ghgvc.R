@@ -1,3 +1,14 @@
+#-------------------------------------------------------------------------------
+# Copyright (c) 2012 University of Illinois and Authors.
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the 
+# University of Illinois/NCSA Open Source License
+# which accompanies this distribution, and is available at
+# http://opensource.ncsa.illinois.edu/license.html
+# 
+# Citation: Kristina J. Teixeira and Evan H. Delucia 2011. The greenhouse gas value of ecosystems. Global Change Biology. 17(1):425–438 doi: 10.1111/j.1365-2486.2010.02220.x
+#-------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------#
 ##' Greenhouse Gas Value Calculator
 ##'
 ##' R function implementation of GHGV_calculator_web.m
