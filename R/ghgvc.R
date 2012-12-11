@@ -1,33 +1,10 @@
-##' .. content for \description{} (no empty lines) ..
-##'
-##' .. content for \details{} ..
-##' @title 
-##' @param x 
-##' @return
-##' @export
-##' @author David LeBauer
-get.nums <- function(x){
-  suppressWarnings(
-    if(is.na(as.numeric(x))){
-      if(is.na(as.logical(x))){
-        as.character(x)
-      } else {
-        as.logical(x)
-      }
-    } else {
-      as.numeric(x)
-    }
-    )
-}        
-
-
 ##' Greenhouse Gas Value Calculator
 ##'
 ##' R function implementation of GHGV_calculator_web.m
-##' @title 
+##' @title GHGVC
 ##' @param options 
 ##' @param ecosystems 
-##' @return 
+##' @return GHGVC result
 ##' @author Chris Schauer, David LeBauer
 ghgvc <- function(options, ecosystem_data){
   options <- lapply(options, get.nums)

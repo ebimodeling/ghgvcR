@@ -1,4 +1,4 @@
 library(testthat)
-library(PEcAn.genericmodel)
+library(ghgvcR)
 
-test_package("PEcAn.genericmodel")
+test_package("ghgvcR")

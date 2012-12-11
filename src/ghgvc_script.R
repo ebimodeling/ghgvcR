@@ -1,6 +1,4 @@
 #!/usr/bin/Rscript
-library(devtools)
-install("../ghgvcR")
 library(ghgvcR)
 config.xml <- system.file("config.xml", package = "ghgvcR")
 
