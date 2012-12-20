@@ -79,5 +79,5 @@ ggplot(data = forcings.long, aes(x = factor(variable), y = value, fill = ecosyst
     xlab("Variable") + ylab("Units of F") + coord_flip()
 ```
 
-![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5.png) 
+![plot of chunk unnamed-chunk-5](https://raw.github.com/dlebauer/ghgvcR/master/figure/unnamed-chunk-5.png) 
 
