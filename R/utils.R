@@ -7,6 +7,7 @@
 ##' @export
 ##' @author David LeBauer
 get.nums <- function(x){
+  options(warn=FALSE)
   if(is.na(as.numeric(x))){
     if(is.na(as.logical(x))){
       x <-  as.character(x)
@@ -18,5 +19,5 @@ get.nums <- function(x){
   }
   print(x)
   return(x)
-  return(x)
+  options(warn = TRUE)
 }        
