@@ -22,7 +22,7 @@ produced by example below:
 
 ### Installing the ghgvcR package on the PEcAn 1.2.6 VM
 
-```{bash eval = false}
+```
 sudo apt-get install git
 sudo apt-get install libcurl4-openssl-dev # dependency of Rcurl, 
 
@@ -36,64 +36,39 @@ install.packages(c("devtools", "roxygen2"), repos = "http://cran.us.r-project.or
 ```
 
 
+### Example of how to run the calculator
 
-now check it out:
+* This can be run at the command line: `./src/ghgvc_script.R`
 
+
+
+
+```r
+
+options(warn = FALSE)
+# test('ghgvcR') example(ghgvcR)
+
+
+## the following is equivalent to
+config.xml <- system.file("config.xml", package = "ghgvcR")
+
+
+config.list <- xmlToList(xmlParse(config.xml))
+options <- config.list$options
+
+ecosystem_data <- config.list$ecosystem_data
+
+x <- ghgvcR::ghgvc(options, ecosystem_data)
+
+
+writeLines(x, "inst/extdata/output.json")
+write.csv(as.data.frame(fromJSON(x)), "inst/extdata/output.csv")
+```
 
 
 ### Plots:
 
 
-```r
-library(ggplot2)
-# number of ecosystems:
-n.ecosystems <- length(names(ecosystem_data))
-for (i in 1:n.ecosystems) {
-    result <- ecosystem_data[[i]]
-    ecosystem.name <- result$name
-    if (i == 1) {
-        result.df <- as.data.frame(result)
-        
-    } else {
-        result.df <- rbind(result.df, as.data.frame(result))
-    }
-    rownames(result.df)[i] <- gsub(" ", "", ecosystem.name)
-}
-
-# identify cols with numbers
-result.num <- suppressWarnings(as.numeric(result))
-num.logical <- !(is.na(result.num) | result.num == -9999)
-result.df <- result.df[, !(result.num == -9999 | is.na(result.num))]
-
-# transpose data.frame for plotting:
-result.tdf <- cbind(variable = names(result.df), as.data.frame(t(result.df)))
-
-forcings.index <- grepl("F", names(result.df))
-forcings.names <- names(result.df)[forcings.index]
-
-require(reshape)
-```
-
-```
-## Loading required package: reshape
-```
-
-```
-## Attaching package: 'reshape'
-```
-
-```
-## The following object(s) are masked from 'package:plyr':
-## 
-## rename, round_any
-```
-
-```r
-forcings <- result.tdf[forcings.index, ]
-forcings.long <- melt(forcings, id.vars = "variable")
-colnames(forcings.long) <- c("variable", "ecosystem", "value")
-
-```
 
 
 
@@ -104,5 +79,5 @@ ggplot(data = forcings.long, aes(x = factor(variable), y = value, fill = ecosyst
     xlab("Variable") + ylab("Units of F") + coord_flip()
 ```
 
-![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4.png) 
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5.png) 
 

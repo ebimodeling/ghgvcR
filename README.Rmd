@@ -22,7 +22,7 @@ produced by example below:
 
 ### Installing the ghgvcR package on the PEcAn 1.2.6 VM
 
-```{bash eval = false}
+```
 sudo apt-get install git
 sudo apt-get install libcurl4-openssl-dev # dependency of Rcurl, 
 
@@ -30,20 +30,30 @@ git clone https://github.com/dlebauer/ghgvcR.git ghgvcR
 R 
 ```
 
-```{r eval = FALSE}
+```{r eval = FALSE, include=TRUE}
 install.packages(c("devtools", "roxygen2"), 
                  repos= "http://cran.us.r-project.org")
 ```
 
+### Example of how to run the calculator
 
-now check it out:
-```{r echo=FALSE, comment=FALSE, results='hide', include=FALSE}
-options(warn=FALSE)
-# test("ghgvcR")
-# example(ghgvcR)
+* This can be run at the command line: `./src/ghgvc_script.R`
+
+```{r echo = FALSE, message=FALSE}
 library(devtools)
 library(ghgvcR)
 library(PEcAn.utils)
+library(reshape)
+library(reshape)
+library(rjson)
+```
+```{r results='hide', comment=NA, warning=FALSE}
+
+options(warn=FALSE)
+# test("ghgvcR")
+# example(ghgvcR)
+
+
 ## the following is equivalent to 
 config.xml <- system.file("config.xml", package = "ghgvcR")
 
@@ -55,7 +65,7 @@ ecosystem_data <- config.list$ecosystem_data
 
 x <- ghgvcR::ghgvc(options, ecosystem_data)
 
-require(rjson)
+
 writeLines(x, "inst/extdata/output.json")
 write.csv(as.data.frame(fromJSON(x)), "inst/extdata/output.csv")
 
@@ -63,7 +73,7 @@ write.csv(as.data.frame(fromJSON(x)), "inst/extdata/output.csv")
 
 ### Plots:
 
-```{r}
+```{r echo=FALSE, results='hide'}
 library(ggplot2)
 # number of ecosystems:
 n.ecosystems <- length(names(ecosystem_data)) 
@@ -91,7 +101,7 @@ result.tdf <- cbind(variable = names(result.df),
 forcings.index <- grepl("F", names(result.df))
 forcings.names <- names(result.df)[forcings.index]
 
-require(reshape)
+
 forcings <- result.tdf[forcings.index,]
 forcings.long <- melt(forcings, id.vars= "variable")
 colnames(forcings.long) <- c("variable", "ecosystem", "value")
