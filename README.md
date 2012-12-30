@@ -26,6 +26,8 @@ produced by example below:
 sudo apt-get install git
 sudo apt-get install libcurl4-openssl-dev # dependency of Rcurl, 
 
+
+git clone https://github.com/dlebauer/pecan pecan
 git clone https://github.com/dlebauer/ghgvcR.git ghgvcR
 R 
 ```
@@ -33,6 +35,9 @@ R
 
 ```r
 install.packages(c("devtools", "roxygen2"), repos = "http://cran.us.r-project.org")
+library(devtools)
+install("pecan/utils")
+install("ghgvcR")
 ```
 
 
