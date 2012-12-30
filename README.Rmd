@@ -22,6 +22,8 @@ produced by example below:
 
 ### Installing the ghgvcR package on the PEcAn 1.2.6 VM
 
+The bash and R code snippets below install dependencies, and only need to be run once. 
+
 ```
 sudo apt-get install git
 sudo apt-get install libcurl4-openssl-dev # dependency of Rcurl, 
@@ -34,6 +36,9 @@ R
 ```{r eval = FALSE, include=TRUE}
 install.packages(c("devtools", "roxygen2"), 
                  repos= "http://cran.us.r-project.org")
+library(devtools)
+install(ghgvcR)
+install(pecan/utils)
 ```
 
 ### Example of how to run the calculator
@@ -41,9 +46,6 @@ install.packages(c("devtools", "roxygen2"),
 * This can be run at the command line: `./src/ghgvc_script.R`
 
 ```{r echo = FALSE, message=FALSE}
-library(devtools)
-install(ghgvcR)
-install(pecan/utils)
 library(ghgvcR)
 library(PEcAn.utils)
 library(reshape)
@@ -114,6 +116,6 @@ colnames(forcings.long) <- c("variable", "ecosystem", "value")
 
 
 ```{r  fig.width=7, fig.height=6}
-ggplot(data = forcings.long, aes(x = factor(variable), y = value, fill = ecosystem)) + geom_bar(position="dodge") + ggtitle(label="Example plot: values of F for two ecosystems") + xlab("Variable") + ylab("Units of F") + coord_flip()
+ggplot(data = forcings.long, aes(x = factor(variable), y = value, fill = ecosystem)) + geom_bar(position="dodge", stat = "identity") + ggtitle(label="Example plot: values of F for two ecosystems") + xlab("Variable") + ylab("Units of F") + coord_flip()
 
 ```

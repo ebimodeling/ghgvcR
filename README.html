@@ -205,14 +205,20 @@ hljs.initHighlightingOnLoad();
 
 <h3>Installing the ghgvcR package on the PEcAn 1.2.6 VM</h3>
 
+<p>The bash and R code snippets below install dependencies, and only need to be run once. </p>
+
 <pre><code>sudo apt-get install git
 sudo apt-get install libcurl4-openssl-dev # dependency of Rcurl, 
 
+git clone https://github.com/dlebauer/pecan.git pecan
 git clone https://github.com/dlebauer/ghgvcR.git ghgvcR
 R 
 </code></pre>
 
 <pre><code class="r">install.packages(c(&quot;devtools&quot;, &quot;roxygen2&quot;), repos = &quot;http://cran.us.r-project.org&quot;)
+library(devtools)
+install(ghgvcR)
+install(pecan/utils)
 </code></pre>
 
 <h3>Example of how to run the calculator</h3>
@@ -245,7 +251,7 @@ write.csv(as.data.frame(fromJSON(x)), &quot;inst/extdata/output.csv&quot;)
 <h3>Plots:</h3>
 
 <pre><code class="r">ggplot(data = forcings.long, aes(x = factor(variable), y = value, fill = ecosystem)) + 
-    geom_bar(position = &quot;dodge&quot;) + ggtitle(label = &quot;Example plot: values of F for two ecosystems&quot;) + 
+    geom_bar(position = &quot;dodge&quot;, stat = &quot;identity&quot;) + ggtitle(label = &quot;Example plot: values of F for two ecosystems&quot;) + 
     xlab(&quot;Variable&quot;) + ylab(&quot;Units of F&quot;) + coord_flip()
 </code></pre>
 
