@@ -1,4 +1,4 @@
-ghgvcR
+ghgvcr
 ======
 
 R implementation of the Greenhouse Gas Value Calculator
@@ -11,7 +11,8 @@ Citation: Kristina J. Teixeira and Evan H. Delucia 2011. The greenhouse gas valu
 
 * `inst/config.xml` example input file
 * `inst/extdata/ghgvc1.Rdata` all objects used and provided by ghgvc 1.0
-* `inputs.Rdata` example of inputs as R objects for ghgvcR example (below)
+* `inputs.Rdata` example of inputs as R objects for ghgvcr example (below)
+* `inst/extdata/multipft_input.xml`
 
 ### Outputs 
 
@@ -20,11 +21,11 @@ produced by example below:
 * `inst/extdata/output.csv`
 * `inst/extdata/output.json`
 
-### Installing the ghgvcR package on the PEcAn 1.2.6 VM
+### Installing the ghgvcr package on the PEcAn 1.2.6 VM
 
 The bash and R code snippets below install dependencies, and only need to be run once. 
 
-```
+```{r eval=FALSE}
 sudo apt-get install git
 sudo apt-get install libcurl4-openssl-dev # dependency of Rcurl, 
 
@@ -37,7 +38,7 @@ R
 install.packages(c("devtools", "roxygen2"), 
                  repos= "http://cran.us.r-project.org")
 library(devtools)
-install(ghgvcR)
+install(ghgvcr)
 install(pecan/utils)
 ```
 
@@ -46,29 +47,23 @@ install(pecan/utils)
 * This can be run at the command line: `./src/ghgvc_script.R`
 
 ```{r echo = FALSE, message=FALSE}
-library(ghgvcR)
-library(PEcAn.utils)
-library(reshape)
-library(reshape)
-library(rjson)
+library(ghgvcr)
 ```
+
 ```{r results='hide', comment=NA, warning=FALSE}
 
 options(warn=FALSE)
-# test("ghgvcR")
-# example(ghgvcR)
+#test("../ghgvcR")
+#example(ghgvcr)
 
 
 ## the following is equivalent to 
-config.xml <- system.file("config.xml", package = "ghgvcR")
-
-
+config.xml <- system.file("config.xml", package = "ghgvcr")
 config.list <- xmlToList(xmlParse(config.xml))
-options <- config.list$options
-
 ecosystem_data <- config.list$ecosystem_data
 
-x <- ghgvcR::ghgvc(options, ecosystem_data)
+x <- ghgvcr::ghgvc(options = config.list$options,
+                   ecosystem_data = config.list$ecosystem_data)
 
 
 writeLines(x, "inst/extdata/output.json")
@@ -76,9 +71,20 @@ write.csv(as.data.frame(fromJSON(x)), "inst/extdata/output.csv")
 
 ```
 
+```{r results='hide', comment=NA, warning=FALSE}
+multipft_config.xml <- system.file("multipft_config.xml", package = "ghgvcr")
+multipft_config.list <- xmlToList(xmlParse(multipft_config.xml))
+
+x2 <- ghgvcr::ghgvc2(multipft_config.list)
+
+writeLines(x2, "inst/extdata/multipft_output.json")
+write.csv(as.data.frame(fromJSON(x2)), "inst/extdata/multipft_output.csv")
+
+```
+
 ### Plots:
 
-```{r echo=FALSE, results='hide'}
+```{r results='hide', comment=NA, warning=FALSE}
 library(ggplot2)
 # number of ecosystems:
 n.ecosystems <- length(names(ecosystem_data)) 
@@ -115,7 +121,10 @@ colnames(forcings.long) <- c("variable", "ecosystem", "value")
 ```
 
 
-```{r  fig.width=7, fig.height=6}
-ggplot(data = forcings.long, aes(x = factor(variable), y = value, fill = ecosystem)) + geom_bar(position="dodge", stat = "identity") + ggtitle(label="Example plot: values of F for two ecosystems") + xlab("Variable") + ylab("Units of F") + coord_flip()
+```{r  fig.width=10, fig.height=4}
+ggplot(data = forcings.long, 
+       aes(x = variable, y = value, fill = ecosystem)) + 
+  geom_bar(position="dodge", stat = "identity") + ggtitle(label="Example plot: values of F for two ecosystems") + 
+  xlab("Variable") + ylab("Units of F") + coord_flip()
 
 ```

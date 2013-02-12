@@ -1,4 +1,4 @@
-Package: ghgvcR
+Package: ghgvcr
 Type: Package
 Title: Greenhouse Gas Value Calculator
 Version: 2.0
@@ -12,7 +12,8 @@ Description: This package runs the Greenhouse Gas Value Calculator, as
     original Matlab code.
 Depends:
     rjson,
-    PEcAn.utils
+    PEcAn.utils,
+    reshape
 Suggests:
     testthat
 OS_type: unix

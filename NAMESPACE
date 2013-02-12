@@ -1,2 +1,3 @@
 export(get.nums)
 export(ghgvc)
+export(ghgvc2)

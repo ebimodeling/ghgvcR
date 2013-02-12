@@ -7,7 +7,7 @@
 \arguments{
   \item{options}{}
 
-  \item{ecosystems}{}
+  \item{ecosystem_data}{}
 }
 \value{
   GHGVC result

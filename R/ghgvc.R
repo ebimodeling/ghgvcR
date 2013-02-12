@@ -14,7 +14,7 @@
 ##' R function implementation of GHGV_calculator_web.m
 ##' @title GHGVC
 ##' @param options 
-##' @param ecosystems 
+##' @param ecosystem_data 
 ##' @export
 ##' @return GHGVC result
 ##' @author Chris Schauer, David LeBauer
@@ -273,4 +273,23 @@ ghgvc <- function(options, ecosystem_data){
   jsonResult <- paste(jsonResult,"]",sep="")
   print(jsonResult)
   return(jsonResult)
+}
+
+##' Greenhouse Gas Value Calculator v2
+##'
+##' R function implementation of GHGV_calculator_web.m; works for n ecosystems
+##' @title GHGVC2
+##' @param config.list 
+##' @export
+##' @return GHGVC2 result
+##' @author David LeBauer
+ghgvc2 <- function(config.list){
+  options <- config.list$options
+  ecosystems <- names(config.list)[-which(names(config.list)%in% "options")]
+  out <- list()
+  for (ecosystem in ecosystems){
+    out[[ecosystem]] <- fromJSON(ghgvc(options, config.list[[ecosystem]]))
+  }
+  
+  return(toJSON(out))
 }
