@@ -10,7 +10,7 @@
     <T_E>50</T_E>
     <r>0</r>
   </options>
-  <ecosystem_0_data>
+  <site_0_data>
     <pft>
       <name>Tropical Forest</name>
 	    <category>native</category>
@@ -123,8 +123,8 @@
 	    <new_F_N2O>-9999</new_F_N2O>
 	    <F_anth>0</F_anth>
     </pft>
-  </ecosystem_0_data>
-  <ecosystem_1_data>
+  </site_0_data>
+  <site_1_data>
       <pft>
 	    <name>Temperate Forest</name>
 	    <category>aggrading</category>
@@ -237,5 +237,5 @@
 	    <new_F_N2O>-9999</new_F_N2O>
 	    <F_anth>0</F_anth>
     </pft>
-  </ecosystem_1_data>
+  </site_1_data>
 </ghgvc>

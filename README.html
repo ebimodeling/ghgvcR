@@ -245,13 +245,31 @@ writeLines(x, &quot;inst/extdata/output.json&quot;)
 write.csv(as.data.frame(fromJSON(x)), &quot;inst/extdata/output.csv&quot;)
 </code></pre>
 
-<pre><code class="r">multipft_config.xml &lt;- system.file(&quot;multipft_config.xml&quot;, package = &quot;ghgvcr&quot;)
+<pre><code class="r">multisite_config.xml &lt;- system.file(&quot;multisite_config.xml&quot;, package = &quot;ghgvcr&quot;)
 multipft_config.list &lt;- xmlToList(xmlParse(multipft_config.xml))
+</code></pre>
 
+<pre><code>Error: object &#39;multipft_config.xml&#39; not found
+</code></pre>
+
+<pre><code class="r">
 x2 &lt;- ghgvcr::ghgvc2(multipft_config.list)
+</code></pre>
 
+<pre><code>Error: object &#39;multipft_config.list&#39; not found
+</code></pre>
+
+<pre><code class="r">
 writeLines(x2, &quot;inst/extdata/multipft_output.json&quot;)
-write.csv(as.data.frame(fromJSON(x2)), &quot;inst/extdata/multipft_output.csv&quot;)
+</code></pre>
+
+<pre><code>Error: object &#39;x2&#39; not found
+</code></pre>
+
+<pre><code class="r">write.csv(as.data.frame(fromJSON(x2)), &quot;inst/extdata/multipft_output.csv&quot;)
+</code></pre>
+
+<pre><code>Error: object &#39;x2&#39; not found
 </code></pre>
 
 <h3>Plots:</h3>

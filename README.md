@@ -74,13 +74,38 @@ write.csv(as.data.frame(fromJSON(x)), "inst/extdata/output.csv")
 
 
 ```r
-multipft_config.xml <- system.file("multipft_config.xml", package = "ghgvcr")
+multisite_config.xml <- system.file("multisite_config.xml", package = "ghgvcr")
 multipft_config.list <- xmlToList(xmlParse(multipft_config.xml))
+```
+
+```
+Error: object 'multipft_config.xml' not found
+```
+
+```r
 
 x2 <- ghgvcr::ghgvc2(multipft_config.list)
+```
+
+```
+Error: object 'multipft_config.list' not found
+```
+
+```r
 
 writeLines(x2, "inst/extdata/multipft_output.json")
+```
+
+```
+Error: object 'x2' not found
+```
+
+```r
 write.csv(as.data.frame(fromJSON(x2)), "inst/extdata/multipft_output.csv")
+```
+
+```
+Error: object 'x2' not found
 ```
 
 

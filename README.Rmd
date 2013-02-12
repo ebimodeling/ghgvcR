@@ -72,7 +72,7 @@ write.csv(as.data.frame(fromJSON(x)), "inst/extdata/output.csv")
 ```
 
 ```{r results='hide', comment=NA, warning=FALSE}
-multipft_config.xml <- system.file("multipft_config.xml", package = "ghgvcr")
+multisite_config.xml <- system.file("multisite_config.xml", package = "ghgvcr")
 multipft_config.list <- xmlToList(xmlParse(multipft_config.xml))
 
 x2 <- ghgvcr::ghgvc2(multipft_config.list)

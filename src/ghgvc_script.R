@@ -1,14 +1,11 @@
 #!/usr/bin/Rscript
-library(ghgvcR)
-config.xml <- system.file("config.xml", package = "ghgvcR")
+library(ghgvcr)
+config.xml <- system.file("multisite_config.xml", package = "ghgvcr")
 
 
 config.list <- xmlToList(xmlParse(config.xml))
-options <- config.list$options
 
-ecosystem_data <- config.list$ecosystem_data
-
-x <- ghgvc(options, ecosystem_data)
+x <- ghgvc2(config.list)
 
 writeLines(x, "inst/extdata/output.json")
 write.csv(as.data.frame(fromJSON(x)), "inst/extdata/output.csv")
