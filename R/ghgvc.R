@@ -64,6 +64,12 @@ ghgvc <- function(options, ecosystem_data){
     t_E <- seq(0, T_E, len=T_E+1)
     t_A <- seq(1, T_A, len=T_A)
 
+    #Biophysical
+    sw_radiative_forcing <- ecosystem[['sw_radiative_forcing']]
+    latent_cooling <- ecosystem[['latent']]
+    sensible_heat <- ecosystem[['sensible']]
+    biophysical_net <- latent_cooling + sensible_heat
+
                                         #STORAGE
     aboveground_storage <- ecosystem[['OM_ag']]
     root_storage <- ecosystem[['OM_root']]
@@ -139,6 +145,7 @@ ghgvc <- function(options, ecosystem_data){
     Ix <- NaN * matrix(1, T_E + 1, 3)
     Cx <- NaN * matrix(1, T_A, 3)
     RFx <- matrix(0, T_A, 3)
+    RFsw <- NaN * matrix(1, T_A, 1)
 
     p_x = t(matrix(c(.217+.259*exp(-t_A / 172.9)+.338*exp(-t_A / 18.51)+.186*exp(-t_A / 1.186), exp(-t_A / 12), exp(-t_A / 114)),nrow=3,byrow=TRUE))
 
@@ -179,9 +186,9 @@ ghgvc <- function(options, ecosystem_data){
 	else if (nm == 2)
 	  Ix[1:(T_E+1),g] <- Sx[,g] * includeS
 	else if (nm == 3)
-	  Ix[1:(T_E+1),g] <- Fx[,g] * includeF
+	  Ix[1:(T_E+1),g] <- -Fx[,g] * includeF
  	else if (nm == 4)
-	  Ix[1:(T_E+1),g] <- Dx[,g] * includeD
+	  Ix[1:(T_E+1),g] <- -Dx[,g] * includeD
 
 	w = matrix(0, T_A, 1)
 	temp = matrix(0, 1, T_A)
@@ -200,8 +207,12 @@ ghgvc <- function(options, ecosystem_data){
 	RFx[,g] <- ax[g] * Cx[,g]
       }
 
+      RFsw[1:T_E] <- biophysical_net
+
                                         #calculate full radiative forcing & apply weighting
-      RF <- rowSums(RFx) * w
+      RF_GHG <- rowSums(RFx) * w
+      RF_SW <- rowSums(RFsw) * w
+      RF <- RF_GHG + RF_SW
 
                                         #calculate radiative frocing from C pulse for comparison
       I_Cpulse <- 1000 * 1/44 #1 Mg CO2 pulse at time 0--> units of kmol
@@ -215,14 +226,26 @@ ghgvc <- function(options, ecosystem_data){
 	GHGV <- NaN * RF
 	cRF_Cpulse <- NaN * RF_Cpulse
 	for (j in 1:T_A) {
-	  GHGV[j] <- sum(RF[1:j,])
+	  GHGV[j] <- sum(RF_GHG[1:j,])
+    swRFV[j] <- sum(RF_SW[1:j,])
 	  cRF_Cpulse[j] <- sum(RF_Cpulse[1:j])
 	}
 
+  RFV <- GHGV + swRFV
+
 	GHGV_C <- GHGV / cRF_Cpulse
+  swRFV_C <- swRFV / cRF_Cpulse
+  RFV_C <- RFV / cRF_Cpulse
 
 	GHGV_matrix[1:T_A,i] <- GHGV
 	GHGV_C_matrix[1:T_A,i] <- GHGV_C
+
+  swRFV_matrix[1:T_A,i] <- swRFV
+  swRFV_C_matrix[1:T_A,i] <- swRFV_C
+
+  RFV_matrix[1:T_A,i] <- RFV
+  RFV_C_matrix[1:T_A,i] <- RFV_C
+
       }
 
                                         #separate reporting for each GHG
@@ -257,7 +280,8 @@ ghgvc <- function(options, ecosystem_data){
     }
     listResult <- list(name = ecosystem[['name']], S_CO2 = GHGmatrix[1,i], S_CH4 = GHGmatrix[2,i], S_N2O = GHGmatrix[3,i],
                        F_CO2 = GHGmatrix[5,i], F_CH4 = GHGmatrix[6,i], F_N2O = GHGmatrix[7,i],
-                       D_CO2 = GHGmatrix[9,i], D_CH4 = GHGmatrix[10,i], D_N2O = GHGmatrix[11,i])
+                       D_CO2 = GHGmatrix[9,i], D_CH4 = GHGmatrix[10,i], D_N2O = GHGmatrix[11,i],
+                       )
 
     jsonResults[i] <- toJSON(listResult)
   }
