@@ -216,7 +216,6 @@ ghgvc <- function(options, ecosystem_data){
                                         #calculate full radiative forcing & apply weighting
       RF_GHG <- rowSums(RFx) * w
       RF_SW <- rowSums(RFsw) * w
-	  print(RF_SW)
       RF <- RF_GHG + RF_SW
 
                                         #calculate radiative frocing from C pulse for comparison
