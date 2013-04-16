@@ -72,6 +72,9 @@
 	<con_energy>-9999</con_energy>
 	<eth_yield>-9999</eth_yield>
 	<G_C02>-9999</G_C02>
+	<sw_radiative_forcing>-0.387200238397716</sw_radiative_forcing>
+	<latent>0.06180009880958</latent>
+	<sensible>0.327720400257219</sensible>
 	<max_ghgv>FALSE</max_ghgv>
 	<eco_copy>1</eco_copy>
 	<reg_ghgv>FALSE</reg_ghgv>

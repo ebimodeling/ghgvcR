@@ -66,6 +66,9 @@
 	    <new_F_CH4>-9999</new_F_CH4>
 	    <new_F_N2O>-9999</new_F_N2O>
 	    <F_anth>0</F_anth>
+		<sw_radiative_forcing>-0.387200238397716</sw_radiative_forcing>
+		<latent>0.06180009880958</latent>
+		<sensible>0.327720400257219</sensible>
     </pft>
     <pft>
 	    <name>Misty Mountain Top</name>
@@ -122,6 +125,9 @@
 	    <new_F_CH4>-9999</new_F_CH4>
 	    <new_F_N2O>-9999</new_F_N2O>
 	    <F_anth>0</F_anth>
+		<sw_radiative_forcing>-0.387200238397716</sw_radiative_forcing>
+		<latent>0.06180009880958</latent>
+		<sensible>0.327720400257219</sensible>
     </pft>
   </site_0_data>
   <site_1_data>
@@ -180,6 +186,9 @@
 	    <new_F_CH4>-0.225844</new_F_CH4>
 	    <new_F_N2O>0.081607</new_F_N2O>
 	    <F_anth>0</F_anth>
+		<sw_radiative_forcing>-0.387200238397716</sw_radiative_forcing>
+		<latent>0.06180009880958</latent>
+		<sensible>0.327720400257219</sensible>
     </pft>
     <pft>
 	    <name>Misty Mountain Hop</name>
@@ -236,6 +245,9 @@
 	    <new_F_CH4>-9999</new_F_CH4>
 	    <new_F_N2O>-9999</new_F_N2O>
 	    <F_anth>0</F_anth>
+		<sw_radiative_forcing>-0.387200238397716</sw_radiative_forcing>
+		<latent>0.06180009880958</latent>
+		<sensible>0.327720400257219</sensible>
     </pft>
   </site_1_data>
 </ghgvc>
