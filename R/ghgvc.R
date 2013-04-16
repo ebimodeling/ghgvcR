@@ -55,6 +55,10 @@ ghgvc <- function(options, ecosystem_data){
 
   GHGV_matrix = NaN * matrix(1, T_A, nruns)
   GHGV_C_matrix = NaN * matrix(1, T_A, nruns)
+  swRFV_matrix = NaN * matrix(1, T_A, nruns)
+  swRFV_C_matrix = NaN * matrix(1, T_A, nruns)
+  RFV_matrix = NaN * matrix(1, T_A, nruns)
+  RFV_C_matrix = NaN * matrix(1, T_A, nruns)
   GHGmatrix = NaN * matrix(1, 16, nruns)
   jsonResults = matrix("", 1, nruns)
 
@@ -212,6 +216,7 @@ ghgvc <- function(options, ecosystem_data){
                                         #calculate full radiative forcing & apply weighting
       RF_GHG <- rowSums(RFx) * w
       RF_SW <- rowSums(RFsw) * w
+	  print(RF_SW)
       RF <- RF_GHG + RF_SW
 
                                         #calculate radiative frocing from C pulse for comparison
@@ -223,28 +228,29 @@ ghgvc <- function(options, ecosystem_data){
 
                                         #calculate GHGV--for inclusion of all components (nm=1)
       if (nm == 1) {
-	GHGV <- NaN * RF
+	GHGV <- NaN * RF_GHG
+	swRFV <- NaN * RF_SW
 	cRF_Cpulse <- NaN * RF_Cpulse
 	for (j in 1:T_A) {
 	  GHGV[j] <- sum(RF_GHG[1:j,])
-    swRFV[j] <- sum(RF_SW[1:j,])
+	  swRFV[j] <- sum(RF_SW[1:j,])
 	  cRF_Cpulse[j] <- sum(RF_Cpulse[1:j])
 	}
 
-  RFV <- GHGV + swRFV
+	RFV <- GHGV + swRFV
 
 	GHGV_C <- GHGV / cRF_Cpulse
-  swRFV_C <- swRFV / cRF_Cpulse
-  RFV_C <- RFV / cRF_Cpulse
+	swRFV_C <- swRFV / cRF_Cpulse
+	RFV_C <- RFV / cRF_Cpulse
 
 	GHGV_matrix[1:T_A,i] <- GHGV
 	GHGV_C_matrix[1:T_A,i] <- GHGV_C
 
-  swRFV_matrix[1:T_A,i] <- swRFV
-  swRFV_C_matrix[1:T_A,i] <- swRFV_C
+	swRFV_matrix[1:T_A,i] <- swRFV
+	swRFV_C_matrix[1:T_A,i] <- swRFV_C
 
-  RFV_matrix[1:T_A,i] <- RFV
-  RFV_C_matrix[1:T_A,i] <- RFV_C
+	RFV_matrix[1:T_A,i] <- RFV
+	RFV_C_matrix[1:T_A,i] <- RFV_C
 
       }
 
@@ -280,8 +286,7 @@ ghgvc <- function(options, ecosystem_data){
     }
     listResult <- list(name = ecosystem[['name']], S_CO2 = GHGmatrix[1,i], S_CH4 = GHGmatrix[2,i], S_N2O = GHGmatrix[3,i],
                        F_CO2 = GHGmatrix[5,i], F_CH4 = GHGmatrix[6,i], F_N2O = GHGmatrix[7,i],
-                       D_CO2 = GHGmatrix[9,i], D_CH4 = GHGmatrix[10,i], D_N2O = GHGmatrix[11,i],
-                       )
+                       D_CO2 = GHGmatrix[9,i], D_CH4 = GHGmatrix[10,i], D_N2O = GHGmatrix[11,i])
 
     jsonResults[i] <- toJSON(listResult)
   }
