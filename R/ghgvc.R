@@ -285,7 +285,8 @@ ghgvc <- function(options, ecosystem_data){
     }
     listResult <- list(name = ecosystem[['name']], S_CO2 = GHGmatrix[1,i], S_CH4 = GHGmatrix[2,i], S_N2O = GHGmatrix[3,i],
                        F_CO2 = GHGmatrix[5,i], F_CH4 = GHGmatrix[6,i], F_N2O = GHGmatrix[7,i],
-                       D_CO2 = GHGmatrix[9,i], D_CH4 = GHGmatrix[10,i], D_N2O = GHGmatrix[11,i])
+                       D_CO2 = GHGmatrix[9,i], D_CH4 = GHGmatrix[10,i], D_N2O = GHGmatrix[11,i],
+					   swRFV = swRFV_C_matrix[T_E,i])
 
     jsonResults[i] <- toJSON(listResult)
   }
