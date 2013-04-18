@@ -12,11 +12,9 @@ Description: This package runs the Greenhouse Gas Value Calculator, as
     original Matlab code.
 Depends:
     rjson,
-    PEcAn.utils,
     reshape
 Suggests:
     testthat
-OS_type: unix
 License: FreeBSD + file LICENSE
 Copyright: Authors
 LazyLoad: yes
