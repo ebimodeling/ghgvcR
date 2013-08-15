@@ -227,29 +227,29 @@ ghgvc <- function(options, ecosystem_data){
 
                                         #calculate GHGV--for inclusion of all components (nm=1)
       if (nm == 1) {
-	GHGV <- NaN * RF_GHG
-	swRFV <- NaN * RF_SW
-	cRF_Cpulse <- NaN * RF_Cpulse
-	for (j in 1:T_A) {
-	  GHGV[j] <- sum(RF_GHG[1:j,])
-	  swRFV[j] <- sum(RF_SW[1:j,])
-	  cRF_Cpulse[j] <- sum(RF_Cpulse[1:j])
-	}
+	        GHGV <- NaN * RF_GHG
+	        swRFV <- NaN * RF_SW
+	        cRF_Cpulse <- NaN * RF_Cpulse
+	        for (j in 1:T_A) {
+	          GHGV[j] <- sum(RF_GHG[1:j,])
+	          swRFV[j] <- sum(RF_SW[1:j,])
+	          cRF_Cpulse[j] <- sum(RF_Cpulse[1:j])
+	        }
 
-	RFV <- GHGV + swRFV
+	        RFV <- GHGV + swRFV
 
-	GHGV_C <- GHGV / cRF_Cpulse
-	swRFV_C <- swRFV / cRF_Cpulse
-	RFV_C <- RFV / cRF_Cpulse
+	        GHGV_C <- GHGV / cRF_Cpulse
+	        swRFV_C <- swRFV / cRF_Cpulse
+	        RFV_C <- RFV / cRF_Cpulse
 
-	GHGV_matrix[1:T_A,i] <- GHGV
-	GHGV_C_matrix[1:T_A,i] <- GHGV_C
+	        GHGV_matrix[1:T_A,i] <- GHGV
+	        GHGV_C_matrix[1:T_A,i] <- GHGV_C
 
-	swRFV_matrix[1:T_A,i] <- swRFV
-	swRFV_C_matrix[1:T_A,i] <- swRFV_C
+	        swRFV_matrix[1:T_A,i] <- swRFV
+	        swRFV_C_matrix[1:T_A,i] <- swRFV_C
 
-	RFV_matrix[1:T_A,i] <- RFV
-	RFV_C_matrix[1:T_A,i] <- RFV_C
+	        RFV_matrix[1:T_A,i] <- RFV
+	        RFV_C_matrix[1:T_A,i] <- RFV_C
 
       }
 
@@ -259,34 +259,40 @@ ghgvc <- function(options, ecosystem_data){
       GHGVx_C <- NaN * RFx
 
       for (kk in 1:3) {
-	RFx_w[1:T_A,kk] <- (RFx[,kk] * t(w))
-	for (j in 1:T_A) {
-	  GHGVx[j,kk] <- sum(RFx_w[1:j,kk])
-	}
-	GHGVx_C[,kk] <- t((GHGVx[,kk] / cRF_Cpulse))
+	        RFx_w[1:T_A,kk] <- (RFx[,kk] * t(w))
+	        for (j in 1:T_A) {
+	          GHGVx[j,kk] <- sum(RFx_w[1:j,kk])
+	        }
+	        GHGVx_C[,kk] <- t((GHGVx[,kk] / cRF_Cpulse))
       }
 
       if (nm == 1) {
-	GHGmatrix[13:15, i] <- GHGVx_C[T_A,]
-	GHGmatrix[16, i] <- sum(GHGmatrix[13:15,i])
+	        GHGmatrix[13:15, i] <- GHGVx_C[T_A,]
+	        GHGmatrix[16, i] <- sum(GHGmatrix[13:15,i])
       }
       else if (nm == 2) {
-	GHGmatrix[1:3, i] <- GHGVx_C[T_A,]
-        GHGmatrix[4, i] <- sum(GHGmatrix[1:3,i])
+        	GHGmatrix[1:3, i] <- GHGVx_C[T_A,]
+          GHGmatrix[4, i] <- sum(GHGmatrix[1:3,i])
       }
       else if (nm == 3) {
-	GHGmatrix[5:7, i] <- GHGVx_C[T_A,]
-        GHGmatrix[8, i] <- sum(GHGmatrix[5:7,i])
+        	GHGmatrix[5:7, i] <- GHGVx_C[T_A,]
+          GHGmatrix[8, i] <- sum(GHGmatrix[5:7,i])
       }
       else if (nm == 4) {
-   	GHGmatrix[9:11, i] <- GHGVx_C[T_A,]
-	GHGmatrix[12, i] <- sum(GHGmatrix[9:11,i])
+   	      GHGmatrix[9:11, i] <- GHGVx_C[T_A,]
+        	GHGmatrix[12, i] <- sum(GHGmatrix[9:11,i])
       }
     }
+    
+    # determine the scale between the input and output value for sw radiative forcing
+    swRFV_scale_factor = swRFV_C_matrix[T_E,i] / sw_radiative_forcing
+    # scale latent proportional to above
+    instance_output_latent = swRFV_scale_factor * latent_cooling
+    
     listResult <- list(name = ecosystem[['name']], S_CO2 = GHGmatrix[1,i], S_CH4 = GHGmatrix[2,i], S_N2O = GHGmatrix[3,i],
                        F_CO2 = GHGmatrix[5,i], F_CH4 = GHGmatrix[6,i], F_N2O = GHGmatrix[7,i],
                        D_CO2 = GHGmatrix[9,i], D_CH4 = GHGmatrix[10,i], D_N2O = GHGmatrix[11,i],
-					   swRFV = swRFV_C_matrix[T_E,i])
+					             swRFV = swRFV_C_matrix[T_E,i], latent = instance_output_latent )
 
     jsonResults[i] <- toJSON(listResult)
   }
