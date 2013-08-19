@@ -289,10 +289,13 @@ ghgvc <- function(options, ecosystem_data){
     # scale latent proportional to above
     instance_output_latent = swRFV_scale_factor * latent_cooling
     
-    listResult <- list(name = ecosystem[['name']], S_CO2 = GHGmatrix[1,i], S_CH4 = GHGmatrix[2,i], S_N2O = GHGmatrix[3,i],
-                       F_CO2 = GHGmatrix[5,i], F_CH4 = GHGmatrix[6,i], F_N2O = GHGmatrix[7,i],
-                       D_CO2 = GHGmatrix[9,i], D_CH4 = GHGmatrix[10,i], D_N2O = GHGmatrix[11,i],
-					             swRFV = swRFV_C_matrix[T_E,i], latent = instance_output_latent )
+    
+    
+    listResult <- list( name = ecosystem[['name']], 
+                        S_CO2 = GHGmatrix[1,i], S_CH4 = GHGmatrix[2,i], S_N2O = GHGmatrix[3,i],
+                        F_CO2 = GHGmatrix[5,i], F_CH4 = GHGmatrix[6,i], F_N2O = GHGmatrix[7,i],
+                        D_CO2 = (GHGmatrix[1,i] + GHGmatrix[5,i]), D_CH4 = (GHGmatrix[2,i]+GHGmatrix[6,i]), D_N2O = (GHGmatrix[3,i] = GHGmatrix[7,i]),
+					              swRFV = swRFV_C_matrix[T_E,i], latent = instance_output_latent )
 
     jsonResults[i] <- toJSON(listResult)
   }
