@@ -3,7 +3,7 @@ ghgvcr
 
 R implementation of the Greenhouse Gas Value Calculator
 
-Citation: Kristina J. Teixeira and Evan H. Delucia 2011. The greenhouse gas value of ecosystems. Global Change Biology. 17(1):425–438 doi: 10.1111/j.1365-2486.2010.02220.x
+Citation: Kristina J. Teixeira and Evan H. Delucia 2011. The greenhouse gas value of ecosystems. Global Change Biology. 17(1):425438 doi: 10.1111/j.1365-2486.2010.02220.x
 
 -------
 
@@ -50,6 +50,9 @@ install(pecan/utils)
 * This can be run at the command line: `./src/ghgvc_script.R`
 
 
+```
+## Error: there is no package called 'ghgvcr'
+```
 
 
 
@@ -62,13 +65,45 @@ options(warn = FALSE)
 ## the following is equivalent to
 config.xml <- system.file("config.xml", package = "ghgvcr")
 config.list <- xmlToList(xmlParse(config.xml))
+```
+
+```
+Error: could not find function "xmlToList"
+```
+
+```r
 ecosystem_data <- config.list$ecosystem_data
+```
+
+```
+Error: object 'config.list' not found
+```
+
+```r
 
 x <- ghgvcr::ghgvc(options = config.list$options, ecosystem_data = config.list$ecosystem_data)
+```
+
+```
+Error: there is no package called 'ghgvcr'
+```
+
+```r
 
 
 writeLines(x, "inst/extdata/output.json")
+```
+
+```
+Error: object 'x' not found
+```
+
+```r
 write.csv(as.data.frame(fromJSON(x)), "inst/extdata/output.csv")
+```
+
+```
+Error: could not find function "fromJSON"
 ```
 
 
@@ -79,7 +114,7 @@ multipft_config.list <- xmlToList(xmlParse(multipft_config.xml))
 ```
 
 ```
-Error: object 'multipft_config.xml' not found
+Error: could not find function "xmlToList"
 ```
 
 ```r
@@ -88,7 +123,7 @@ x2 <- ghgvcr::ghgvc2(multipft_config.list)
 ```
 
 ```
-Error: object 'multipft_config.list' not found
+Error: there is no package called 'ghgvcr'
 ```
 
 ```r
@@ -105,7 +140,7 @@ write.csv(as.data.frame(fromJSON(x2)), "inst/extdata/multipft_output.csv")
 ```
 
 ```
-Error: object 'x2' not found
+Error: could not find function "fromJSON"
 ```
 
 
@@ -116,6 +151,13 @@ Error: object 'x2' not found
 library(ggplot2)
 # number of ecosystems:
 n.ecosystems <- length(names(ecosystem_data))
+```
+
+```
+Error: object 'ecosystem_data' not found
+```
+
+```r
 for (i in 1:n.ecosystems) {
     result <- ecosystem_data[[i]]
     ecosystem.name <- result$name
@@ -127,22 +169,92 @@ for (i in 1:n.ecosystems) {
     }
     rownames(result.df)[i] <- gsub(" ", "", ecosystem.name)
 }
+```
+
+```
+Error: object 'n.ecosystems' not found
+```
+
+```r
 
 # identify cols with numbers
 result.num <- suppressWarnings(as.numeric(result))
+```
+
+```
+Error: object 'result' not found
+```
+
+```r
 num.logical <- !(is.na(result.num) | result.num == -9999)
+```
+
+```
+Error: object 'result.num' not found
+```
+
+```r
 result.df <- result.df[, !(result.num == -9999 | is.na(result.num))]
+```
+
+```
+Error: object 'result.df' not found
+```
+
+```r
 
 # transpose data.frame for plotting:
 result.tdf <- cbind(variable = names(result.df), as.data.frame(t(result.df)))
+```
+
+```
+Error: object 'result.df' not found
+```
+
+```r
 
 forcings.index <- grepl("F", names(result.df))
+```
+
+```
+Error: object 'result.df' not found
+```
+
+```r
 forcings.names <- names(result.df)[forcings.index]
+```
+
+```
+Error: object 'result.df' not found
+```
+
+```r
 
 
 forcings <- result.tdf[forcings.index, ]
+```
+
+```
+Error: object 'result.tdf' not found
+```
+
+```r
 forcings.long <- melt(forcings, id.vars = "variable")
+```
+
+```
+Error: could not find function "melt"
+```
+
+```r
 colnames(forcings.long) <- c("variable", "ecosystem", "value")
+```
+
+```
+Error: object 'forcings.long' not found
+```
+
+```r
 
 ```
 
@@ -155,5 +267,7 @@ ggplot(data = forcings.long, aes(x = variable, y = value, fill = ecosystem)) +
     xlab("Variable") + ylab("Units of F") + coord_flip()
 ```
 
-![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7.png) 
+```
+## Error: object 'forcings.long' not found
+```
 
