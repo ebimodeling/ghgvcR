@@ -1,14 +1,14 @@
-#-------------------------------------------------------------------------------
-# Copyright (c) 2012 University of Illinois and Authors.
-# All rights reserved. This program and the accompanying materials
-# are made available under the terms of the 
-# University of Illinois/NCSA Open Source License
-# which accompanies this distribution, and is available at
-# http://opensource.ncsa.illinois.edu/license.html
-# 
-# Citation: Kristina J. Teixeira and Evan H. Delucia 2011. The greenhouse gas value of ecosystems. Global Change Biology. 17(1):425–438 doi: 10.1111/j.1365-2486.2010.02220.x
-#-------------------------------------------------------------------------------
-#--------------------------------------------------------------------------------------------------#
+##-------------------------------------------------------------------------------
+## Copyright (c) 2012 University of Illinois and Authors.
+## All rights reserved. This program and the accompanying materials
+## are made available under the terms of the 
+## University of Illinois/NCSA Open Source License
+## which accompanies this distribution, and is available at
+## http://opensource.ncsa.illinois.edu/license.html
+## 
+## Citation: Kristina J. Teixeira and Evan H. Delucia 2011. The greenhouse gas value of ecosystems. Global Change Biology. 17(1):425–438 doi: 10.1111/j.1365-2486.2010.02220.x
+##-------------------------------------------------------------------------------
+##--------------------------------------------------------------------------------------------------#
 ##' Greenhouse Gas Value Calculator
 ##'
 ##' R function implementation of GHGV_calculator_web.m
@@ -19,7 +19,9 @@
 ##' @return GHGVC result
 ##' @author Chris Schauer, David LeBauer
 ghgvc <- function(options, ecosystem_data){
+    options(warn=FALSE)
   options <- lapply(options, get.nums)
+    options(warn=TRUE)
   
   includeANTH <- 1
 
@@ -46,8 +48,6 @@ ghgvc <- function(options, ecosystem_data){
                                         #see p_x function for description of decay kinetics (currently from IPCC 2007)
 
   nruns <- length(grep("pft", names(ecosystem_data)))
-  p_matrix = matrix(0, 52, nruns)
-  s_names <- vector('list', nruns)
 
   T_A <- as.numeric(options[['T_A']])
   T_E <- as.numeric(options[['T_E']])
@@ -298,7 +298,7 @@ ghgvc <- function(options, ecosystem_data){
     listResult <- list( name = ecosystem[['name']], 
                         S_CO2 = GHGmatrix[1,i], S_CH4 = GHGmatrix[2,i], S_N2O = GHGmatrix[3,i],
                         F_CO2 = GHGmatrix[5,i], F_CH4 = GHGmatrix[6,i], F_N2O = GHGmatrix[7,i],
-                        D_CO2 = (GHGmatrix[1,i] + GHGmatrix[5,i]), D_CH4 = (GHGmatrix[2,i]+GHGmatrix[6,i]), D_N2O = (GHGmatrix[3,i] = GHGmatrix[7,i]),
+                           D_CO2 = (GHGmatrix[1,i] + GHGmatrix[5,i]), D_CH4 = (GHGmatrix[2,i]+GHGmatrix[6,i]), D_N2O = (GHGmatrix[3,i] + GHGmatrix[7,i]),
 					              swRFV = swRFV_C_matrix[T_E,i], latent = instance_output_latent, crv = climate_regulating_value )
 
     jsonResults[i] <- toJSON(listResult)
@@ -327,10 +327,12 @@ ghgvc <- function(options, ecosystem_data){
 ##' @author David LeBauer
 ghgvc2 <- function(config.list){
   options <- config.list$options
-  ecosystems <- names(config.list)[-which(names(config.list)%in% "options")]
+    sites <- names(config.list)[-which(names(config.list)%in% "options")]
   out <- list()
-  for (ecosystem in ecosystems){
-    out[[ecosystem]] <- fromJSON(ghgvc(options, config.list[[ecosystem]]))
+    for (site in sites){
+        for(ecosystem in length(tmp)){
+            tmp <- fromJSON(ghgvc(options, list(pft = config.list[[site]][[ecosystem]])))
+            tmp <- lapply
   }
   
   return(toJSON(out))
