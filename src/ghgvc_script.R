@@ -1,18 +1,17 @@
 #!/usr/bin/Rscript
 library(ghgvcr)
 
-## TODO pass inputdir and outputdir as arguments
-homedir <- Sys.getenv("HOME")
-inputdir <- file.path(homedir, "ghgvcR/inst")
-outputdir <- file.path(homedir, "ghgvcR/inst/extdata")
+args   <- commandArgs(trailingOnly = TRUE)
+rundir <- args[1]
+outdir <- args[2]
 
 
-config.xml <- file.path(inputdir, "multisite_config.xml")
+config.xml <- file.path(rundir, "multisite_config.xml")
 config.list <- xmlToList(xmlParse(config.xml))
 
 x <- ghgvc2(config.list)
 
-writeLines(x, file.path(outputdir, "output.json"))
+writeLines(x, file.path(outdir, "output.json"))
 
 outlist <- fromJSON(x)
 outdf <- list()
@@ -27,4 +26,4 @@ for(site in names(outlist)){
 }
 outdf$site <- gsub("site_", "", gsub("_data", "", outdf$site))
     
-write.csv(outdf, file.path(outputdir, "output.csv"))
+write.csv(outdf, file.path(outdir, "output.csv"))
