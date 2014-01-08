@@ -1,7 +1,5 @@
 #!/usr/bin/env Rscript
 
-print(.libPaths())
-
 library(ghgvcr)
 
 
@@ -18,31 +16,41 @@ x <- ghgvc2(config.list)
 writeLines(x, file.path(outdir, "output.json"))
 
 outlist <- fromJSON(x)
-outdf <- list()
+outdf <- tmpdf <- list()
 for(site in names(outlist)){
     for(pft in seq(length(outlist[[site]]))){
-        print(site)
         tmplist <- outlist$site_2_data[[pft]]
         tmplist <- lapply(tmplist, function(x) ifelse(is.list(x), NA, x))
-        tmpdf <- data.frame(site = site, tmplist)
+        tmplist <- lapply(tmplist, function(x) ifelse(x == 0, NA, x))
+        tmplist[tmplist == "NaN"] <- NA
+        Location <- as.numeric(gsub("_data", "", gsub("site_", "", site)))
+        ## Temporary hack needs to be fixed
+        ## https://github.com/ebimodeling/ghgvcR/issues/3
+        ## https://github.com/ebimodeling/ghgvc/issues/19
+        tmpdf <- data.frame(Location = Location, tmplist)
+
+        tmp <- as.numeric(tmpdf[!colnames(tmpdf) %in% c("Location", "name")])
+        tmpdf[!colnames(tmpdf) %in% c("Location", "name")] <- round(tmp, digits = 1)
+        
         outdf <- rbind(outdf, tmpdf)
     }
 }
 
 ## Cleaning up output for downloading
-outdf$site <- gsub("site_", "", gsub("_data", "", outdf$site))
-
-Location <- as.numeric(gsub("_data", "", gsub("site_", "", outdf$site)))
-outdf$site <- NULL
-outdf <- cbind(Location, outdf)
-outdf <- outdf[order(outdf$Location),]
 
 colnames(outdf)[colnames(outdf) == "name"] <- "Biome"
-
 colnames(outdf) <- gsub("D_", "GHGV_", colnames(outdf))
 
-outdf[outdf == 0] <- NA
-
+outdf <- outdf[order(outdf$Location),]
 write.csv(outdf, file.path(outdir, "output.csv"))
 
 ## Plotting
+initial_storage <- outdf[,grepl("S_", colnames(outdf))]
+ongoing_exchange <- outdf[,grepl("F_", colnames(outdf))]
+Total_GHGV <- outdf[,grepl("GHGV_", colnames(outdf))]
+Biophysical <- cbind(outdf$swRFV, outdf$latent)
+CRV <- outdf$crv
+
+## T_E is number of years considered
+T_E <- config.list$options$T_E
+xlabels <- paste0("CO_2 Emission Equivalents (Mg CO_2-eq ha-1 ",  T_E, " yrs-1)")
