@@ -28,6 +28,21 @@ for(site in names(outlist)){
         outdf <- rbind(outdf, tmpdf)
     }
 }
+
+## Cleaning up output for downloading
 outdf$site <- gsub("site_", "", gsub("_data", "", outdf$site))
-    
+
+Location <- as.numeric(gsub("_data", "", gsub("site_", "", outdf$site)))
+outdf$site <- NULL
+outdf <- cbind(Location, outdf)
+outdf <- outdf[order(outdf$Location),]
+
+colnames(outdf)[colnames(outdf) == "name"] <- "Biome"
+
+colnames(outdf) <- gsub("D_", "GHGV_", colnames(outdf))
+
+outdf[outdf == 0] <- NA
+
 write.csv(outdf, file.path(outdir, "output.csv"))
+
+## Plotting
