@@ -1,5 +1,9 @@
-#!/usr/bin/Rscript
+#!/usr/bin/env Rscript
+
+print(.libPaths())
+
 library(ghgvcr)
+
 
 args   <- commandArgs(trailingOnly = TRUE)
 rundir <- args[1]
