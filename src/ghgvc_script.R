@@ -48,9 +48,18 @@ write.csv(outdf, file.path(outdir, "output.csv"))
 initial_storage <- outdf[,grepl("S_", colnames(outdf))]
 ongoing_exchange <- outdf[,grepl("F_", colnames(outdf))]
 Total_GHGV <- outdf[,grepl("GHGV_", colnames(outdf))]
-Biophysical <- cbind(outdf$swRFV, outdf$latent)
+Biophysical <- data.frame(Rnet = outdf$swRFV, LE = outdf$latent)
 CRV <- outdf$crv
 
 ## T_E is number of years considered
 T_E <- config.list$options$T_E
 xlabels <- paste0("CO_2 Emission Equivalents (Mg CO_2-eq ha-1 ",  T_E, " yrs-1)")
+
+plotdata <- data.frame(outdf$Biome,
+                       Storage = rowSums(initial_storage),
+                       Ongoing_Exchange = rowSums(ongoing_exchange),
+                       Rnet = outdf$swRFV,
+                       LE = outdf$latent,
+                       CRV_BGC = )
+
+ggplot() + geom_bar(data = st.bars, aes(x = values, y = values))
