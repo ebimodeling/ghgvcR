@@ -1,18 +1,21 @@
-#!/usr/bin/Rscript
+#!/usr/bin/env Rscript
+
+print(.libPaths())
+
 library(ghgvcr)
 
-## TODO pass inputdir and outputdir as arguments
-homedir <- Sys.getenv("HOME")
-inputdir <- file.path(homedir, "ghgvcR/inst")
-outputdir <- file.path(homedir, "ghgvcR/inst/extdata")
+
+args   <- commandArgs(trailingOnly = TRUE)
+rundir <- args[1]
+outdir <- args[2]
 
 
-config.xml <- file.path(inputdir, "multisite_config.xml")
+config.xml <- file.path(rundir, "multisite_config.xml")
 config.list <- xmlToList(xmlParse(config.xml))
 
 x <- ghgvc2(config.list)
 
-writeLines(x, file.path(outputdir, "output.json"))
+writeLines(x, file.path(outdir, "output.json"))
 
 outlist <- fromJSON(x)
 outdf <- list()
@@ -25,6 +28,21 @@ for(site in names(outlist)){
         outdf <- rbind(outdf, tmpdf)
     }
 }
+
+## Cleaning up output for downloading
 outdf$site <- gsub("site_", "", gsub("_data", "", outdf$site))
-    
-write.csv(outdf, file.path(outputdir, "output.csv"))
+
+Location <- as.numeric(gsub("_data", "", gsub("site_", "", outdf$site)))
+outdf$site <- NULL
+outdf <- cbind(Location, outdf)
+outdf <- outdf[order(outdf$Location),]
+
+colnames(outdf)[colnames(outdf) == "name"] <- "Biome"
+
+colnames(outdf) <- gsub("D_", "GHGV_", colnames(outdf))
+
+outdf[outdf == 0] <- NA
+
+write.csv(outdf, file.path(outdir, "output.csv"))
+
+## Plotting
