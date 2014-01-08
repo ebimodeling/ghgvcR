@@ -63,3 +63,6 @@ plotdata <- data.frame(outdf$Biome,
                        CRV_BGC = )
 
 ggplot() + geom_bar(data = st.bars, aes(x = values, y = values))
+
+## Dummy plot for now
+file.copy(system.file("extdata/output.svg", package = "ghgvcr"), file.path(outdir, "output.svg"))
