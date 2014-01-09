@@ -6,15 +6,16 @@ library(ghgvcr)
 args   <- commandArgs(trailingOnly = TRUE)
 rundir <- args[1]
 outdir <- args[2]
+if(interactive()){
+    rundir <- system.file("extdata", package = "ghgvcr")
+    outdir <- "/tmp"
+}    
 
 
 config.xml <- file.path(rundir, "multisite_config.xml")
 config.list <- xmlToList(xmlParse(config.xml))
 
 x <- ghgvc2(config.list)
-
-writeLines(x, file.path(outdir, "output.json"))
-
 outlist <- fromJSON(x)
 outdf <- tmpdf <- list()
 for(site in names(outlist)){
@@ -42,7 +43,7 @@ colnames(outdf)[colnames(outdf) == "name"] <- "Biome"
 colnames(outdf) <- gsub("D_", "GHGV_", colnames(outdf))
 
 outdf <- outdf[order(outdf$Location),]
-write.csv(outdf, file.path(outdir, "output.csv"))
+write.csv(outdf, file.path(outdir, "output.csv"), row.names = FALSE)
 
 ## Plotting
 initial_storage <- outdf[,grepl("S_", colnames(outdf))]
@@ -55,14 +56,34 @@ CRV <- outdf$crv
 T_E <- config.list$options$T_E
 xlabels <- paste0("CO_2 Emission Equivalents (Mg CO_2-eq ha-1 ",  T_E, " yrs-1)")
 
-plotdata <- data.frame(outdf$Biome,
-                       Storage = rowSums(initial_storage),
-                       Ongoing_Exchange = rowSums(ongoing_exchange),
+library(ggplot2)
+library(gridExtra)
+
+library(Hmisc)
+
+plotdata <- data.frame(Biome = capitalize(paste(gsub("_", " ", gsub("BR", "Brazil", outdf$Biome)), "Site", outdf$Location)),
+                       Storage = rowSums(initial_storage, na.rm = TRUE),
+                       Ongoing_Exchange = rowSums(ongoing_exchange, na.rm = TRUE),
                        Rnet = outdf$swRFV,
                        LE = outdf$latent,
-                       CRV_BGC = )
+                       CRV_BGC = outdf$crv)
+plotdata[is.na(plotdata)] <- 0
 
-ggplot() + geom_bar(data = st.bars, aes(x = values, y = values))
+nolabels <- theme(axis.title = element_blank(), axis.text.y = element_blank(), axis.ticks.y = element_blank())
+baseplot <- ggplot(data = plotdata) + theme_minimal() + coord_flip() + nolabels
 
-## Dummy plot for now
-file.copy(system.file("extdata/output.svg", package = "ghgvcr"), file.path(outdir, "output.svg"))
+ylabels <- baseplot + geom_text(data
+storage.plot <- baseplot + 
+    geom_bar(aes(x = Biome, y = Storage), fill = "DarkGreen", width = 0.25, stat = "identity")
+ongoing.plot <- baseplot +
+    geom_bar(aes(x = Biome, y = Ongoing_Exchange), fill = "DarkBlue", width = 0.25, stat = "identity")
+crv.plot <- baseplot +
+    geom_bar(aes(x = Biome, y = CRV_BGC))
+
+newplot <- grid.arrange(storage.plot, ongoing.plot, crv.plot, ncol = 4) 
+
+
+
+
+
+
