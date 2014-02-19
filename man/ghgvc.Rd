@@ -2,7 +2,7 @@
 \alias{ghgvc}
 \title{GHGVC}
 \usage{
-  ghgvc(options, ecosystem_data)
+ghgvc(options, ecosystem_data)
 }
 \arguments{
   \item{options}{}
@@ -10,15 +10,15 @@
   \item{ecosystem_data}{}
 }
 \value{
-  GHGVC result
+GHGVC result
 }
 \description{
-  Greenhouse Gas Value Calculator
+Greenhouse Gas Value Calculator
 }
 \details{
-  R function implementation of GHGV_calculator_web.m
+R function implementation of GHGV_calculator_web.m
 }
 \author{
-  Chris Schauer, David LeBauer
+Chris Schauer, David LeBauer
 }
 

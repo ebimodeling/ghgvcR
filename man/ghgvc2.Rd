@@ -2,22 +2,22 @@
 \alias{ghgvc2}
 \title{GHGVC2}
 \usage{
-  ghgvc2(config.list)
+ghgvc2(config.list)
 }
 \arguments{
   \item{config.list}{}
 }
 \value{
-  GHGVC2 result
+GHGVC2 result
 }
 \description{
-  Greenhouse Gas Value Calculator v2
+Greenhouse Gas Value Calculator v2
 }
 \details{
-  R function implementation of GHGV_calculator_web.m; works
-  for n ecosystems
+R function implementation of GHGV_calculator_web.m; works
+for n ecosystems
 }
 \author{
-  David LeBauer
+David LeBauer
 }
 

@@ -1,5 +1,5 @@
 <ghgvc>
-	<options>
+  <options>
 		<storage>TRUE</storage>
 		<flux>TRUE</flux>
 		<disturbance>FALSE</disturbance>
@@ -10,125 +10,6 @@
 		<T_E>50</T_E>
 		<r>0</r>
 	</options>
-<site_2_data>
-	<pft>
-		<name>desert</name>
-		<category>native</category>
-		<T_A>100</T_A>
-		<T_E>50</T_E>
-		<r>0</r>
-		<OM_ag>7</OM_ag>
-		<OM_root>18</OM_root>
-		<OM_wood>0</OM_wood>
-		<OM_litter>0.27027</OM_litter>
-		<OM_peat>0</OM_peat>
-		<OM_SOM>32.75862</OM_SOM>
-		<fc_ag_wood_litter>0.75</fc_ag_wood_litter>
-		<fc_root>0</fc_root>
-		<fc_peat>0</fc_peat>
-		<fc_SOM>0</fc_SOM>
-		<Ec_CO2>36.65909</Ec_CO2>
-		<Ec_CH4>0.14375</Ec_CH4>
-		<Ec_N2O>0.004773</Ec_N2O>
-		<k_ag_wood_litter>0.4</k_ag_wood_litter>
-		<k_root>0.4</k_root>
-		<k_peat>0</k_peat>
-		<k_SOM>0.4</k_SOM>
-		<termite>0</termite>
-		<Ed_CO2_ag_wood_litter>41.66667</Ed_CO2_ag_wood_litter>
-		<Ed_CO2_root>41.66667</Ed_CO2_root>
-		<Ed_CO2_peat>45</Ed_CO2_peat>
-		<Ed_CO2_litter>48.33333</Ed_CO2_litter>
-		<Ed_CH4_ag_wood_litter>0</Ed_CH4_ag_wood_litter>
-		<Ed_CH4_root>0</Ed_CH4_root>
-		<Ed_CH4_peat>0</Ed_CH4_peat>
-		<Ed_CH4_litter>0</Ed_CH4_litter>
-		<Ed_N2O_ag_wood_litter>0</Ed_N2O_ag_wood_litter>
-		<Ed_N2O_root>0</Ed_N2O_root>
-		<Ed_N2O_peat>0</Ed_N2O_peat>
-		<Ed_N2O_litter>0</Ed_N2O_litter>
-		<F_CO2>-10.6944</F_CO2>
-		<F_CH4>-0.18934</F_CH4>
-		<F_N2O>0.005357</F_N2O>
-		<rd>0</rd>
-		<tR>-9999</tR>
-		<FR_CO2>-9999</FR_CO2>
-		<FR_CH4>-9999</FR_CH4>
-		<FR_N2O>-9999</FR_N2O>
-		<dfc_ag_wood_litter>0.75</dfc_ag_wood_litter>
-		<dfc_root>0</dfc_root>
-		<dfc_peat>0</dfc_peat>
-		<dk_ag_wood_litter>0.4</dk_ag_wood_litter>
-		<dk_root>0.4</dk_root>
-		<dk_peat>0</dk_peat>
-		<age_transition>-9999</age_transition>
-		<new_F_CO2>-9999</new_F_CO2>
-		<new_F_CH4>-9999</new_F_CH4>
-		<new_F_N2O>-9999</new_F_N2O>
-		<F_anth>0</F_anth>
-		<sw_radiative_forcing>0.07671454980405952</sw_radiative_forcing>
-		<latent>0.004362173018669921</latent>
-		<sensible>0</sensible>
-	</pft>
-	<pft>
-		<name>tropical_pasture</name>
-		<category>agroecosystem</category>
-		<T_A>100</T_A>
-		<T_E>50</T_E>
-		<r>0</r>
-		<OM_ag>3.6</OM_ag>
-		<OM_root>15.2</OM_root>
-		<OM_wood>0</OM_wood>
-		<OM_litter>0</OM_litter>
-		<OM_peat>0</OM_peat>
-		<OM_SOM>68.96552</OM_SOM>
-		<fc_ag_wood_litter>0.83</fc_ag_wood_litter>
-		<fc_root>0</fc_root>
-		<fc_peat>0</fc_peat>
-		<fc_SOM>0</fc_SOM>
-		<Ec_CO2>36.65909</Ec_CO2>
-		<Ec_CH4>0.14375</Ec_CH4>
-		<Ec_N2O>0.004773</Ec_N2O>
-		<k_ag_wood_litter>0.4</k_ag_wood_litter>
-		<k_root>0.4</k_root>
-		<k_peat>0</k_peat>
-		<k_SOM>0.4</k_SOM>
-		<termite>3</termite>
-		<Ed_CO2_ag_wood_litter>41.66667</Ed_CO2_ag_wood_litter>
-		<Ed_CO2_root>41.66667</Ed_CO2_root>
-		<Ed_CO2_peat>45</Ed_CO2_peat>
-		<Ed_CO2_litter>48.33333</Ed_CO2_litter>
-		<Ed_CH4_ag_wood_litter>0.0275</Ed_CH4_ag_wood_litter>
-		<Ed_CH4_root>0</Ed_CH4_root>
-		<Ed_CH4_peat>0</Ed_CH4_peat>
-		<Ed_CH4_litter>0</Ed_CH4_litter>
-		<Ed_N2O_ag_wood_litter>0</Ed_N2O_ag_wood_litter>
-		<Ed_N2O_root>0</Ed_N2O_root>
-		<Ed_N2O_peat>0</Ed_N2O_peat>
-		<Ed_N2O_litter>0</Ed_N2O_litter>
-		<F_CO2>-35</F_CO2>
-		<F_CH4>3.664219</F_CH4>
-		<F_N2O>0.067387</F_N2O>
-		<rd>0</rd>
-		<tR>-9999</tR>
-		<FR_CO2>-9999</FR_CO2>
-		<FR_CH4>-9999</FR_CH4>
-		<FR_N2O>-9999</FR_N2O>
-		<dfc_ag_wood_litter>-9999</dfc_ag_wood_litter>
-		<dfc_root>0</dfc_root>
-		<dfc_peat>0</dfc_peat>
-		<dk_ag_wood_litter>0.4</dk_ag_wood_litter>
-		<dk_root>0.4</dk_root>
-		<dk_peat>0</dk_peat>
-		<age_transition>-9999</age_transition>
-		<new_F_CO2>-9999</new_F_CO2>
-		<new_F_CH4>-9999</new_F_CH4>
-		<new_F_N2O>-9999</new_F_N2O>
-		<F_anth>0</F_anth>
-		<sensible>0</sensible>
-		<latent>0</latent>
-	</pft>
-</site_2_data>
 <site_1_data>
 	<pft>
 		<name>tropical_forest</name>
@@ -185,70 +66,9 @@
 		<new_F_CH4>-9999</new_F_CH4>
 		<new_F_N2O>-9999</new_F_N2O>
 		<F_anth>0</F_anth>
-		<sw_radiative_forcing>0.34957947008048</sw_radiative_forcing>
-		<latent>0.517109140820821</latent>
+		<sw_radiative_forcing>0.5222862256934591</sw_radiative_forcing>
+		<latent>0.7953705722817992</latent>
 		<sensible>0</sensible>
 	</pft>
 </site_1_data>
-<site_0_data>
-	<pft>
-		<name>temperate_grassland</name>
-		<category>native</category>
-		<T_A>100</T_A>
-		<T_E>50</T_E>
-		<r>0</r>
-		<OM_ag>2.4</OM_ag>
-		<OM_root>14</OM_root>
-		<OM_wood>0</OM_wood>
-		<OM_litter>5.405405</OM_litter>
-		<OM_peat>0</OM_peat>
-		<OM_SOM>60.34483</OM_SOM>
-		<fc_ag_wood_litter>0.83</fc_ag_wood_litter>
-		<fc_root>0</fc_root>
-		<fc_peat>0</fc_peat>
-		<fc_SOM>0</fc_SOM>
-		<Ec_CO2>36.65909</Ec_CO2>
-		<Ec_CH4>0.14375</Ec_CH4>
-		<Ec_N2O>0.004773</Ec_N2O>
-		<k_ag_wood_litter>0.4</k_ag_wood_litter>
-		<k_root>0.4</k_root>
-		<k_peat>0</k_peat>
-		<k_SOM>0.4</k_SOM>
-		<termite>0</termite>
-		<Ed_CO2_ag_wood_litter>41.66667</Ed_CO2_ag_wood_litter>
-		<Ed_CO2_root>41.66667</Ed_CO2_root>
-		<Ed_CO2_peat>45</Ed_CO2_peat>
-		<Ed_CO2_litter>48.33333</Ed_CO2_litter>
-		<Ed_CH4_ag_wood_litter>0</Ed_CH4_ag_wood_litter>
-		<Ed_CH4_root>0</Ed_CH4_root>
-		<Ed_CH4_peat>0</Ed_CH4_peat>
-		<Ed_CH4_litter>0</Ed_CH4_litter>
-		<Ed_N2O_ag_wood_litter>0</Ed_N2O_ag_wood_litter>
-		<Ed_N2O_root>0</Ed_N2O_root>
-		<Ed_N2O_peat>0</Ed_N2O_peat>
-		<Ed_N2O_litter>0</Ed_N2O_litter>
-		<F_CO2>-33.6246</F_CO2>
-		<F_CH4>-0.14828</F_CH4>
-		<F_N2O>0.012038</F_N2O>
-		<rd>0</rd>
-		<tR>-9999</tR>
-		<FR_CO2>-9999</FR_CO2>
-		<FR_CH4>-9999</FR_CH4>
-		<FR_N2O>-9999</FR_N2O>
-		<dfc_ag_wood_litter>0.83</dfc_ag_wood_litter>
-		<dfc_root>0</dfc_root>
-		<dfc_peat>0</dfc_peat>
-		<dk_ag_wood_litter>0.4</dk_ag_wood_litter>
-		<dk_root>0.4</dk_root>
-		<dk_peat>0</dk_peat>
-		<age_transition>-9999</age_transition>
-		<new_F_CO2>-9999</new_F_CO2>
-		<new_F_CH4>-9999</new_F_CH4>
-		<new_F_N2O>-9999</new_F_N2O>
-		<F_anth>0</F_anth>
-		<sw_radiative_forcing>0.178659086957791</sw_radiative_forcing>
-		<latent>0.2775819876832722</latent>
-		<sensible>0</sensible>
-	</pft>
-</site_0_data>
 </ghgvc>

@@ -2,21 +2,21 @@
 \alias{get.nums}
 \title{Get Nums}
 \usage{
-  get.nums(x)
+get.nums(x)
 }
 \arguments{
   \item{x}{}
 }
 \value{
-  GHGVC output
+GHGVC output
 }
 \description{
-  Get numbers
+Get numbers
 }
 \details{
-  Get numbers (e.g., from string or other format)
+Get numbers (e.g., from string or other format)
 }
 \author{
-  David LeBauer
+David LeBauer
 }
 
