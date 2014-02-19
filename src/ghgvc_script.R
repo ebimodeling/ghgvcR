@@ -35,11 +35,7 @@ for(site in names(outlist)){
         outdf <- rbind(outdf, tmpdf)
     }
 }
-
-outdf$site <- gsub("site_", "", gsub("_data", "", outdf$site))
     
-write.csv(outdf, file.path(outdir, "output.csv"))
-
 ## Cleaning up output for downloading
 
 colnames(outdf)[colnames(outdf) == "name"] <- "Biome"
