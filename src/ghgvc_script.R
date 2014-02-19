@@ -19,7 +19,7 @@ outlist <- fromJSON(x)
 outdf <- tmpdf <- list()
 for(site in names(outlist)){
     for(pft in seq(length(outlist[[site]]))){
-        tmplist <- outlist$site_2_data[[pft]]
+        tmplist <- outlist[[site]][[pft]]
         tmplist <- lapply(tmplist, function(x) ifelse(is.list(x), NA, x))
         tmplist <- lapply(tmplist, function(x) ifelse(x == 0, NA, x))
         tmplist[tmplist == "NaN"] <- NA
@@ -35,11 +35,7 @@ for(site in names(outlist)){
         outdf <- rbind(outdf, tmpdf)
     }
 }
-
-outdf$site <- gsub("site_", "", gsub("_data", "", outdf$site))
     
-write.csv(outdf, file.path(outdir, "output.csv"))
-
 ## Cleaning up output for downloading
 
 colnames(outdf)[colnames(outdf) == "name"] <- "Biome"

@@ -333,13 +333,15 @@ ghgvc <- function(options, ecosystem_data){
 ##' @author David LeBauer
 ghgvc2 <- function(config.list){
   options <- config.list$options
-    sites <- names(config.list)[-which(names(config.list)%in% "options")]
+  sites <- names(config.list)[-which(names(config.list)%in% "options")]
   out <- list()
-    for (site in sites){
-        for(ecosystem in length(tmp)){
-            tmp <- fromJSON(ghgvc(options, list(pft = config.list[[site]][[ecosystem]])))
-            tmp <- lapply
-  }
-  
+  for (site in sites){
+    tmp <- config.list[[site]]
+    out[[site]] <- list()
+    for(ecosystem in which(names(tmp) %in% "pft")){
+      ecosystem.name <- tmp[[ecosystem]]$name
+      out[[site]][[ecosystem.name]] <- fromJSON(ghgvc(options, list(pft = config.list[[site]][[ecosystem]])))[[1]]
+    }
+  }    
   return(toJSON(out))
 }
