@@ -296,10 +296,16 @@ ghgvc <- function(options, ecosystem_data){
     climate_regulating_value = storage_group + flux_group - swRFV_C_matrix[T_E,i] + instance_output_latent
     
     listResult <- list( name = ecosystem[['name']], 
-                        S_CO2 = GHGmatrix[1,i], S_CH4 = GHGmatrix[2,i], S_N2O = GHGmatrix[3,i],
-                        F_CO2 = GHGmatrix[5,i], F_CH4 = GHGmatrix[6,i], F_N2O = GHGmatrix[7,i],
-                           D_CO2 = (GHGmatrix[1,i] + GHGmatrix[5,i]), D_CH4 = (GHGmatrix[2,i]+GHGmatrix[6,i]), D_N2O = (GHGmatrix[3,i] + GHGmatrix[7,i]),
-					              swRFV = swRFV_C_matrix[T_E,i], latent = instance_output_latent, crv = climate_regulating_value )
+                       S_CO2 = GHGmatrix[1,i],
+                       S_CH4 = GHGmatrix[2,i],
+                       S_N2O = GHGmatrix[3,i],
+                       F_CO2 = GHGmatrix[5,i],
+                       F_CH4 = GHGmatrix[6,i],
+                       F_N2O = GHGmatrix[7,i],
+                       D_CO2 = (GHGmatrix[1,i] + GHGmatrix[5,i]),
+                       D_CH4 = (GHGmatrix[2,i] + GHGmatrix[6,i]),
+                       D_N2O = (GHGmatrix[3,i] + GHGmatrix[7,i]),
+                       swRFV = swRFV_C_matrix[T_E,i], latent = instance_output_latent, crv = climate_regulating_value )
 
     jsonResults[i] <- toJSON(listResult)
   }
