@@ -62,35 +62,48 @@ plotdata <- data.frame(Biome = capitalize(paste(gsub("_", " ", gsub("BR", "Brazi
                        Storage = rowSums(initial_storage, na.rm = TRUE),
                        Ongoing_Exchange = rowSums(ongoing_exchange, na.rm = TRUE),
                        Rnet = outdf$swRFV,
-                       LE = outdf$latent,
-                       CRV_BGC = outdf$crv)
+                       LE = outdf$latent)
+plotdata$CRV_BGC <- plotdata$Storage + plotdata$Ongoing_Exchange
+plotdata$CRV_BIOPHYS <- plotdata$Rnet + plotdata$LE
+plotdata$CRV_NET <- plotdata$CRV_BGC + plotdata$CRV_BIOPHYS
 plotdata[is.na(plotdata)] <- 0
 
-nolabels <- theme(axis.title = element_blank(), axis.text.y = element_blank(), axis.ticks.y = element_blank())
-baseplot <- ggplot(data = plotdata) + theme_minimal() + coord_flip() + nolabels
+nolabels <- theme(axis.title = element_blank(), axis.text.y = element_blank(), 
+                  axis.ticks.y = element_blank(), legend.position = "top")
+baseplot <- ggplot(data = plotdata) + theme_minimal() + coord_flip() + nolabels 
 
 
 ## T_E is number of years considered
 YEARS <- config.list$options$T_E
 xlabels <- as.expression(bquote(paste("CO"[2], " Emission Equivalents (Mg CO"[2],"-eq ha"^{-1}, " ", .(YEARS)," yrs"^{-1},")")))
 
-ylabels <- baseplot + geom_text(aes(x = plotdata$Biome, y = 1, label = gsub(" Site", "\nSite", plotdata$Biome)), 
-                                hjust = 1) + ylim(0,1) +
-  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) 
-
-storage.plot <- baseplot + 
-  geom_bar(data = plotdata, aes(x = Biome, y = Storage), fill = "DarkGreen", width = 0.25, stat = "identity") +  ggtitle("Biogeochemical")
-ongoing.plot <- baseplot +
-  geom_bar(data = plotdata, aes(x = Biome, y = Ongoing_Exchange), fill = "DarkBlue", width = 0.25, stat = "identity") + ggtitle("Biophysical")
+biome <- data.frame(order = 1:(nrow(plotdata)+1), Biome = c("", as.character(plotdata$Biome)))
+longdata$label <- gsub(" Site", "\nSite", longdata$Biome)
+longdata <- melt(plotdata, id.var = "Biome")
+bgc.plot <- baseplot +
+  geom_bar(data = subset(longdata, variable %in% c("Storage", "Ongoing_Exchange")), 
+           aes(x = Biome, y = value, fill = variable),  
+           width = 0.25, stat = "identity", color = "darkgrey") +  
+  scale_fill_manual(values= c("DarkGreen", "LightGreen"), labels = c("Storage", "Ongoing Exchange")) + labs(fill = "") +
+  ggtitle("Biogeochemical") + theme(axis.text.y = element_text(size = 15, hjust = 1))
+biophys.plot <- baseplot +
+  geom_bar(data = subset(longdata, variable %in% c("Rnet", "LE")), aes(x = Biome, y = value, fill = variable),  
+           width = 0.25, stat = "identity", color = "darkgrey") +  
+  scale_fill_manual(values= c("LightBlue", "DarkBlue"), labels = c(expression("R"["net"]), "LE")) + labs(fill = "") + 
+  ggtitle("Biophysical")
 crv.plot <- baseplot +
-  geom_bar(data = plotdata, aes(x = Biome, y = CRV_BGC), fill = "Grey", width = 0.25, stat = "identity") + ggtitle("Climate Regulating Value")
+  geom_bar(data = subset(longdata, variable %in% c("CRV_BGC", "CRV_BIOPHYS")), aes(x = Biome, y = value, fill = variable),  
+           width = 0.25, stat = "identity", color = "darkgrey") +  
+  scale_fill_manual(values= c("LightGreen", "LightBlue"), labels = c("Biogeochemical", "Biophysical")) + labs(fill = "") +
+  geom_point(data = subset(longdata, variable == "CRV_NET"), aes(x = Biome, y = value)) +
+  ggtitle("Climate Regulating Value")
 
 
-newplot <- grid.arrange(arrangeGrob(ylabels, storage.plot, ongoing.plot, crv.plot, ncol = 4,
-                         #main = "",
-                         sub = textGrob(xlabels, hjust = 0.4)))
-                         #sub = annotate("text", x = 2, y = 0.3, parse = T, label = xlabels)))
-
+svg(filename=file.path(outdir, "output.svg"), width = 5)
+grid.arrange(bgc.plot, biophys.plot, crv.plot, ncol = 3, widths = c(2,1,1),
+                         sub = textGrob(xlabels, hjust = 0.2))
+#sub = annotate("text", x = 2, y = 0.3, parse = T, label = xlabels)))
+dev.off()
 
 
 
