@@ -101,8 +101,8 @@ crv.plot <- baseplot +
   ggtitle("Climate Regulating Value")
 
 
-svg(filename=file.path(outdir, "output.svg"), width = 5, height = 1 + nrow(plotdata))
-svg(filename = "foo.svg", width = 10, height = 1 + nrow(plotdata))
+svg(filename=file.path(outdir, "output.svg"), width = 10, height = 1 + nrow(plotdata))
+
 grid.arrange(bgc.plot, biophys.plot, crv.plot, ncol = 3, widths = c(2,1,1),
              sub = textGrob(xlabels, hjust = 0.2))
 dev.off()
