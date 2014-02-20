@@ -91,6 +91,7 @@ bgc.plot <- baseplot +
   geom_bar(data = subset(longdata[neg, ], variable %in% c("Storage", "Ongoing_Exchange")), 
            aes(x = Biome, y = value, fill = variable),  
            width = 0.25, stat = "identity") +  
+
   scale_fill_manual(values= brewer_pal(pal = "Greens")(6)[c(4,6)], labels = c("Storage", "Ongoing Exchange")) + labs(fill = "") +
   ggtitle("Biogeochemical") + theme(axis.text.y = element_text(size = 12, hjust = 1))
 biophys.plot <- baseplot +
