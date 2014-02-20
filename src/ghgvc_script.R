@@ -79,15 +79,15 @@ xlabels <- as.expression(bquote(paste("CO"[2], " Emission Equivalents (Mg CO"[2]
 
 biome <- data.frame(order = 1:(nrow(plotdata)+1), Biome = c("", as.character(plotdata$Biome)))
 
-longdata$label <- gsub(" Site", "\nSite", longdata$Biome)
 longdata <- melt(plotdata, id.var = "Biome")
+longdata$label <- gsub(" Site", "\nSite", longdata$Biome)
 
 bgc.plot <- baseplot +
   geom_bar(data = subset(longdata, variable %in% c("Storage", "Ongoing_Exchange")), 
            aes(x = Biome, y = value, fill = variable),  
            width = 0.25, stat = "identity", color = "darkgrey") +  
   scale_fill_manual(values= c("DarkGreen", "LightGreen"), labels = c("Storage", "Ongoing Exchange")) + labs(fill = "") +
-  ggtitle("Biogeochemical") + theme(axis.text.y = element_text(size = 15, hjust = 1))
+  ggtitle("Biogeochemical") + theme(axis.text.y = element_text(size = 12, hjust = 1))
 biophys.plot <- baseplot +
   geom_bar(data = subset(longdata, variable %in% c("Rnet", "LE")), aes(x = Biome, y = value, fill = variable),  
            width = 0.25, stat = "identity", color = "darkgrey") +  
@@ -101,11 +101,14 @@ crv.plot <- baseplot +
   ggtitle("Climate Regulating Value")
 
 
-svg(filename=file.path(outdir, "output.svg"), width = 5)
+svg(filename=file.path(outdir, "output.svg"), width = 5, height = 1 + nrow(plotdata))
+svg(filename = "foo.svg", width = 10, height = 1 + nrow(plotdata))
 grid.arrange(bgc.plot, biophys.plot, crv.plot, ncol = 3, widths = c(2,1,1),
-                         sub = textGrob(xlabels, hjust = 0.2))
-#sub = annotate("text", x = 2, y = 0.3, parse = T, label = xlabels)))
+             sub = textGrob(xlabels, hjust = 0.2))
 dev.off()
+
+
+#sub = annotate("text", x = 2, y = 0.3, parse = T, label = xlabels)))
 
 
 
