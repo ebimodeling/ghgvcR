@@ -79,8 +79,9 @@ xlabels <- as.expression(bquote(paste("CO"[2], " Emission Equivalents (Mg CO"[2]
 
 biome <- data.frame(order = 1:(nrow(plotdata)+1), Biome = c("", as.character(plotdata$Biome)))
 
-longdata <- melt(plotdata, id.var = "Biome")
 longdata$label <- gsub(" Site", "\nSite", longdata$Biome)
+longdata <- melt(plotdata, id.var = "Biome")
+
 bgc.plot <- baseplot +
   geom_bar(data = subset(longdata, variable %in% c("Storage", "Ongoing_Exchange")), 
            aes(x = Biome, y = value, fill = variable),  
