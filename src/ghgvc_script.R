@@ -117,6 +117,8 @@ grid.arrange(bgc.plot, biophys.plot, crv.plot, ncol = 3, widths = c(2,1,1),
              sub = textGrob(xlabels, hjust = 0.2))
 dev.off()
 
+svgfixcmd <- paste("sed -i 's/symbol id/symbol overflow=\"visible\" id/g'", file.path(outdir, "output.svg"))
+system(svgfixcmd)
 #sub = annotate("text", x = 2, y = 0.3, parse = T, label = xlabels)))
 
 
