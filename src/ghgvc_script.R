@@ -61,7 +61,7 @@ library(Hmisc)
 plotdata <- data.frame(Biome = capitalize(paste(gsub("_", " ", gsub("BR", "Brazil", outdf$Biome)), "Site", outdf$Location)),
                        Storage = rowSums(initial_storage, na.rm = TRUE),
                        Ongoing_Exchange = rowSums(ongoing_exchange, na.rm = TRUE),
-                       Rnet = -outdf$swRFV,
+                       Rnet = outdf$swRFV,
                        LE = outdf$latent)
 plotdata$CRV_BGC <- plotdata$Storage + plotdata$Ongoing_Exchange
 plotdata$CRV_BIOPHYS <- plotdata$Rnet + plotdata$LE
