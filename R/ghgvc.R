@@ -306,7 +306,7 @@ ghgvc <- function(options, ecosystem_data){
                        D_CO2 = (GHGmatrix[1,i] + GHGmatrix[5,i]),
                        D_CH4 = (GHGmatrix[2,i] + GHGmatrix[6,i]),
                        D_N2O = (GHGmatrix[3,i] + GHGmatrix[7,i]),
-                       swRFV = - swRFV_C_matrix[T_E,i], 
+                       swRFV =  swRFV_C_matrix[T_E,i], 
                        latent = instance_output_latent, 
                        crv = climate_regulating_value )
 
