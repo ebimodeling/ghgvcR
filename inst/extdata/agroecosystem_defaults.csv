@@ -1,0 +1,50 @@
+variable type,variable symbol,variable name/ description,units,US conv. corn,US miscanthus,US switchgrass,US soy,BR soy,BR Sugarcane (sq)
+storage,OM_ag,aboveground biomass,Mg/ha,8.5,17.2,5.8,1.346408,1.3,15
+,OM_root,root biomass,Mg/ha,3.4,19.8,12.9,0.21,0.21,10
+,OM_wood,"dead wood (dead trees, course woody debris)",Mg/ha,0,0,0,0,0,0
+,OM_litter,litter,Mg/ha,3.2,3.1,2.4,2.8,2.8,12.4
+,OM_peat,peat,Mg/ha,0,0,0,0,0,0
+,OM_SOM,potential SOM loss (top meter of mineral soils),Mg/ha/1m,0,0,0,0,0,0
+combustion,fc_ag+wood+litter,"fraction of combustible biomass (aboveground, wood, litter) burned",,0,0,0,0,0,0
+,fc_root,fraction of root biomass burned,,0,0,0,0,0,0
+,fc_peat,fraction of peat burned,,0,0,0,0,0,0
+,fc_SOM,fraction of SOM burned,,0,0,0,0,0,0
+,Ec_CO2,proportional release of CO2 for each unit of biomass burned,kmol/Mg dry matter,34.4,34.4,34.4,34.4,34.4,34.4
+,Ec_CH4,proportional release of CH4 for each unit of biomass burned,kmol/Mg dry matter,0.17,0.17,0.17,0.17,0.17,0.17
+,Ec_N2O,proportional release of N2O for each unit of biomass burned,kmol/Mg dry matter,0.0016,0.0016,0.0016,0.0016,0.0016,0.0016
+decomposition,k_ag+wood+litter,decay constant for combustable biomass,,0.4,0.4,0.4,0.4,2.33,0.4
+,k_root,decay constant for root,,0.4,0.4,0.4,0.4,0.4,0.4
+,k_peat,decay constant for peat,,0,0,0,0,0,0
+,k_SOM,decay constant for SOM,,0.4,0.4,0.4,0.4,0.4,0.4
+,termite,%termite mediated decomposition,%,0,0,0,0,0,0
+,Ed_CO2_ag+wood+litter,proportional release of CO2 for each unit of biomass decomposed,kmol/Mg dry matter,41.7,41.7,41.7,41.7,41.7,41.7
+,Ed_CO2_root,proportional release of CO2 for each unit of biomass decomposed,kmol/Mg dry matter,41.7,41.7,41.7,41.7,41.7,41.7
+,Ed_CO2_peat,proportional release of CO2 for each unit of biomass decomposed,kmol/Mg dry matter,45.0,45.0,45.0,45.0,45.0,45.0
+,Ed_CO2_litter,proportional release of CO2 for each unit of biomass decomposed,kmol/Mg dry matter,48.3,48.3,48.3,48.3,48.3,48.3
+,Ed_CH4_ag+wood+litter,proportional release of CH4 for each unit of biomass decomposedcomes from termite mediated decompisition,kmol/Mg dry matter,0.0,0.0,0.0,0.0,0.0,0.0
+,Ed_CH4_root,proportional release of CH4 for each unit of biomass decomposed,kmol/Mg dry matter,0.0,0.0,0.0,0.0,0.0,0.0
+,Ed_CH4_peat,proportional release of CH4 for each unit of biomass decomposed,kmol/Mg dry matter,0.0,0.0,0.0,0.0,0.0,0.0
+,Ed_CH4_litter,proportional release of CH4 for each unit of biomass decomposed,kmol/Mg dry matter,0.0,0.0,0.0,0.0,0.0,0.0
+,Ed_N2O_ag+wood+litter,proportional release of N2O for each unit of biomass decomposed,kmol/Mg dry matter,0.0,0.0,0.0,0.0,0.0,0.0
+,Ed_N2O_root,proportional release of N2O for each unit of biomass decomposed,kmol/Mg dry matter,0.0,0.0,0.0,0.0,0.0,0.0
+,Ed_N2O_peat,proportional release of N2O for each unit of biomass decomposed,kmol/Mg dry matter,0.0,0.0,0.0,0.0,0.0,0.0
+,Ed_N2O_litter,proportional release of N2O for each unit of biomass decomposed,kmol/Mg dry matter,0.0,0.0,0.0,0.0,0.0,0.0
+flux,F_CO2,annual CO2 flux,kmol/ha/yr,0.0,-84.2,-56.7,0.0,0.0,-19.6
+,F_CH4,annual CH4 flux,kmol/ha/yr,-0.125,-0.125,-0.125,-0.125,-0.125,-0.065
+,F_N2O,annual N2O flux,kmol/ha/yr,0.165,0.029,0.045,0.097,0.115,0.117
+disturbance,rd,rate of disturbance,#/yr,0,0,0,0,0,0
+,tR,time spent in recovery after disturbance,yrs,NA,NA,NA,NA,NA,NA
+,FR_CO2,CO2 flux during recovery,kmol/ha/yr,NA,NA,NA,NA,NA,NA
+,FR_CH4,CH4 flux during recovery,kmol/ha/yr,NA,NA,NA,NA,NA,NA
+,FR_N2O,N2O flux during recovery,kmol/ha/yr,NA,NA,NA,NA,NA,NA
+,fc_ag+wood+litter,"fraction of combustible biomass (aboveground, wood, litter) burned",,NA,NA,NA,NA,NA,NA
+,fc_root,fraction of root biomass burned,,0,0,0,0,0,0
+,fc_peat,fraction of peat burned,,0,0,0,0,0,0
+,k_ag+wood+litter,decay constant for combustable biomass,,0.4,0.4,0.4,0.4,0.4,0.4
+,k_root,decay constant for root,,0.4,0.4,0.4,0.4,0.4,0.4
+,k_peat,decay constant for peat,,0,0,0,0,0,0
+"step changes in F (e.g., for aggrading ecosystems that transition into 'mature' ecosystems)",age_transition,age at transition to different fluxes,years,NA,50,50,NA,NA,NA
+,new F_CO2,annual CO2 flux,kmol/ha/yr,0,0,0,NA,NA,NA
+,new F_CH4,annual CH4 flux,kmol/ha/yr,-0.13,-0.13,-0.13,NA,NA,NA
+,new F_N2O,annual N2O flux,kmol/ha/yr,0.16,0.0085,0.045,NA,NA,NA
+management,F_anth,annual anthropogenic flux,kmol/ha/yr,19,7.6,7.6,8.9,8.9,12.7
