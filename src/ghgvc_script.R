@@ -43,6 +43,7 @@ colnames(outdf) <- gsub("D_", "GHGV_", colnames(outdf))
 outdf$GHGV <- outdf$GHGV_CO2 + outdf$GHGV_CH4 + outdf$GHGV_N2O
 
 outdf <- outdf[order(outdf$Location),]
+outdf$swRFV <- - outdf$swRFV
 write.csv(outdf, file.path(outdir, "output.csv"), row.names = FALSE)
 
 ## Plotting
