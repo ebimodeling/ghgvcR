@@ -87,6 +87,21 @@ Biophysical <- data.frame(Rnet = outdf$swRFV, LE = outdf$latent)
 CRV <- outdf$crv
 
 
+crop.defaults <- structure(list(ecosystem = structure(c(7L, 4L, 5L, 3L, 6L, 1L, 
+                                       2L), .Label = c("BR_soy", "BR_sugarcane", "miscanthus", "soybean", 
+                                                       "Spring Wheat", "switchgrass", "US_corn"), class = "factor"), 
+               sw_radiative_forcing = c(3.84, 34.17, 10.47, 9.72, 24.88, 
+                                        30.12, 90.67), latent = c(136.27, 141.19, 70.59, 132.53, 
+                                                                  137.34, 55.43, 179.2)), .Names = c("name", "swRFV", 
+                                                                                                     "latent"), class = "data.frame", row.names = c(NA, -7L))
+
+for(name in outdf$name){
+  if(name %in% crop.defaults$name){
+    outdf$swRFV[outdf$name == name] <- crop.defaults[crop.defaults$name == name, "swRFV"]
+    outdf$latent[outdf$name == name] <- crop.defaults[crop.defaults$name == name, "latent"]
+  }
+  
+}
 library(ggplot2)
 library(gridExtra)
 library(scales)
