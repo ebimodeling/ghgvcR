@@ -10,16 +10,17 @@ Description: This package runs the Greenhouse Gas Value Calculator, as
     greenhouse gas value of ecosystems. Global Change Biology. DOI:
     10.1111/j.1365-2486.2010.02220.x. This is an R implementation of the
     original Matlab code.
-Depends:
+Imports:
     rjson,
     reshape,
-    XML
+    XML,
+    ggplot2,
+    gridExtra,
+    scales,
+    Hmisc
 Suggests:
     testthat
 License: FreeBSD + file LICENSE
 Copyright: Authors
 LazyLoad: yes
 LazyData: FALSE
-Collate:
-    'ghgvc.R'
-    'utils.R'
