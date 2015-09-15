@@ -1,0 +1,158 @@
+#' Plot Greenhouse Gas values.
+#' 
+#' @import ggplot2
+#' @import gridextra
+#' @import scales
+#' @import Hmisc
+#' @importFrom reshape melt
+#' @export
+#' 
+#' @param df a data.frame of output from \code{ghgvc()}.
+#' @param outdir the directory to save the plot image.
+#' @param years number of years considered in the analysis.
+#' @param save boolean to save plot as an image.
+#' @param savefile name of svg file to save.
+#' @return a ggplot2 plot object.
+ghgvc_plot <- function(df, outdir, years,
+                       save = TRUE, savefile = "output.svg") {
+
+  #Format data for plotting
+  plotdata <- data.frame(
+    Biome = capitalize(paste(gsub("_", " ", gsub("BR", "Brazil", df$Biome)), 
+                             "Site", 
+                             df$Location)),
+    Storage = rowSums(df[,grepl("S_", colnames(df))], na.rm = TRUE),
+    Ongoing_Exchange = rowSums(df[,grepl("F_", colnames(df))], na.rm = TRUE),
+    Rnet = df$swRFV,
+    LE = df$latent)
+
+  #Create sums
+  plotdata$CRV_BGC <- plotdata$Storage + plotdata$Ongoing_Exchange
+  plotdata$CRV_BIOPHYS <- plotdata$Rnet + plotdata$LE
+  plotdata$CRV_NET <- plotdata$CRV_BGC + plotdata$CRV_BIOPHYS
+  
+  #Replace NA/0 with 0
+  plotdata[is.na(plotdata)] <- 0
+  plotdata$CRV_BGC[plotdata$CRV_NET == 0] <- 0
+  plotdata$CRV_BIOPHYS[plotdata$CRV_NET == 0] <- 0
+  plotdata$CRV_NET[plotdata$CRV_NET == 0] <- NA
+
+  ## Build data for subplots
+  longdata <- melt(plotdata, id.var = "Biome")
+  longdata$label <- gsub(" Site", "\nSite", longdata$Biome)
+  
+  #baseplot for use in grid plots
+  baseplot <- ggplot(data = plotdata) + 
+    geom_hline(aes(yintercept = 0)) +      #horizontal line
+    coord_flip() + 
+    theme_minimal() +                      #set ggplot2 theme
+    theme(axis.title = element_blank(),    
+          axis.text.y = element_blank(),   
+          axis.ticks.y = element_blank(),  
+          legend.position = "top",       
+          panel.grid.major = element_line("black", size = 0.14)
+    )
+  
+  #BGC
+  bgc_plot = ghgvc_subplot(c("Storage", "Ongoing_Exchange"), 
+                           data = longdata, 
+                           baseplot = baseplot)
+  bgc_plot = bgc_plot + 
+             scale_fill_manual(values= brewer_pal(pal = "Greens")(6)[c(4,6)], 
+                               labels = c("Storage", "Ongoing Exchange")) + 
+             labs(fill = "") +
+             ggtitle("Biogeochemical") + 
+             theme(axis.text.y = element_text(size = 12, hjust = 1))
+  
+  #BIOPHYS
+  biophys_plot = ghgvc_subplot(c("LE", "Rnet"), 
+                                data = longdata,
+                                baseplot = baseplot) 
+  biophys_plot = biophys_plot + 
+                 scale_fill_manual(values = brewer_pal(pal = "Blues")(6)[c(4,6)], 
+                                   labels = c(expression("LE", "R"["net"]))) + 
+                 labs(fill = "") + 
+                 ggtitle("Biophysical")
+  
+  #CRV
+  crv_plot =  ghgvc_subplot(c("CRV_BGC", "CRV_BIOPHYS"), 
+                            data = longdata,
+                            baseplot = baseplot) 
+  crv_plot = crv_plot +
+             scale_fill_manual(values= c(brewer_pal(pal = "Greens")(6)[5], 
+                                         brewer_pal(pal = "Blues")(6)[5]), 
+                               labels = c("Biogeochemical", "Biophysical")) + 
+             labs(fill = "") +
+             geom_point(data = subset(longdata, variable == "CRV_NET"), 
+                        aes(x = Biome, y = value)) +
+             ggtitle("Climate Regulating Value")
+
+  #Create the x label
+  xlabels <- as.expression(bquote(paste("CO"[2], " Emission Equivalents (Mg CO"[2],"-eq ha"^{-1}, " ", .(years)," yrs"^{-1},")")))
+ 
+  if(save) {
+    #Create the SVG Plot image
+    svg(filename=file.path(outdir, savefile), width = 10, height = 1 + nrow(plotdata))
+    
+    #Create the gridded plot image
+    grid.arrange(bgc_plot, 
+                 biophys_plot, 
+                 crv_plot, 
+                 ncol = 3, 
+                 widths = c(2,1,1),
+                 sub = textGrob(xlabels, hjust = 0.2))
+    dev.off()
+    
+    #Fix to remove overflow
+    svgfixcmd <- paste("sed -i 's/symbol id/symbol overflow=\"visible\" id/g'", 
+                       file.path(outdir, savefile))
+    system(svgfixcmd)
+    #sub = annotate("text", x = 2, y = 0.3, parse = T, label = xlabels)))
+  } 
+  
+}
+
+#' Plot ghgcv subplot.
+#' 
+#' Creates a ggplot2 object using long-form data from \code{ghgcv_plot()} and
+#' a set of variables to plot over.
+#'
+#' @import ggplot2 
+#' @export
+#' 
+#' @param vars a list of variables to plot.
+#' @param longdata long form data.frame of data from \code{ghgcv()}.
+#' @param baseplot a ggplot2 object as the base plot.
+#' @return a ggplot2 object.
+ghgvc_subplot <- function(vars, longdata) {
+  #subset the data just including vars
+  d <- subset(longdata, variable %in% vars)
+  
+  #Positive Plot
+  pos <- d$value > 0
+  posplot <- if(any(pos)) {
+    geom_bar(data = d[pos,], 
+             aes(x = Biome, y = value, fill = variable),  
+             width = 0.25, stat = "identity")  
+  } else {
+    NULL
+  }
+  
+  #Negative Plot
+  negplot <- if(any(!pos)) {
+    geom_bar(data = d[!pos,], 
+             aes(x = Biome, y = value, fill = variable),  
+             width = 0.25, stat = "identity")  
+  } else {
+    NULL
+  }
+  
+  #return all plots as one object
+  return(baseplot + posplot + negplot)
+}
+
+
+
+
+
+

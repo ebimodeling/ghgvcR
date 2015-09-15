@@ -11,13 +11,13 @@ Description: This package runs the Greenhouse Gas Value Calculator, as
     10.1111/j.1365-2486.2010.02220.x. This is an R implementation of the
     original Matlab code.
 Imports:
-    rjson,
-    reshape,
-    XML,
     ggplot2,
     gridExtra,
-    scales,
     Hmisc
+    reshape,
+    rjson,
+    scales,
+    XML,
 Suggests:
     testthat
 License: FreeBSD + file LICENSE
