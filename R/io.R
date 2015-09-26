@@ -8,7 +8,7 @@
 #' @param format (character) file format to write.
 #' @return TRUE if written with no errors.
 ghgvc_write <- function(df, outdir, filename="output", format=c("json", "csv")) {
-  formats = match.arg(format, several.ok = TRUE)
+  formats <- match.arg(format, several.ok = TRUE)
   
   #JSON
   if ("json" %in% formats) {

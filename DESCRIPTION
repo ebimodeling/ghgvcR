@@ -13,11 +13,11 @@ Description: This package runs the Greenhouse Gas Value Calculator, as
 Imports:
     ggplot2,
     gridExtra,
-    Hmisc
+    Hmisc,
     reshape,
     rjson,
     scales,
-    XML,
+    XML
 Suggests:
     testthat
 License: FreeBSD + file LICENSE

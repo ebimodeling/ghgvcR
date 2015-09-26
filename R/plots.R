@@ -54,10 +54,10 @@ ghgvc_plot <- function(df, outdir, years,
     )
   
   #BGC
-  bgc_plot = ghgvc_subplot(c("Storage", "Ongoing_Exchange"), 
+  bgc_plot <- ghgvc_subplot(c("Storage", "Ongoing_Exchange"), 
                            data = longdata, 
                            baseplot = baseplot)
-  bgc_plot = bgc_plot + 
+  bgc_plot <- bgc_plot + 
              scale_fill_manual(values= brewer_pal(pal = "Greens")(6)[c(4,6)], 
                                labels = c("Storage", "Ongoing Exchange")) + 
              labs(fill = "") +
@@ -65,20 +65,20 @@ ghgvc_plot <- function(df, outdir, years,
              theme(axis.text.y = element_text(size = 12, hjust = 1))
   
   #BIOPHYS
-  biophys_plot = ghgvc_subplot(c("LE", "Rnet"), 
+  biophys_plot <- ghgvc_subplot(c("LE", "Rnet"), 
                                 data = longdata,
                                 baseplot = baseplot) 
-  biophys_plot = biophys_plot + 
+  biophys_plot <- biophys_plot + 
                  scale_fill_manual(values = brewer_pal(pal = "Blues")(6)[c(4,6)], 
                                    labels = c(expression("LE", "R"["net"]))) + 
                  labs(fill = "") + 
                  ggtitle("Biophysical")
   
   #CRV
-  crv_plot =  ghgvc_subplot(c("CRV_BGC", "CRV_BIOPHYS"), 
+  crv_plot <-  ghgvc_subplot(c("CRV_BGC", "CRV_BIOPHYS"), 
                             data = longdata,
                             baseplot = baseplot) 
-  crv_plot = crv_plot +
+  crv_plot <- crv_plot +
              scale_fill_manual(values= c(brewer_pal(pal = "Greens")(6)[5], 
                                          brewer_pal(pal = "Blues")(6)[5]), 
                                labels = c("Biogeochemical", "Biophysical")) + 
