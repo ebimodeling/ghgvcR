@@ -1,8 +1,9 @@
 #' Extract GHG parameters into a matrix.
 #' 
 #' @param ecosystem a named list of ecosystem traits.
+#' @param inclAnth boolean whether to include Anthro flux
 #' @return a matrix of greenhouse gas parameters.
-extract_ghg_params <- function(ecosystem) {
+extract_ghg_params <- function(ecosystem, includeANTH = TRUE) {
   m = matrix(nrow = 8, ncol = 3)
   colnames(m) <- c("CO2", "CH4", "N20")
   rownames(m) <- c("combust", "flux", "FR", "new_flux",
@@ -13,7 +14,7 @@ extract_ghg_params <- function(ecosystem) {
   
   #Flux
   m['flux',] <- unlist(ecosystem[c('F_CO2', 'F_CH4', 'F_N2O')])
-  m['flux','CO2'] = m['flux','CO2'] + ecosystem[['F_anth']]
+  if (includeANTH) m['flux','CO2'] = m['flux','CO2'] + unlist(ecosystem[['F_anth']])
   
   #TODO: ??
   m['FR',] <- unlist(ecosystem[c('FR_CO2', 'FR_CH4', 'FR_N2O')])
@@ -107,6 +108,6 @@ calc_time_decay <- function(time_vector) {
 #' @param t a sequential vector of time steps.
 #' @return a matrix of decay fluxes for each time moment. 
 decay_func <- function(r, t) {
-  exp(-pool_params['decomp',] %o% t) - 
-    exp(-pool_params['decomp',] %o% (t+1))
+  exp(-r %o% t) - 
+    exp(-r %o% (t+1))
 }

@@ -7,7 +7,7 @@ test_that("run.ghgvc works for test config file",{
   config_file <- system.file("config.xml", package = "ghgvcr")
   if (!file.exists(config_file)) config_file = "inst/config.xml"
   
-  config <- XML::xmlToList(xmlParse(config_file))  
+  config <- XML::xmlToList(XML::xmlParse(config_file))  
   
   #Calculator
   x <- ghgvc(config)
