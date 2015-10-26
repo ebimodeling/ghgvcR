@@ -222,9 +222,6 @@ ghgvc <- function(config){
         #crv    = climate_regulating_value)
         
       jsonResults <- jsonlite::toJSON(listResult)
-      print(jsonResults) 
-      original.output <- "[{\"name\":\"Tropical Forest\",\"S_CO2\":715.481930448906,\"S_CH4\":18.5897095138668,\"S_N2O\":11.2808552885403,\"F_CO2\":264.088404311696,\"F_CH4\":4.53053004775435,\"F_N2O\":-43.9477537844218,\"D_CO2\":0,\"D_CH4\":0,\"D_N2O\":0,\"swRFV\":382.964452488271},{\"name\":\"Misty Mountain Top\",\"S_CO2\":183.54445481929,\"S_CH4\":140.39500394662,\"S_N2O\":446.523494486041,\"F_CO2\":264.088404311696,\"F_CH4\":4.53053004775435,\"F_N2O\":-43.9477537844218,\"D_CO2\":0,\"D_CH4\":0,\"D_N2O\":0,\"swRFV\":382.964452488271}]"
-      
       
       #Output
       out[[site]][[listResult$name]] <- listResult
@@ -232,108 +229,7 @@ ghgvc <- function(config){
   }
   return(out)
 }
-# 
-#       #calculate full radiative forcing & apply weighting
-#       radiative_forcing_ghg <- apply(clearing, MARGIN=3, function(x) { 
-#         x %*% ghg_radiative_efficiency
-#       })
-#       radiative_forcing_sw <- radiative_flux_sw * w
-#       radiative_forcing <- radiative_forcing_ghg + 
-#         matrix(radiative_forcing_sw, nrow = num_years_analysis, ncol = 3)
-# 
-#       #calculate total GHGV (including all components)
-#       GHGV <- apply(radiative_forcing_ghg, MARGIN = 2, cumsum)
-#       swRFV <- cumsum(radiative_forcing_sw)
-#       cRF_Cpulse <- apply(RF_Cpulse, MARGIN = 2, cumsum)
-#         
-#       RFV <- GHGV + swRFV
-#         
-#       GHGV_C <- GHGV / cRF_Cpulse
-#       swRFV_C <- swRFV / cRF_Cpulse
-#       RFV_C <- RFV / cRF_Cpulse
-#       
-#       GHGV_matrix[1:num_years_analysis,i] <- GHGV
-#       GHGV_C_matrix[1:num_years_analysis,i] <- GHGV_C
-#       
-#       swRFV_matrix[1:num_years_analysis,i] <- swRFV
-#       swRFV_C_matrix[1:num_years_analysis,i] <- swRFV_C
-#       
-#       RFV_matrix[1:num_years_analysis,i] <- RFV
-#       RFV_C_matrix[1:num_years_analysis,i] <- RFV_C
-#       
-#       #separate reporting for each GHG
-#       radiative_flux_w <- NaN * radiative_flux
-#       GHGVx <- NaN * radiative_flux
-#       GHGVx_C <- NaN * radiative_flux
-#       
-#       for (kk in 1:3) {
-#         radiative_flux_w[1:num_year_analysis,kk] <- (radiative_flux[,kk] * t(w))
-#         for (j in 1:num_year_analysis) {
-#           GHGVx[j,kk] <- sum(radiative_flux_w[1:j,kk])
-#         }
-#         GHGVx_C[,kk] <- t((GHGVx[,kk] / cRF_Cpulse))
-#       }
-#       if (nm == 1) {
-#         GHGmatrix[13:15, i] <- GHGVx_C[num_year_analysis,]
-#         GHGmatrix[16, i] <- sum(GHGmatrix[13:15,i])
-#       }
-#       else if (nm == 2) {
-#         GHGmatrix[1:3, i] <- GHGVx_C[num_year_analysis,]
-#         GHGmatrix[4, i] <- sum(GHGmatrix[1:3,i])
-#       }
-#       else if (nm == 3) {
-#         GHGmatrix[5:7, i] <- GHGVx_C[num_year_analysis,]
-#         GHGmatrix[8, i] <- sum(GHGmatrix[5:7,i])
-#       }
-#       else if (nm == 4) {
-#         GHGmatrix[9:11, i] <- GHGVx_C[num_year_analysis,]
-#         GHGmatrix[12, i] <- sum(GHGmatrix[9:11,i])
-#       }
-#     }
-#     
-# 
-#     
-# 
-#             
-#       
-#       
-#             
-      
-#       clearing <- rbind(
-#         input / A *
-#         input[num_years_emissions+1,] 
-#         matrix(rep(apply(p_x, MARGIN = 2, cumsum), 3), ncol=9)
-#         input * (1 + cumsum(p_x))
-#         
-#         c1 = input[1,] / A
-#         c2,1 = input[1,] / A * p_x[1]
-#         c2,2 = input[2,] / A
-#         c3,1 = input[1,] / A * p_x[2]
-#         c3,2 = input[2,] / A * p_x[1]
-#         c3,3 = input[3,] / A
-#         c4,1 = input[1,] / A * p_x[3]
-#         c4,2 = input[2,] / A * p_x[2]
-#         c4,3 = input[3,] / A * p_x[1]
-#         c4,4 = input[4,] / A
-#         
-#         A * input[1:4] * rbind(p_x[1:3,], rep(1,3))
-#         A * cumsum(input * )
-#         
-#         
-#         ci = input[i] + sum(input[1:(i-1),] * p)
-#         
-#         
-#         
-#         c21 = input[1,] / A * p_x[1,]
-#         c22 = input[2,] / A
-#         c31
-#         c32
-#         c33
-#         c52 = input[1] / A + sum(input[2:,] / A * cumsum(p_x))
-#         for j in 1:100
-#           for k in c(1:51, rep(51,49))
-#             
-        
+
         
         
         
