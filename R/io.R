@@ -49,5 +49,3 @@ ghgvc_write <- function(df, outdir, filename="output", format=c("json", "csv")) 
   }
 }
 
-
-

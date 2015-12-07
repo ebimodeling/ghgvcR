@@ -111,3 +111,4 @@ decay_func <- function(r, t) {
   exp(-r %o% t) - 
     exp(-r %o% (t+1))
 }
+

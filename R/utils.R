@@ -32,6 +32,7 @@ get.nums <- function(x){
 #'   str2LogicalOrNumeric("TRUE") # -> TRUE
 #'   str2LogicalOrNumeric("5") # -> 5
 #'   str2LogicalOrNumeric("NaN") # -> "NaN"
+#' }
 str2LogicalOrNumeric <- function(string) {
   if (grepl("TRUE|FALSE", string)) x <- as.logical(string)
   else if (!grepl("[a-zA-Z]", string)) x <- as.numeric(string)

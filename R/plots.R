@@ -1,7 +1,7 @@
 #' Plot Greenhouse Gas values.
 #' 
 #' @import ggplot2
-#' @import gridextra
+#' @import gridExtra
 #' @import scales
 #' @import Hmisc
 #' @importFrom reshape melt
