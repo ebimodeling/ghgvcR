@@ -2,7 +2,7 @@
 #' 
 #' @export
 #' @import ncdf
-#' @import jsonlite
+#' @importFrom jsonlite toJSON 
 #'
 #' @param ncfile name of the netCDF file.
 #' @param latitude the latitude of the biome.
