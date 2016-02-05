@@ -5,7 +5,7 @@ test_that("run.ghgvc works for test config file",{
  
   #config file location 
   config_file <- system.file("config.xml", package = "ghgvcr")
-  if (!file.exists(config_file)) config_file = "inst/config.xml"
+  if (!file.exists(config_file)) config_file <- "inst/config.xml"
   
   config <- XML::xmlToList(XML::xmlParse(config_file))  
   

@@ -1,18 +1,23 @@
-#' Write Greenhouse Gas value calculator output to file.
+#' Writes a json string to a json or csv file.
 #' 
+#' importFrom jsonlite toJSON fromJSON validate
 #' @export
 #' 
-#' @param df data.frame of output from \code{ghgvc()}.
+#' @param df the data.
 #' @param outdir the directory to write the data to.
 #' @param filename (character) name of file to write.
 #' @param format (character) file format to write.
 #' @return TRUE if written with no errors.
-ghgvc_write <- function(df, outdir, filename="output", format=c("json", "csv")) {
+write_json <- function(json, outdir, filename="json", format=c("json", "csv")) {
   formats <- match.arg(format, several.ok = TRUE)
+  tryCatch(validate(json),
+           error = function(e) {
+             stop("json must be a valid json string (jsonlite::validate() must be TRUE.")
+           })
   
   #JSON
   if ("json" %in% formats) {
-    writeLines(df, file.path(outdir, paste0(filename, ".json")))
+    writeLines(json, file.path(outdir, paste0(filename, ".json")))
   }
   
   #CSV
@@ -48,4 +53,6 @@ ghgvc_write <- function(df, outdir, filename="output", format=c("json", "csv")) 
     write.csv(outdf, file.path(outdir, paste0(filename,".csv")), row.names = FALSE)
   }
 }
+
+
 

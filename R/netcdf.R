@@ -1,11 +1,10 @@
 #' Get biome data from a netCDF file.
 #' 
 #' @export
-#' @import ncdf4
+#' @importFrom ncdf4 nc_open nc_close ncvar_get
 #' 
 #' @param data_dir directory containing the data file.
-#' @param ncfile name of the netCDF file. \code{paste0(data_dir, ncfile)} is the
-#'   hard location of the file.
+#' @param ncfile name of the netCDF file.
 #' @param latitude the latitude.
 #' @param longitude the longitude.
 #' @param variables the names of variables to select. If missing then all are 
@@ -72,7 +71,9 @@ get_ncdf <- function(data_dir, ncfile, latitude, longitude, variables = "all") {
 get_ncdf_vars <- function(file_name) {
   if (file.exists(file_name)) {
     con <- nc_open(file_name)
-    return(names(con$var))
+    vars <- names(con$var)
+    nc_close(con)
+    return(vars)
   }
   else stop(paste0("file ", file_name, " doesn't exist"))
 }

@@ -9,8 +9,7 @@ get_ncdf(data_dir, ncfile, latitude, longitude, variables = "all")
 \arguments{
 \item{data_dir}{directory containing the data file.}
 
-\item{ncfile}{name of the netCDF file. \code{paste0(data_dir, ncfile)} is the
-hard location of the file.}
+\item{ncfile}{name of the netCDF file.}
 
 \item{latitude}{the latitude.}
 

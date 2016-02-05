@@ -2,21 +2,35 @@
 % Please edit documentation in R/biome.R
 \name{get_biome}
 \alias{get_biome}
-\title{Get biome data from a netCDF file.}
+\title{Get biome data from netcdf and json files and return and/or write a config 
+file.}
 \usage{
-get_biome(ncfile, latitude, longitude)
+get_biome(latitude, longitude, netcdf_dir, named_ecosystems, output_dir,
+  output_filename = "biome", output_format = c("json", "cvs"),
+  write_data = TRUE)
 }
 \arguments{
-\item{ncfile}{name of the netCDF file.}
+\item{latitude}{the selected latitude.}
 
-\item{latitude}{the latitude of the biome.}
+\item{longitude}{the selected longitude.}
 
-\item{longitude}{the longitude of the biome.}
+\item{netcdf_dir}{full path to the directory containing the netcdf data files.}
+
+\item{named_ecosystems}{full path of the name-indexed ecosystem json file.}
+
+\item{output_dir}{full path of the directory to write results to.}
+
+\item{output_filename}{name of file to write (without extension).}
+
+\item{output_format}{format to save data in.}
+
+\item{write}{boolean whether to write the data.}
 }
 \value{
 JSON of biome data.
 }
 \description{
-Get biome data from a netCDF file.
+Get biome data from netcdf and json files and return and/or write a config 
+file.
 }
 

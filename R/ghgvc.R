@@ -14,13 +14,11 @@
 #' R function implementation of GHGV_calculator_web.m
 #' @title GHGVC
 #' 
-#' @importFrom jsonlite fromJSON toJSON
-#' 
 #' @export
 #' 
 #' @param config A list of configuration settings and data parameters. 
 #' @return List of GHGVC results for each location specified in \code{config}.
-#' @author Chris Schauer, David LeBauer
+#' @author Chris Schauer, David LeBauer, Nicholas Potter
 ghgvc <- function(config){
   
   ### 
@@ -60,13 +58,13 @@ ghgvc <- function(config){
   if (num_years_emissions > 50) t_peat[51:num_years_emissions] <- 0
   
   #see p_x function for description of decay kinetics (currently from IPCC 2007)
-  decay_p <- calc_time_decay(ta)
+  decay_p <- kinetic_decay(ta)
   
   #calculate radiative forcing from C pulse for later comparison
   I_Cpulse <- 1000 * 1/44 #1 Mg CO2 pulse at time 0--> units of kmol
   C_Cpulse <- matrix(0, nrow = num_years_analysis, ncol = 1)
   C_Cpulse[1] <- I_Cpulse / A
-  C_Cpulse[2:num_years_analysis] <- I_Cpulse / A * p_x[1:num_years_analysis-1]
+  C_Cpulse[2:num_years_analysis] <- I_Cpulse / A * decay_p[1:num_years_analysis-1]
   cRF_Cpulse <- cumsum((C_Cpulse * w) %*% ghg_radiative_efficiency[1])
   
   ###
@@ -84,9 +82,9 @@ ghgvc <- function(config){
       termite <- ecosystem_data[['termite']] / 100
       #Biophysical
       sw_radiative_forcing <- ecosystem_data$sw_radiative_forcing
-      Qle <- ecosystem_data$latent
-      Qh <- ecosystem_data$sensible
-      biophysical_net <- Qh + Qle
+      latent_cooling <- ecosystem_data$latent
+      sensible_heat <- ecosystem_data$sensible
+      biophysical_net <- latent_cooling + sensible_heat
       radiative_flux_sw <- rep(biophysical_net, num_years_analysis)
 
       
@@ -96,7 +94,7 @@ ghgvc <- function(config){
       
       #Decay kinetics. 
       #decomposition decay function
-      decay_decomp = decay_func(pool_params['decomp',], te)
+      decay_decomp = decay(pool_params['decomp',], te)
       decay_decomp['peat',] = pool_params['decomp','peat'] * te
       
       if (pool_params['storage', 'peat'] > 0) {
@@ -106,14 +104,14 @@ ghgvc <- function(config){
       }
       
       #distrubed decomposition decay function
-      decay_disturb_decomp = decay_func(pool_params['disturb_decomp',], te)
+      decay_disturb_decomp = decay(pool_params['disturb_decomp',], te)
       
       #Transition from Aggrading to 'Mature':
       age_transition <- ecosystem_data[['age_transition']]
       
       #Other disturbance parameters
       disturb_rate <- ecosystem_data[['rd']]
-      disturb_years <- ecosystem_data[['tR']]
+      disturb_years <- min(num_years_emissions, max(ecosystem_data[['tR']], 0))
       
       #CALCULATE GHGV
       ###
@@ -181,7 +179,7 @@ ghgvc <- function(config){
           if (j - k == 0)
             temp[k,] <- as.vector(input[k,,]) / A
           else
-            temp[k,] <- as.vector(input[k,,]) / A * p_x[(j-k),]
+            temp[k,] <- as.vector(input[k,,]) / A * decay_p[(j-k),]
         }
         clearing[j,,] <- colSums(temp)
       }
@@ -196,7 +194,7 @@ ghgvc <- function(config){
       flux_group = sum(res[4:6])
 
       # determine the scale between the input and output value for sw radiative forcing
-      radiative_forcing_sw <- cumsum(radiative_flux_sw * w)
+      swRFV <- cumsum(radiative_flux_sw * w)
       swRFV_C <- swRFV / cRF_Cpulse
       swRFV_scale_factor = swRFV_C[num_years_emissions] / sw_radiative_forcing
       
@@ -221,14 +219,14 @@ ghgvc <- function(config){
         #latent = instance_output_latent,
         #crv    = climate_regulating_value)
         
-      jsonResults <- jsonlite::toJSON(listResult)
-      
       #Output
       out[[site]][[listResult$name]] <- listResult
     }
   }
+  print(res)
   return(out)
 }
+
 
         
         

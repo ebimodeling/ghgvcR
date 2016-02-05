@@ -16,6 +16,8 @@
 ghgvc_plot <- function(df, outdir, years,
                        save = TRUE, savefile = "output.svg") {
 
+  if (missing(outdir) && save == TRUE) stop("outdir must be specified if save is TRUE.")
+    
   #Format data for plotting
   plotdata <- data.frame(
     Biome = capitalize(paste(gsub("_", " ", gsub("BR", "Brazil", df$Biome)), 

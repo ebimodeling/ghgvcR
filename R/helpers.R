@@ -1,5 +1,5 @@
 #' Extract GHG parameters into a matrix.
-#' 
+#'  
 #' @param ecosystem a named list of ecosystem traits.
 #' @param inclAnth boolean whether to include Anthro flux
 #' @return a matrix of greenhouse gas parameters.
@@ -47,8 +47,6 @@ extract_ghg_params <- function(ecosystem, includeANTH = TRUE) {
 
 #' Extract pool parameters into a matrix.
 #' 
-#' @export
-#' 
 #' @param ecosystem a list of ecosystem traits.
 #' @return a matrix.
 extract_pool_params <- function(ecosystem) {
@@ -90,7 +88,7 @@ extract_pool_params <- function(ecosystem) {
 #' 
 #' @param time_vector a vector of time moments.
 #' @return a matrix of decay kinetics for each time moment.
-calc_time_decay <- function(time_vector) {
+kinetic_decay <- function(time_vector) {
   t(matrix(c(.217 +
              .259 * exp(-time_vector / 172.9) +
              .338 * exp(-time_vector / 18.51) +
@@ -102,71 +100,51 @@ calc_time_decay <- function(time_vector) {
 
 #' Decay function for rates over time.
 #' 
-#' @export
-#' 
 #' @param r a vector of decay rates.
 #' @param t a sequential vector of time steps.
 #' @return a matrix of decay fluxes for each time moment. 
-decay_func <- function(r, t) {
+decay <- function(r, t) {
   exp(-r %o% t) - 
     exp(-r %o% (t+1))
 }
 
-#' Writes a json string to a file.
+#' Remap latitude and longitude ranges.
 #' 
-#' importFrom jsonlite toJSON fromJSON validate
-#' @export
-#' 
-#' @param df the data.
-#' @param outdir the directory to write the data to.
-#' @param filename (character) name of file to write.
-#' @param format (character) file format to write.
-#' @return TRUE if written with no errors.
-write_json <- function(json, outdir, filename="json", format=c("json", "csv")) {
-  formats <- match.arg(format, several.ok = TRUE)
-  tryCatch(validate(json),
-           error = function(e) {
-             stop("json must be a valid json string (jsonlite::validate() must be TRUE.")
-             })
-  
-  #JSON
-  if ("json" %in% formats) {
-    writeLines(json, file.path(outdir, paste0(filename, ".json")))
-  }
-  
-  #CSV
-  if ("csv" %in% formats) {
-    outlist <- fromJSON(df)
-    outdf <- tmpdf <- list()
-    for(site in names(outlist)){
-      for(pft in seq(length(outlist[[site]]))){
-        tmplist <- outlist[[site]][[pft]]
-        tmplist <- lapply(tmplist, function(df) ifelse(is.list(df), NA, df))
-        tmplist <- lapply(tmplist, function(df) ifelse(df == 0, NA, df))
-        tmplist[tmplist == "NaN"] <- NA
-        Location <- as.numeric(gsub("_data", "", gsub("site_", "", site)))
-        ## Temporary hack needs to be fixed
-        ## https://github.com/ebimodeling/ghgvcR/issues/3
-        ## https://github.com/ebimodeling/ghgvc/issues/19
-        tmpdf <- data.frame(Location = Location, tmplist)
-        
-        tmp <- as.numeric(tmpdf[!colnames(tmpdf) %in% c("Location", "name")])
-        tmpdf[!colnames(tmpdf) %in% c("Location", "name")] <- round(tmp, digits = 1)
-        
-        outdf <- rbind(outdf, tmpdf)
-      }
-    }
-    
-    ## Cleaning up output for downloading
-    colnames(outdf)[colnames(outdf) == "name"] <- "Biome"
-    colnames(outdf) <- gsub("D_", "GHGV_", colnames(outdf))
-    outdf$GHGV <- outdf$GHGV_CO2 + outdf$GHGV_CH4 + outdf$GHGV_N2O
-    
-    outdf <- outdf[order(outdf$Location),]
-    outdf$swRFV <- - outdf$swRFV
-    write.csv(outdf, file.path(outdir, paste0(filename,".csv")), row.names = FALSE)
-  }
+#' @param input the value to remap.
+#' @param input_min minimum input value.
+#' @param input_max maximum input value.
+#' @param output_min minimum output value.
+#' @param output_max maximum output value.
+remap_range <- function(input, input_min, input_max, output_min, output_max) {
+  #Adapted from RUBY code:  
+  # def remap_range(input, in_low, in_high, out_low, out_high)
+  #   # map onto [0,1] using input range
+  #   frac = ( input - in_low ) / ( in_high - in_low )
+  #   # map onto output range
+  #   ( frac * ( out_high - out_low ) + out_low ).to_i.round()
+  # end
+  frac <- min(max((input - input_min) / (input_max - input_min), 0), 1)
+  as.integer(round((frac * (output_max - output_min)) + output_min))
 }
+
+#' Convert string to logical or numeric.
+#' 
+#' @param x (character) a string
+#' @return a logical or numeric value
+#' @examples \dontrun{
+#'   str2LogicalOrNumeric("TRUE") # -> TRUE
+#'   str2LogicalOrNumeric("5") # -> 5
+#'   str2LogicalOrNumeric("NaN") # -> "NaN"
+#' }
+str2LogicalOrNumeric <- function(string) {
+  if (grepl("TRUE|FALSE", string)) x <- as.logical(string)
+  else if (!grepl("[a-zA-Z]", string)) x <- as.numeric(string)
+  else x <- string
+  x
+}
+
+
+
 
 
 
