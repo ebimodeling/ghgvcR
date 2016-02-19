@@ -17,9 +17,24 @@
 #' @export
 #' 
 #' @param config A list of configuration settings and data parameters. 
+#' @param output_dir directory to write results to.
+#' @param output_filename name of file to write.
+#' @param output_format format of output file, either json or csv.
+#' @param write_data logical indicating whether or not to write the results.
 #' @return List of GHGVC results for each location specified in \code{config}.
 #' @author Chris Schauer, David LeBauer, Nicholas Potter
-ghgvc <- function(config){
+ghgvc <- function(config,
+                  output_dir, 
+                  output_filename = "ghgv",
+                  output_format = c("json", "cvs"),
+                  write_data = TRUE
+                  ) {
+                    
+  if (write_data== TRUE && missing(output_dir)) 
+    stop("'output_dir' cannot be missing if write_data is TRUE.")
+ 
+  output_format <- match.arg(output_format)
+   
   
   ### 
   #Constants for use in calculation  
@@ -29,7 +44,7 @@ ghgvc <- function(config){
     c(1.4*10^-5, 3.7*10^-4*4/3, 3.03*10^-3)    
   
   names(ghg_radiative_efficiency) <- c("co2", "ch4", "n2o")
-  
+
   #get config information
   options <- config$options
   options <- lapply(config$options, str2LogicalOrNumeric)
@@ -85,8 +100,9 @@ ghgvc <- function(config){
       latent_cooling <- ecosystem_data$latent
       sensible_heat <- ecosystem_data$sensible
       biophysical_net <- latent_cooling + sensible_heat
-      radiative_flux_sw <- rep(biophysical_net, num_years_analysis)
-
+      if(is.null(biophysical_net)) biophysical_net <- 0
+      
+      sw_radiative_flux <- rep(biophysical_net, num_years_analysis)
       
       #Get parameter matrices
       pool_params <- extract_pool_params(ecosystem_data)
@@ -194,7 +210,7 @@ ghgvc <- function(config){
       flux_group = sum(res[4:6])
 
       # determine the scale between the input and output value for sw radiative forcing
-      swRFV <- cumsum(radiative_flux_sw * w)
+      swRFV <- cumsum(sw_radiative_flux * w)
       swRFV_C <- swRFV / cRF_Cpulse
       swRFV_scale_factor = swRFV_C[num_years_emissions] / sw_radiative_forcing
       
@@ -223,20 +239,14 @@ ghgvc <- function(config){
       out[[site]][[listResult$name]] <- listResult
     }
   }
-  print(res)
+  
+  #write the data to a file if specified
+  if (write_data == TRUE) { 
+    write_json(toJSON(out), 
+               output_dir, 
+               output_filename, 
+               format = output_format)
+  }
+
   return(out)
 }
-
-
-        
-        
-        
-        
-        
-        
-      
-
-
-
-
-

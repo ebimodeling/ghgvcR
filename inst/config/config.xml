@@ -10,7 +10,8 @@
     <T_E>50</T_E>
     <r>0</r>
   </options>
-  <ecosystem_data>
+<ecosystem_data>
+	<pft>
     <name>Tropical Forest</name>
     <category>native</category>
     <T_A>100</T_A>
@@ -72,5 +73,9 @@
     <max_ghgv>FALSE</max_ghgv>
     <eco_copy>1</eco_copy>
     <reg_ghgv>FALSE</reg_ghgv>
-  </ecosystem_data>
+		<sw_radiative_forcing>0.3332378188995255</sw_radiative_forcing>
+		<latent>0.2841988801077424</latent>
+		<sensible>0</sensible>
+	</pft>
+</ecosystem_data>
 </ghgvc>

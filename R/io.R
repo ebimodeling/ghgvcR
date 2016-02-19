@@ -10,8 +10,10 @@
 #' @return TRUE if written with no errors.
 write_json <- function(json, outdir, filename="json", format=c("json", "csv")) {
   formats <- match.arg(format, several.ok = TRUE)
+  print(json)
   tryCatch(validate(json),
            error = function(e) {
+             print(json)
              stop("json must be a valid json string (jsonlite::validate() must be TRUE.")
            })
   

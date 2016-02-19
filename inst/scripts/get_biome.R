@@ -11,10 +11,10 @@ if (length(script_args) < 5 | length(script_args) > 6) {
         netcdf_dir:       Full path to the netcdf biome data.
         named_ecosystems: Full path to name-indexed ecosystems json file.
         output_dir:       Full path to write the biome data to.
-        output_filename:  OPTIONAL name of file to write output to (without extension).
-        output_format:    OPTIONAL format of file to write output to. Either 'json' or 'csv'.
         write_data:       OPTIONAL Boolean whether to write data to a file.\n")
 }
+
+
 
 #write data is true by default.
 write_data <- TRUE
@@ -28,7 +28,7 @@ get_biome(script_args[1],
           script_args[3], 
           script_args[4], 
           script_args[5], 
-          write_data)
+          write_data = write_data)
 
 
 
