@@ -438,7 +438,6 @@ get_biome <- function(latitude,
   
   #write the data to a file if specified
   if (write_data == TRUE) { 
-    print(biome_data)
     write_json(toJSON(biome_data, force=FALSE), 
                output_dir, 
                output_filename, 
