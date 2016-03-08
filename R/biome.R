@@ -25,6 +25,10 @@ get_biome <- function(latitude,
     stop("'output_dir' cannot be missing if write_data is TRUE.")
  
   output_format <- match.arg(output_format)
+  
+  #convert lat/lon to floats if they are strings
+  if(typeof(latitude)=="character") latitude <- as.numeric(latitude)
+  if(typeof(longitude)=="character") longitude <- as.numeric(longitude)
    
   #results are a list
   res <- list()
@@ -32,22 +36,22 @@ get_biome <- function(latitude,
   #list of data sources
   data_list <- list(
     "saatchi_agb_num" = list(
-      ncdir = "/",
+      ncdir = "",
       ncfile = "saatchi.nc",
       variable = "agb_1km"
     ),
     "saatchi_bgb_num" = list(
-      ncdir = "/",
+      ncdir = "",
       ncfile = "saatchi.nc",
       variable = "bgb_1km"
     ),
     "nbcd_num" = list(
-      ncdir = "/",
+      ncdir = "",
       ncfile = "nbcd.nc",
       variable = "reprojx1"
     ),
     "soc_num" = list(
-      ncdir = "/",
+      ncdir = "",
       ncfile = "SoilCarbonDataS.nc",
       variable = "HWSDa_OC_Dens_Sub_5min.rst"
     ),
@@ -209,7 +213,7 @@ get_biome <- function(latitude,
     #   variable = "fswh"
     # ),
     "biome_num" = list(
-      ncdir = "./",
+      ncdir = "",
       ncfile = "vegtype.nc",
       variable = "vegtype"
     )
@@ -438,7 +442,7 @@ get_biome <- function(latitude,
   
   #write the data to a file if specified
   if (write_data == TRUE) { 
-    write_json(toJSON(biome_data, force=FALSE), 
+    write_json(toJSON(biome_data), 
                output_dir, 
                output_filename, 
                format = output_format)
