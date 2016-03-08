@@ -21,8 +21,8 @@ get_biome <- function(latitude,
                       output_filename = "biome",
                       output_format = c("json", "cvs"),
                       write_data = TRUE) {
-  if (write_data== TRUE && missing(out_dir)) 
-    stop("'out_dir' cannot be missing if write_data is TRUE.")
+  if (write_data== TRUE && missing(output_dir)) 
+    stop("'output_dir' cannot be missing if write_data is TRUE.")
  
   output_format <- match.arg(output_format)
    
@@ -438,7 +438,8 @@ get_biome <- function(latitude,
   
   #write the data to a file if specified
   if (write_data == TRUE) { 
-    write_json(toJSON(biome_data), 
+    print(biome_data)
+    write_json(toJSON(biome_data, force=FALSE), 
                output_dir, 
                output_filename, 
                format = output_format)

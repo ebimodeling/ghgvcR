@@ -1,4 +1,4 @@
-library("ghgvcR")
+library("ghgvcr")
 context("testing biome functions.")
 
 test_that("remap_range() returns correct values.", {

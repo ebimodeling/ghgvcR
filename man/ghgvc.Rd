@@ -4,10 +4,19 @@
 \alias{ghgvc}
 \title{GHGVC}
 \usage{
-ghgvc(config)
+ghgvc(config, output_dir, output_filename = "ghgv",
+  output_format = c("json", "cvs"), write_data = TRUE)
 }
 \arguments{
 \item{config}{A list of configuration settings and data parameters.}
+
+\item{output_dir}{directory to write results to.}
+
+\item{output_filename}{name of file to write.}
+
+\item{output_format}{format of output file, either json or csv.}
+
+\item{write_data}{logical indicating whether or not to write the results.}
 }
 \value{
 List of GHGVC results for each location specified in \code{config}.
