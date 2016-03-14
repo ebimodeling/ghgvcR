@@ -331,6 +331,24 @@ get_biome <- function(latitude,
     if (res$saatchi_agb_num != 0 && !is.na(res$saatchi_agb_num)) {
       biome_data$native_eco[[eco]]$OM_ag$s001 <- res$saatchi_agb_num
     }
+    ## Radiative and latent
+    if (eco %in% c("temperate_pasture", 
+                       "temperate_cropland", 
+                       "tropical_pasture", 
+                       "tropical_cropland")) {
+      biome_data$native_eco[[eco]]$sw_radiative_forcing <- list("s000" = 0)
+      biome_data$native_eco[[eco]]$latent <- ("s000" = 0)
+    }
+    else {
+      biome_data$native_eco[[eco]]$sw_radiative_forcing <- list(
+        "s000" = (res$global_potVeg_rnet_num - res$global_bare_net_radiation_num) /
+          51007200000*1000000000
+        )
+      biome_data$native_eco[[eco]]$latent <- list(
+        "s000" = (res$global_potVeg_latent_num - res$global_bare_latent_heat_flux_num) / 
+          51007200000*1000000000
+        )
+    }
   }
   
   # Will we have a saatchi match without a vegtype?
@@ -358,30 +376,6 @@ get_biome <- function(latitude,
     }
     else {
       biome_data$agroecosystem_eco["temperate_cropland"] = name_indexed_ecosystems["temperate cropland"]
-    }
-  }
-  
-  for (k in names(biome_data)) {
-    if (k == "native_eco") {
-      for (biome_k in names(biome_data[k])) {
-        if (biome_k %in% c("temperate_pasture", 
-                           "temperate_cropland", 
-                           "tropical_pasture", 
-                           "tropical_cropland")) {
-          biome_data[[k]][[biome_k]]$sw_radiative_forcing <- list("s000" = 0)
-          biome_data[[k]][[biome_k]]$latent <- ("s000" = 0)
-        }
-        else {
-          biome_data[[k]][[biome_k]]$sw_radiative_forcing <- list(
-            "s000" = (res$global_potVeg_rnet_num - res$global_bare_net_radiation_num) /
-              51007200000*1000000000
-          )
-          biome_data[[k]][[biome_k]]$latent <- list(
-            "s000" = (res$global_potVeg_latent_num - res$global_bare_latent_heat_flux_num) / 
-              51007200000*1000000000
-          )
-        }
-      }
     }
   }
   
