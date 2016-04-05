@@ -38,7 +38,7 @@ write_ghgv <- function(json, output_dir, filename="ghgv", format=c("json", "csv"
       r1 <- d[[i]]
       r1$Location <- i
       r1[r1 == "NaN"] <- NA
-      outdf <- rbind(outdf, d1[c(ncols+1, 1:ncols)])
+      outdf <- rbind(outdf, r1[c(ncols+1, 1:ncols)])
     }
     
     #round the results
