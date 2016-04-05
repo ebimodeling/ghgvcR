@@ -5,7 +5,7 @@
 \title{GHGVC}
 \usage{
 ghgvc(config, output_dir, output_filename = "ghgv",
-  output_format = c("json", "cvs"), write_data = TRUE)
+  output_format = c("json", "csv"), write_data = TRUE)
 }
 \arguments{
 \item{config}{A list of configuration settings and data parameters.}

@@ -26,7 +26,7 @@
 ghgvc <- function(config,
                   output_dir, 
                   output_filename = "ghgv",
-                  output_format = c("json", "cvs"),
+                  output_format = c("json", "csv"),
                   write_data = TRUE
                   ) {
                     
@@ -231,9 +231,9 @@ ghgvc <- function(config,
         D_CO2  = res[7],
         D_CH4  = res[8],
         D_N2O  = res[9],
-        swRFV  = swRFV_C[num_years_emissions])
-        #latent = instance_output_latent,
-        #crv    = climate_regulating_value)
+        swRFV  = swRFV_C[num_years_emissions],
+        latent = instance_output_latent,
+        crv    = climate_regulating_value)
         
       #Output
       out[[site]][[listResult$name]] <- listResult
@@ -241,11 +241,14 @@ ghgvc <- function(config,
   }
   
   #write the data to a file if specified
-  if (write_data == TRUE) { 
-    write_json(toJSON(out), 
+  if (write_data == TRUE) {
+    json_data <- toJSON(out)
+    write_ghgv(json_data, 
                output_dir, 
-               output_filename, 
-               format = output_format)
+               format = "json")
+    write_ghgv(json_data, 
+               output_dir,
+               format = "csv")
   }
 
   return(out)

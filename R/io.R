@@ -3,12 +3,12 @@
 #' importFrom jsonlite toJSON fromJSON validate
 #' @export
 #' 
-#' @param df the data.
-#' @param outdir the directory to write the data to.
+#' @param json a json object of the ghgv output.
+#' @param output_dir the directory to write the data to.
 #' @param filename (character) name of file to write.
 #' @param format (character) file format to write.
 #' @return TRUE if written with no errors.
-write_json <- function(json, outdir, filename="json", format=c("json", "csv")) {
+write_ghgv <- function(json, output_dir, filename="ghgv", format=c("json", "csv")) {
   formats <- match.arg(format, several.ok = TRUE)
   # tryCatch(validate(json),
   #          error = function(e) {
@@ -18,40 +18,42 @@ write_json <- function(json, outdir, filename="json", format=c("json", "csv")) {
   
   #JSON
   if ("json" %in% formats) {
-    writeLines(json, file.path(outdir, paste0(filename, ".json")))
+    writeLines(json, file.path(output_dir, paste0(filename, ".json")))
   }
   
   #CSV
   if ("csv" %in% formats) {
-    outlist <- fromJSON(df)
-    outdf <- tmpdf <- list()
-    for(site in names(outlist)){
-      for(pft in seq(length(outlist[[site]]))){
-        tmplist <- outlist[[site]][[pft]]
-        tmplist <- lapply(tmplist, function(df) ifelse(is.list(df), NA, df))
-        tmplist <- lapply(tmplist, function(df) ifelse(df == 0, NA, df))
-        tmplist[tmplist == "NaN"] <- NA
-        Location <- as.numeric(gsub("_data", "", gsub("site_", "", site)))
-        ## Temporary hack needs to be fixed
-        ## https://github.com/ebimodeling/ghgvcR/issues/3
-        ## https://github.com/ebimodeling/ghgvc/issues/19
-        tmpdf <- data.frame(Location = Location, tmplist)
-        
-        tmp <- as.numeric(tmpdf[!colnames(tmpdf) %in% c("Location", "name")])
-        tmpdf[!colnames(tmpdf) %in% c("Location", "name")] <- round(tmp, digits = 1)
-        
-        outdf <- rbind(outdf, tmpdf)
-      }
+    #convert to list of data.frames
+    d <- lapply(fromJSON(json), function(r) { data.frame(do.call(rbind.data.frame, r)) })
+    ncols <- length(names(d[[1]]))
+    
+    #out data frame
+    outdf <- data.frame(matrix(vector(), 
+                               ncol=ncols + 1, 
+                               dimnames = list(c(), c("Location", names(d[[1]]))))
+                        )
+    
+    #iterate through sites and append to data.frame
+    for(i in 1:length(d)) {
+      r1 <- d[[i]]
+      r1$Location <- i
+      r1[r1 == "NaN"] <- NA
+      outdf <- rbind(outdf, d1[c(ncols+1, 1:ncols)])
     }
     
-    ## Cleaning up output for downloading
+    #round the results
+    outdf[!colnames(outdf) %in% c("Location", "name")] <- round(outdf[!colnames(outdf) %in% c("Location", "name")], digits = 1)
+    
+    #fix column names
     colnames(outdf)[colnames(outdf) == "name"] <- "Biome"
     colnames(outdf) <- gsub("D_", "GHGV_", colnames(outdf))
+    
+    #total ghgv
     outdf$GHGV <- outdf$GHGV_CO2 + outdf$GHGV_CH4 + outdf$GHGV_N2O
     
-    outdf <- outdf[order(outdf$Location),]
+    #write the data
     outdf$swRFV <- - outdf$swRFV
-    write.csv(outdf, file.path(outdir, paste0(filename,".csv")), row.names = FALSE)
+    write.csv(outdf, file.path(output_dir, paste0(filename,".csv")), row.names = FALSE)
   }
 }
 

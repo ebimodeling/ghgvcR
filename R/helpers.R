@@ -129,7 +129,7 @@ remap_range <- function(input, input_min, input_max, output_min, output_max) {
 }
 
 #' Convert string to logical or numeric.
-#' 
+#'
 #' @param x (character) a string
 #' @return a logical or numeric value
 #' @examples \dontrun{

@@ -13,7 +13,7 @@ test_that("run.ghgvc works for test config file",{
   
   expect_true(class(x) == "list")
   expect_true(grepl("Tropical Forest", names(x$ecosystem_data)))
-  config_output <- "list(`Tropical Forest` = list(name = \"Tropical Forest\", S_CO2 = 715.481930448906, S_CH4 = 18.5897095138668, S_N2O = 11.2808552885403, F_CO2 = 264.088404311696, F_CH4 = 4.53053004775435, F_N2O = -43.9477537844218, D_CO2 = 0, D_CH4 = 0, D_N2O = 0, swRFV = 382.964452488271))"
+  config_output <- "list(`Tropical Forest` = list(name = \"Tropical Forest\", S_CO2 = 715.481930448906, S_CH4 = 18.5897095138668, S_N2O = 11.2808552885403, F_CO2 = 264.088404311696, F_CH4 = 4.53053004775435, F_N2O = -43.9477537844218, D_CO2 = 0, D_CH4 = 0, D_N2O = 0, swRFV = 279.415509014268, latent = 238.297006650775, crv = 928.905173462847))"
   expect_equal(as.character(x), config_output)
 })
 
