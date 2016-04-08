@@ -18,7 +18,7 @@ plot_ghgv <- function(df, output_dir,
                       save = TRUE, 
                       savefile = "output.svg") {
 
-  if (missing(outdir) && save == TRUE) stop("outdir must be specified if save is TRUE.")
+  if (missing(output_dir) && save == TRUE) stop("outdir must be specified if save is TRUE.")
     
   #Format data for plotting
   plotdata <- data.frame(
