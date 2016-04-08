@@ -14,9 +14,9 @@ Imports:
     ggplot2,
     gridExtra,
     Hmisc,
-    reshape,
     jsonlite,
     scales,
+    tidyr,
     XML
 Suggests: 
     testthat,

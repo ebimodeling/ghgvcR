@@ -1,7 +1,5 @@
 #' Writes a json string to a json or csv file.
 #' 
-#' @export
-#' 
 #' @param json a json object of the ghgv output.
 #' @param output_dir the directory to write the data to.
 #' @param filename (character) name of file to write.

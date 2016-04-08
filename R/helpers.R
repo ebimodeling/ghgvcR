@@ -156,7 +156,6 @@ kinetic_decay <- function(time_vector) {
 
 #' Remap latitude and longitude ranges.
 #' 
-#' @export
 #' @param input the value to remap.
 #' @param input_min minimum input value.
 #' @param input_max maximum input value.

@@ -34,8 +34,8 @@ ghgvc <- function(config,
                   make_plots = TRUE
                   ) {
                     
-  if (missing(output_dir) && (write_data == TRUE | make_plots == TRUE )) 
-    stop("'output_dir' cannot be missing if write_data is TRUE.")
+  if (missing(output_dir) && (write_data == TRUE || make_plots == TRUE )) 
+    stop("'output_dir' cannot be missing if write_data or make_plots is TRUE.")
  
   output_format <- match.arg(output_format)
    

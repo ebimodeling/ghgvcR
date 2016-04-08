@@ -1,10 +1,11 @@
 #' Plot Greenhouse Gas values.
 #' 
 #' @import ggplot2
+#' @import grid
 #' @import gridExtra
 #' @import scales
 #' @import Hmisc
-#' @importFrom reshape melt
+#' @importFrom tidyr gather
 #' @export
 #' 
 #' @param df a data.frame of output from \code{ghgvc()}.
@@ -18,7 +19,7 @@ plot_ghgv <- function(df, output_dir,
                       save = TRUE, 
                       savefile = "output.svg") {
 
-  if (missing(output_dir) && save == TRUE) stop("outdir must be specified if save is TRUE.")
+  if (missing(output_dir) && save == TRUE) stop("output_dir must be specified if save is TRUE.")
     
   #Format data for plotting
   plotdata <- data.frame(
@@ -42,7 +43,7 @@ plot_ghgv <- function(df, output_dir,
   plotdata$CRV_NET[plotdata$CRV_NET == 0] <- NA
 
   ## Build data for subplots
-  longdata <- melt(plotdata, id.var = "Biome")
+  longdata <- gather(plotdata, variable, value, -Biome)
   longdata$label <- gsub(" Site", "\nSite", longdata$Biome)
   
   #baseplot for use in grid plots
@@ -96,7 +97,7 @@ plot_ghgv <- function(df, output_dir,
  
   if(save) {
     #Create the SVG Plot image
-    svg(filename=file.path(outdir, savefile), width = 10, height = 1 + nrow(plotdata))
+    svg(filename=file.path(output_dir, savefile), width = 10, height = 1 + nrow(plotdata))
     
     #Create the gridded plot image
     grid.arrange(bgc_plot, 
@@ -109,7 +110,7 @@ plot_ghgv <- function(df, output_dir,
     
     #Fix to remove overflow
     svgfixcmd <- paste("sed -i 's/symbol id/symbol overflow=\"visible\" id/g'", 
-                       file.path(outdir, savefile))
+                       file.path(output_dir, savefile))
     system(svgfixcmd)
     #sub = annotate("text", x = 2, y = 0.3, parse = T, label = xlabels)))
   } 
@@ -122,7 +123,6 @@ plot_ghgv <- function(df, output_dir,
 #' a set of variables to plot over.
 #'
 #' @import ggplot2 
-#' @export
 #' 
 #' @param vars a list of variables to plot.
 #' @param longdata long form data.frame of data from \code{ghgcv()}.

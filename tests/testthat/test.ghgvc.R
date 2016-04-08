@@ -9,7 +9,7 @@ test_that("run.ghgvc works for test config file",{
   config <- XML::xmlToList(XML::xmlParse(config_file))  
   
   #Calculator
-  x <- ghgvc(config, write_data = FALSE)
+  x <- ghgvc(config, write_data = FALSE, make_plots = FALSE)
   
   expect_true(class(x) == "list")
   expect_true(grepl("Tropical Forest", names(x$ecosystem_data)))

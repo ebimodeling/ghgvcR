@@ -1,6 +1,5 @@
 #' Get biome data from a netCDF file.
 #' 
-#' @export
 #' @importFrom ncdf4 nc_open nc_close ncvar_get
 #' 
 #' @param data_dir directory containing the data file.
@@ -63,7 +62,6 @@ get_ncdf <- function(data_dir, ncfile, latitude, longitude, variables = "all") {
 #' 
 #' Wrapper to simplify checking variables in a netcdf file.
 #' 
-#' @export
 #' @importFrom ncdf4 nc_open nc_close
 #' 
 #' @param file_name file name (relative to working directory).
