@@ -14,6 +14,7 @@
 #' R function implementation of GHGV_calculator_web.m
 #' @title GHGVC
 #' 
+#' @importFrom jsonlite toJSON
 #' @export
 #' 
 #' @param config A list of configuration settings and data parameters. 
@@ -21,16 +22,19 @@
 #' @param output_filename name of file to write.
 #' @param output_format format of output file, either json or csv.
 #' @param write_data logical indicating whether or not to write the results.
+#' @param make_plots logical indicating whether or not to create svg plots from
+#'   the results.
 #' @return List of GHGVC results for each location specified in \code{config}.
 #' @author Chris Schauer, David LeBauer, Nicholas Potter
 ghgvc <- function(config,
                   output_dir, 
                   output_filename = "ghgv",
                   output_format = c("json", "csv"),
-                  write_data = TRUE
+                  write_data = TRUE,
+                  make_plots = TRUE
                   ) {
                     
-  if (write_data== TRUE && missing(output_dir)) 
+  if (missing(output_dir) && (write_data == TRUE | make_plots == TRUE )) 
     stop("'output_dir' cannot be missing if write_data is TRUE.")
  
   output_format <- match.arg(output_format)
@@ -240,15 +244,19 @@ ghgvc <- function(config,
     }
   }
   
+  out_json <- toJSON(out) 
   #write the data to a file if specified
-  if (write_data == TRUE) {
-    json_data <- toJSON(out)
-    write_ghgv(json_data, 
+  if(write_data == TRUE) {
+    write_ghgv(out_json, 
                output_dir, 
                format = "json")
-    write_ghgv(json_data, 
+    write_ghgv(out_json, 
                output_dir,
                format = "csv")
+  }
+  
+  if(make_plots == TRUE) {
+    plot_ghgv(json2DF(out_json), output_dir = output_dir)
   }
 
   return(out)

@@ -1,3 +1,14 @@
+#' Decay function for rates over time.
+#' 
+#' @param r a vector of decay rates.
+#' @param t a sequential vector of time steps.
+#' @return a matrix of decay fluxes for each time moment. 
+decay <- function(r, t) {
+  exp(-r %o% t) - 
+    exp(-r %o% (t+1))
+}
+
+
 #' Extract GHG parameters into a matrix.
 #'  
 #' @param ecosystem a named list of ecosystem traits.
@@ -45,6 +56,7 @@ extract_ghg_params <- function(ecosystem, includeANTH = TRUE) {
   m
 }
 
+
 #' Extract pool parameters into a matrix.
 #' 
 #' @param ecosystem a list of ecosystem traits.
@@ -84,6 +96,49 @@ extract_pool_params <- function(ecosystem) {
   m
 }
 
+
+#' Convert GHGVC json results to data.frame.
+#' 
+#' @importFrom jsonlite fromJSON
+#' 
+#' @param res a json object containing results from \code{ghgvc()}.
+#' @return a data frame of ghgvc results.
+json2DF <- function(json) {
+  #convert to list of data.frames
+  d <- lapply(fromJSON(json), function(r) { data.frame(do.call(rbind.data.frame, r)) })
+  ncols <- length(names(d[[1]]))
+  
+  #out data frame
+  outdf <- data.frame(matrix(vector(), 
+                             ncol=ncols + 1, 
+                             dimnames = list(c(), c("Location", names(d[[1]]))))
+  )
+  
+  #iterate through sites and append to data.frame
+  for(i in 1:length(d)) {
+    r1 <- d[[i]]
+    r1$Location <- i
+    r1[r1 == "NaN"] <- NA
+    outdf <- rbind(outdf, r1[c(ncols+1, 1:ncols)])
+  }
+  
+  #round the results
+  outdf[!colnames(outdf) %in% c("Location", "name")] <- round(outdf[!colnames(outdf) %in% c("Location", "name")], digits = 1)
+  
+  #fix column names
+  colnames(outdf)[colnames(outdf) == "name"] <- "Biome"
+  colnames(outdf) <- gsub("D_", "GHGV_", colnames(outdf))
+  
+  #total ghgv
+  outdf$GHGV <- outdf$GHGV_CO2 + outdf$GHGV_CH4 + outdf$GHGV_N2O
+  
+  #invert swRFV
+  outdf$swRFV <- - outdf$swRFV
+  
+  return(outdf)
+}
+
+
 #' Decay Kinetics.
 #' 
 #' @param time_vector a vector of time moments.
@@ -98,15 +153,6 @@ kinetic_decay <- function(time_vector) {
            nrow = 3, byrow = TRUE))
 }
 
-#' Decay function for rates over time.
-#' 
-#' @param r a vector of decay rates.
-#' @param t a sequential vector of time steps.
-#' @return a matrix of decay fluxes for each time moment. 
-decay <- function(r, t) {
-  exp(-r %o% t) - 
-    exp(-r %o% (t+1))
-}
 
 #' Remap latitude and longitude ranges.
 #' 
@@ -127,6 +173,7 @@ remap_range <- function(input, input_min, input_max, output_min, output_max) {
   frac <- min(max((input - input_min) / (input_max - input_min), 0), 1)
   as.integer(round((frac * (output_max - output_min)) + output_min))
 }
+
 
 #' Convert string to logical or numeric.
 #'

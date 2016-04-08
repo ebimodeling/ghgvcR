@@ -4,14 +4,14 @@
 \alias{ghgvc_subplot}
 \title{Plot ghgcv subplot.}
 \usage{
-ghgvc_subplot(vars, longdata)
+ghgvc_subplot(vars, data, baseplot)
 }
 \arguments{
 \item{vars}{a list of variables to plot.}
 
-\item{longdata}{long form data.frame of data from \code{ghgcv()}.}
-
 \item{baseplot}{a ggplot2 object as the base plot.}
+
+\item{longdata}{long form data.frame of data from \code{ghgcv()}.}
 }
 \value{
 a ggplot2 object.

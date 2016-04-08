@@ -5,7 +5,7 @@
 \title{GHGVC}
 \usage{
 ghgvc(config, output_dir, output_filename = "ghgv",
-  output_format = c("json", "csv"), write_data = TRUE)
+  output_format = c("json", "csv"), write_data = TRUE, make_plots = TRUE)
 }
 \arguments{
 \item{config}{A list of configuration settings and data parameters.}
@@ -17,6 +17,9 @@ ghgvc(config, output_dir, output_filename = "ghgv",
 \item{output_format}{format of output file, either json or csv.}
 
 \item{write_data}{logical indicating whether or not to write the results.}
+
+\item{make_plots}{logical indicating whether or not to create svg plots from
+the results.}
 }
 \value{
 List of GHGVC results for each location specified in \code{config}.

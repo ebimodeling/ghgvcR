@@ -19,6 +19,6 @@ write_ghgv(json, output_dir, filename = "ghgv", format = c("json", "csv"))
 TRUE if written with no errors.
 }
 \description{
-importFrom jsonlite toJSON fromJSON validate
+Writes a json string to a json or csv file.
 }
 

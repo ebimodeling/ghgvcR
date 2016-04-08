@@ -8,20 +8,22 @@
 #' @export
 #' 
 #' @param df a data.frame of output from \code{ghgvc()}.
-#' @param outdir the directory to save the plot image.
+#' @param output_dir the directory to save the plot image.
 #' @param years number of years considered in the analysis.
 #' @param save boolean to save plot as an image.
 #' @param savefile name of svg file to save.
 #' @return a ggplot2 plot object.
-ghgvc_plot <- function(df, outdir, years,
-                       save = TRUE, savefile = "output.svg") {
+plot_ghgv <- function(df, output_dir, 
+                      years = 50,
+                      save = TRUE, 
+                      savefile = "output.svg") {
 
   if (missing(outdir) && save == TRUE) stop("outdir must be specified if save is TRUE.")
     
   #Format data for plotting
   plotdata <- data.frame(
-    Biome = capitalize(paste(gsub("_", " ", gsub("BR", "Brazil", df$Biome)), 
-                             "Site", 
+    Biome = capitalize(paste(gsub("_", " ", gsub("BR", "Brazil", df$Biome)),
+                             "Site",
                              df$Location)),
     Storage = rowSums(df[,grepl("S_", colnames(df))], na.rm = TRUE),
     Ongoing_Exchange = rowSums(df[,grepl("F_", colnames(df))], na.rm = TRUE),
@@ -126,9 +128,9 @@ ghgvc_plot <- function(df, outdir, years,
 #' @param longdata long form data.frame of data from \code{ghgcv()}.
 #' @param baseplot a ggplot2 object as the base plot.
 #' @return a ggplot2 object.
-ghgvc_subplot <- function(vars, longdata) {
+ghgvc_subplot <- function(vars, data, baseplot) {
   #subset the data just including vars
-  d <- subset(longdata, variable %in% vars)
+  d <- subset(data, variable %in% vars)
   
   #Positive Plot
   pos <- d$value > 0
