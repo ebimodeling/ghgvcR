@@ -1,6 +1,7 @@
 #' Get biome data from a netCDF file.
 #' 
 #' @importFrom ncdf4 nc_open nc_close ncvar_get
+#' @export
 #' 
 #' @param data_dir directory containing the data file.
 #' @param ncfile name of the netCDF file.
@@ -18,10 +19,27 @@ get_ncdf <- function(data_dir, ncfile, latitude, longitude, variables = "all") {
   } 
   else stop(paste0("file ", ncfile, " doesn't exist."))
   
+  #check dimension names to get lat/lon indices
+  dim_names <- names(con$dim)
   #Get latitude and longitude indexes
-  lats <- con$dim$latitude$vals
-  lons <- con$dim$longitude$vals
-  
+  if("latitude" %in% dim_names) {
+    lats <- con$dim$latitude$vals
+    lons <- con$dim$longitude$vals
+  }
+  else if("x" %in% dim_names) { #x,y coords, x == lon, y == lat
+    lats <- con$dim$y$vals
+    lons <- con$dim$x$vals
+  }
+  else if("lat" %in% dim_names) {
+    lats <- con$dim$lat$vals
+    lons <- con$dim$lon$vals
+  }
+  else {
+    stop(paste("Error: dimension names", 
+                dim_names, 
+                "not found in ghgvcr::get_ncdf()."))
+  }
+    
   #Variables are all variables unless given
   varnames <- names(con$var)
   if (missing(variables) | variables == "all") variables <- varnames

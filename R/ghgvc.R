@@ -170,7 +170,7 @@ ghgvc <- function(config,
             pool_params['disturb_storage',] * 
             (1 - pool_params['disturb_combust',]), na.rm=TRUE)))))
       
-      disturbance <- disturb_rate * (storage_disturb - flux_disturb)
+      disturbance <- disturb_rate * (storage_disturb + flux_disturb)
       disturbance[1,] <- 0
       
       #Input is a 3D array containing year, ghg, and 

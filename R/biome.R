@@ -222,7 +222,7 @@ get_biome <- function(latitude,
   #iterate through the list of data sources and 
   #load the data for the lat/lon pair.
   res <- lapply(data_list, function(x) { 
-    get_ncdf(paste0(netcdf_dir, x$ncdir), x$ncfile, latitude, longitude, x$variable)[[x$variable]]
+    get_ncdf(paste0(netcdf_dir, x$ncdir), x$ncfile, latitude, longitude, x$variable)[[x$variable]][[1]]
   })
   
   #specific calculations based on loaded data

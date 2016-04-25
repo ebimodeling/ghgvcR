@@ -1,4 +1,4 @@
-library("ghgvcR")
+library("ghgvcr")
 context("test helper functions.")
 
 #Tests are in alphabetical order by function they test.
