@@ -89,10 +89,17 @@ ghgvc <- function(config,
   ###
   #Sites for analysis 
   sites <- names(config)[-which(names(config) %in% "options")]
+  
   out <- list()
+  
   for (site in sites) {
     site_config <- config[[site]]
-    out[[site]] <- list()
+    
+    if("pft" %in% names(site_config)) { 
+      #fix issue of blank site (user selects a site but doesn't click a biome)
+      #this way the calculator doesn't try to include results for an empty site.
+      out[[site]] <- list()
+    }
     
     # loop through "pft"
     for(ecosystem in which(names(site_config) %in% "pft")){
@@ -175,20 +182,24 @@ ghgvc <- function(config,
       
       #Input is a 3D array containing year, ghg, and 
       #storage, flux, and disturbance
+      #cat(length(storage * options$storage))
+      #cat(length(-flux * options$flux))
+      #cat(length(-disturbance * options$disturbance))
+      cat(num_years_emissions)
       input <- array(
         cbind(
           storage * options$storage,
           -flux * options$flux,
           -disturbance * options$disturbance), 
-        dim=c(num_years_emissions+1, 3, 3),
-        dimnames = c("year", "ghg", "input"))
-      
+        dim=c(num_years_emissions+1, 3, 3))
+      #,
+      #  dimnames = list("year", "ghg", "input"))
       #clearing <- array(
       #  cbind(
 #           
 #         ),
 #         dim=c(num_years_emissions+1, 3, 3),
-#         dimnames = c("year", "ghg", "input"))
+#         dimnames = list("year", "ghg", "input"))
 #         
 #       )
       #TODO: turn this into apply statements
