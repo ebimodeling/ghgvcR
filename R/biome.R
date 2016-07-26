@@ -34,7 +34,7 @@ get_biome <- function(latitude,
   res <- list()
   
   #list of data sources
-  data_list <- list(
+  variable_query_list <- list(
     "saatchi_agb_num" = list(
       ncdir = "",
       ncfile = "saatchi.nc",
@@ -221,7 +221,7 @@ get_biome <- function(latitude,
   
   #iterate through the list of data sources and 
   #load the data for the lat/lon pair.
-  res <- lapply(data_list, function(x) { 
+  res <- lapply(variable_query_list, function(x) { 
     get_ncdf(paste0(netcdf_dir, x$ncdir), x$ncfile, latitude, longitude, x$variable)[[x$variable]][[1]]
   })
   
