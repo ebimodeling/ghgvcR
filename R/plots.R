@@ -4,7 +4,7 @@
 #' @import grid
 #' @import gridExtra
 #' @import scales
-#' @import Hmisc
+#' @importFrom Hmisc capitalize
 #' @importFrom tidyr gather
 #' @export
 #' 
@@ -44,6 +44,7 @@ plot_ghgv <- function(df, output_dir,
 
   ## Build data for subplots
   longdata <- gather(plotdata, variable, value, -Biome)
+  longdata <- longdata[order(longdata$Biome, decreasing = TRUE), ]
   longdata$label <- gsub(" Site", "\nSite", longdata$Biome)
   
   #baseplot for use in grid plots

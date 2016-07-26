@@ -256,7 +256,10 @@ get_biome <- function(latitude,
   )
   
   ############ Here we set the additional logic threshold levels ############
-  if (res$biome_num <= 15) {
+  if(is.na(res$biome_num) || res$biome_num == "") {
+    #do nothing
+  }
+  else if (res$biome_num <= 15) {
     ## Logic for vegtype ecosystems
     if (res$biome_num == 1) {
       # Per Kristas request

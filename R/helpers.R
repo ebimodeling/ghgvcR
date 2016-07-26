@@ -117,7 +117,7 @@ json2DF <- function(json) {
   #iterate through sites and append to data.frame
   for(i in 1:length(d)) {
     r1 <- d[[i]]
-    r1$Location <- i
+    r1$Location <- length(d) + 1 - i
     r1[r1 == "NaN"] <- NA
     outdf <- rbind(outdf, r1[c(ncols+1, 1:ncols)])
   }
