@@ -98,7 +98,7 @@ plot_ghgv <- function(df, output_dir,
  
   if(save) {
     #Create the SVG Plot image
-    svg(filename=file.path(output_dir, savefile), width = 10, height = 1 + nrow(plotdata))
+    svg(filename=file.path(output_dir, savefile), width = 10, height = 1 + 1.5*nrow(plotdata))
     
     #Create the gridded plot image
     grid.arrange(bgc_plot, 
