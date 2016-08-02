@@ -249,6 +249,7 @@ ghgvc <- function(config,
         swRFV  = swRFV_C[num_years_emissions],
         latent = instance_output_latent,
         crv    = climate_regulating_value)
+    
         
       #Output
       out[[site]][[listResult$name]] <- listResult

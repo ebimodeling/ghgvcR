@@ -20,8 +20,9 @@ plot_ghgv <- function(df, output_dir,
                       savefile = "output.svg") {
 
   if (missing(output_dir) && save == TRUE) stop("output_dir must be specified if save is TRUE.")
-    
+  print(df)
   #Format data for plotting
+  print(df)
   plotdata <- data.frame(
     Biome = capitalize(paste(gsub("_", " ", gsub("BR", "Brazil", df$Biome)),
                              "Site",
@@ -31,6 +32,7 @@ plot_ghgv <- function(df, output_dir,
     Rnet = df$swRFV,
     LE = df$latent)
 
+  print(plotdata)
   #Create sums
   plotdata$CRV_BGC <- plotdata$Storage + plotdata$Ongoing_Exchange
   plotdata$CRV_BIOPHYS <- plotdata$Rnet + plotdata$LE
@@ -47,6 +49,7 @@ plot_ghgv <- function(df, output_dir,
   longdata <- longdata[order(longdata$Biome, decreasing = TRUE), ]
   longdata$label <- gsub(" Site", "\nSite", longdata$Biome)
   
+  print(longdata)
   #baseplot for use in grid plots
   baseplot <- ggplot(data = plotdata) + 
     geom_hline(aes(yintercept = 0)) +      #horizontal line
@@ -60,15 +63,16 @@ plot_ghgv <- function(df, output_dir,
     )
   
   #BGC
-  bgc_plot <- ghgvc_subplot(c("Storage", "Ongoing_Exchange"), 
+  bgc_plot <- ghgvc_subplot(c("Ongoing_Exchange", "Storage"), 
                            data = longdata, 
                            baseplot = baseplot)
   bgc_plot <- bgc_plot + 
              scale_fill_manual(values= brewer_pal(pal = "Greens")(6)[c(4,6)], 
-                               labels = c("Storage", "Ongoing Exchange")) + 
-             labs(fill = "") +
+                               labels = c("Ongoing Exchange", "Storage")) + 
+             labs(fill = "") + 
              ggtitle("Biogeochemical") + 
-             theme(axis.text.y = element_text(size = 12, hjust = 1))
+             theme(axis.text.y = element_text(size = 12, hjust = 1)) 
+  bgc_plot 
   
   #BIOPHYS
   biophys_plot <- ghgvc_subplot(c("LE", "Rnet"), 
@@ -98,7 +102,7 @@ plot_ghgv <- function(df, output_dir,
  
   if(save) {
     #Create the SVG Plot image
-    svg(filename=file.path(output_dir, savefile), width = 10, height = 1 + 1.5*nrow(plotdata))
+    svg(filename=file.path(output_dir, savefile), width = 10, height = 2.5 + 1.5*nrow(plotdata))
     
     #Create the gridded plot image
     grid.arrange(bgc_plot, 
@@ -132,28 +136,34 @@ plot_ghgv <- function(df, output_dir,
 ghgvc_subplot <- function(vars, data, baseplot) {
   #subset the data just including vars
   d <- subset(data, variable %in% vars)
+  d$variable <- factor(d$variable, levels = vars)
   
-  #Positive Plot
+  # plot <- geom_bar(data = d,
+  #                  aes(x = Biome, y = value, fill = variable),
+  #                  width = 0.25, stat = "identity")
+  # return(baseplot + plot)
+  
+  # #Positive Plot
   pos <- d$value > 0
   posplot <- if(any(pos)) {
-    geom_bar(data = d[pos,], 
-             aes(x = Biome, y = value, fill = variable),  
-             width = 0.25, stat = "identity")  
+    geom_bar(data = d[pos,],
+             aes(x = Biome, y = value, fill = variable),
+             width = 0.25, stat = "identity")
   } else {
     NULL
   }
-  
+
   #Negative Plot
   negplot <- if(any(!pos)) {
-    geom_bar(data = d[!pos,], 
-             aes(x = Biome, y = value, fill = variable),  
-             width = 0.25, stat = "identity")  
+    geom_bar(data = d[!pos,],
+             aes(x = Biome, y = value, fill = variable),
+             width = 0.25, stat = "identity")
   } else {
     NULL
   }
-  
+
   #return all plots as one object
-  return(baseplot + posplot + negplot)
+  return(baseplot + negplot + posplot)
 }
 
 

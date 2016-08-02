@@ -104,6 +104,7 @@ extract_pool_params <- function(ecosystem) {
 #' @param res a json object containing results from \code{ghgvc()}.
 #' @return a data frame of ghgvc results.
 json2DF <- function(json) {
+  print(json)
   #convert to list of data.frames
   d <- lapply(fromJSON(json), function(r) { data.frame(do.call(rbind.data.frame, r)) })
   ncols <- length(names(d[[1]]))

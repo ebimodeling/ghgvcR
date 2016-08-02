@@ -334,24 +334,15 @@ get_biome <- function(latitude,
     if (res$saatchi_agb_num != 0 && !is.na(res$saatchi_agb_num)) {
       biome_data$native_eco[[eco]]$OM_ag$s001 <- res$saatchi_agb_num
     }
-    ## Radiative and latent
-    if (eco %in% c("temperate_pasture", 
-                       "temperate_cropland", 
-                       "tropical_pasture", 
-                       "tropical_cropland")) {
-      biome_data$native_eco[[eco]]$sw_radiative_forcing <- list("s000" = 0)
-      biome_data$native_eco[[eco]]$latent <- ("s000" = 0)
-    }
-    else {
-      biome_data$native_eco[[eco]]$sw_radiative_forcing <- list(
-        "s000" = (res$global_potVeg_rnet_num - res$global_bare_net_radiation_num) /
-          51007200000*1000000000
-        )
-      biome_data$native_eco[[eco]]$latent <- list(
-        "s000" = (res$global_potVeg_latent_num - res$global_bare_latent_heat_flux_num) / 
-          51007200000*1000000000
-        )
-    }
+    
+    biome_data$native_eco[[eco]]$sw_radiative_forcing <- list(
+      "s000" = (res$global_potVeg_rnet_num - res$global_bare_net_radiation_num) /
+        51007200000*1000000000
+      )
+    biome_data$native_eco[[eco]]$latent <- list(
+      "s000" = (res$global_potVeg_latent_num - res$global_bare_latent_heat_flux_num) / 
+        51007200000*1000000000
+      )
   }
   
   # Will we have a saatchi match without a vegtype?
@@ -364,7 +355,6 @@ get_biome <- function(latitude,
   #  # disabled per kristas request
   #  biome_data$agroecosystem_eco["springwheat"] = name_indexed_ecosystems["switchgrass"]
   #}
-  
   if (!is.na(res$global_pasture_num) & res$global_pasture_num > 0.01 & res$global_pasture_num < 1.0) {
     if (abs(latitude) < 23.26) {
       biome_data$agroecosystem_eco["tropical_pasture"] = name_indexed_ecosystems["tropical pasture"]
@@ -436,6 +426,20 @@ get_biome <- function(latitude,
     biome_data$biofuel_eco[["switchgrass"]]$latent <- custom 
     biome_data$biofuel_eco[["switchgrass"]]$sw_radiative_forcing <- custom 
   } 
+  
+  #For these ecosystems, we set latent and forcing to 0
+  for (n in c("native_eco", "agroecosystem_eco")) {
+    for (eco in names(biome_data[[n]])) {
+      ## Radiative and latent
+      if (eco %in% c("temperate_pasture", 
+                         "temperate_cropland", 
+                         "tropical_pasture", 
+                         "tropical_cropland")) {
+        biome_data[[n]][[eco]]$sw_radiative_forcing <- custom
+        biome_data[[n]][[eco]]$latent <- custom
+      }
+    }
+  }
   
   #write the data to a file if specified
   if (write_data == TRUE) { 
