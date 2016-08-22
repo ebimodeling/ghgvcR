@@ -18,7 +18,8 @@ test_that("get_biome() correctly reads values from biome ncdf4 files.", {
   longitude <- -69
   
   #paths
-  netcdf_dir <- "/run/media/potterzot/zfire1/work/ebimodeling/netcdf/"
+  #netcdf_dir <- "/run/media/potterzot/zfire1/work/ebimodeling/netcdf/"
+  netcdf_dir <- "/opt/ghgvc/ghgvc/netcdf/"
   biome_defaults_file <- "inst/extdata/final_ecosystems.json"
   
   #Load the biome data for that location
