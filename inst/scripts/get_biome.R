@@ -8,6 +8,7 @@ if (length(script_args) < 5 | length(script_args) > 6) {
         USAGE: 'get_biome.R <latitude> <longitude> <netcdf_dir> <named_ecosystems> <output_dir> [output_filename] [output_format] [write_data]'\n
         latitude:         The latitude to load data for.
         longitude:        The longitude to load data for.
+        named_ecosystem:  Ecosystem defaults file.
         netcdf_dir:       Full path to the netcdf biome data.
         output_dir:       Full path to write the biome data to.
         write_data:       OPTIONAL Boolean whether to write data to a file.\n")
@@ -24,9 +25,9 @@ if (length(script_args) == 6) {
 #Get the biome data.
 get_biome(script_args[1], #latitude 
           script_args[2], #longitude
-          script_args[3], #netcdf directory
-          script_args[4], #output directory
-          script_args[5], #filename
+          script_args[3], #ecosystem defaults file
+          script_args[4], #netcdf directory
+          script_args[5], #output directory
           write_data = write_data)
 
 

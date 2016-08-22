@@ -1,4 +1,4 @@
-"Map","Value","Category","Broadleaf Evergreen Forest","Broadleaf Deciduous Forest","Mixed Broadleaf-Conifer Forest","Conifer Evergreen Forest","Conifer Deciduous Forest","Savanna","Shrub","Grass","Pasture","Crop","Barren","Other"
+"Map","Value","Category","Broadleaf Evergreen Forest","Broadleaf Deciduous Forest","Mixed Broadleaf-Conifer Forest","Conifer Evergreen Forest","Conifer Deciduous Forest","Savanna","Shrub","Grass","Pasture","Cropland","Barren","Other"
 "SYNMAP",0,"Water",0,0,0,0,0,0,0,0,0,0,0,
 "SYNMAP",1,"Trees / Needle / Evergreen",,,,,,,,,,,,
 "SYNMAP",2,"Trees / Needle / Deciduous",,,,,1,,,,,,,

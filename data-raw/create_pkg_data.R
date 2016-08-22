@@ -1,5 +1,6 @@
 library(dplyr)
 library(readr)
+setwd("data-raw")
 
 ### FAO Biome Lookup Table
 fao_biomes <- read_csv("fao_biomes.csv")

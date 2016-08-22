@@ -19,9 +19,10 @@ test_that("get_biome() correctly reads values from biome ncdf4 files.", {
   
   #paths
   netcdf_dir <- "/run/media/potterzot/zfire1/work/ebimodeling/netcdf/"
+  biome_defaults_file <- "inst/extdata/final_ecosystems.json"
   
   #Load the biome data for that location
-  biome <- get_biome(latitude, longitude, netcdf_dir, write_data = FALSE)
+  biome <- get_biome(latitude, longitude, biome_defaults_file, netcdf_dir, write_data = FALSE)
 
   #tests of biome results
   expect_equal(typeof(biome), "list")
