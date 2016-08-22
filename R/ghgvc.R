@@ -38,21 +38,27 @@ ghgvc <- function(config,
     stop("'output_dir' cannot be missing if write_data or make_plots is TRUE.")
  
   output_format <- match.arg(output_format)
-   
   
-  ### 
-  #Constants for use in calculation  
-  includeANTH <- 1 #include anthro
-  A <- 1.78e8 #TODO rename
-  ghg_radiative_efficiency <- 10^9 * 
-    c(1.4*10^-5, 3.7*10^-4*4/3, 3.03*10^-3)    
-  
-  names(ghg_radiative_efficiency) <- c("co2", "ch4", "n2o")
-
   #get config information
   options <- config$options
   options <- lapply(config$options, str2LogicalOrNumeric)
   
+  ### 
+  #Constants for use in calculation
+  include_anth <- if(is.null(options$includeANTH)) 1 else options$includeANTH 
+  include_bio <- if(is.null(options$includeBIO)) 1 else options$includeBIO 
+  num_years_analysis <- options$T_A
+  num_years_emissions <- options$T_E 
+  annual_discount_rate <- options$r
+  ta <- 1:num_years_analysis
+  te <- 0:num_years_emissions
+  w <- 1 / (1 + annual_discount_rate)**(1:num_years_analysis)
+  
+  ghg_radiative_efficiency <- 10^9 * 
+    c(1.4*10^-5, 3.7*10^-4*4/3, 3.03*10^-3)    
+  names(ghg_radiative_efficiency) <- c("co2", "ch4", "n2o")
+  A <- 1.78e8 #TODO rename
+
   ### 
   #Parameters dependent on options values
   includes = c(options$storage, options$flux, options$disturbance) * c(1, -1, -1)
@@ -61,16 +67,7 @@ ghgvc <- function(config,
   #GHG to include
   ghg_flags <- c(options$co2, options$ch4, options$n2o) #GHG flags to include
   
-  #Years of analysis
-  num_years_analysis <- options$T_A
-  ta <- 1:num_years_analysis
-  
-  num_years_emissions <- options$T_E 
-  te <- 0:num_years_emissions
-  
   #Discount rate over analysis years
-  annual_discount_rate <- options$r
-  w <- 1 / (1 + annual_discount_rate)**(1:num_years_analysis)
   
   #Emissions time for peat
   t_peat <- rep(1,num_years_emissions+1)
@@ -95,6 +92,10 @@ ghgvc <- function(config,
   for (site in sites) {
     site_config <- config[[site]]
     
+    #site lat/lon for later
+    site_lat <- as.numeric(site_config$.attrs[['lat']])
+    site_lng <- as.numeric(site_config$.attrs[['lng']])
+    
     if("pft" %in% names(site_config)) { 
       #fix issue of blank site (user selects a site but doesn't click a biome)
       #this way the calculator doesn't try to include results for an empty site.
@@ -117,7 +118,7 @@ ghgvc <- function(config,
       
       #Get parameter matrices
       pool_params <- extract_pool_params(ecosystem_data)
-      ghg_params <- extract_ghg_params(ecosystem_data, includeANTH)
+      ghg_params <- extract_ghg_params(ecosystem_data, include_anth)
       
       #Decay kinetics. 
       #decomposition decay function
@@ -233,10 +234,15 @@ ghgvc <- function(config,
       instance_output_latent = swRFV_scale_factor * latent_cooling
       
       #   CRV= (S_CO2+S_CH4+S_N2O) + (F_CO2+F_CH4+F_N2O)-swRFV+latent
-      climate_regulating_value = storage_group + flux_group - swRFV_C[num_years_emissions] + instance_output_latent
+      climate_regulating_value = storage_group + 
+        flux_group - 
+        swRFV_C[num_years_emissions] + 
+        instance_output_latent
       
       listResult <- list(
         name   = ecosystem_data$name,
+        lat    = site_lat,
+        lng    = site_lng,
         S_CO2  = res[1],
         S_CH4  = res[2],
         S_N2O  = res[3],
@@ -249,13 +255,20 @@ ghgvc <- function(config,
         swRFV  = swRFV_C[num_years_emissions],
         latent = instance_output_latent,
         crv    = climate_regulating_value)
-    
+      
+      #Replace names with units
+      units <- paste("[Mg CO2-eq ha-1", num_years_analysis, "yrs-1]")
+      unit_names <- c("S_CO2", "S_CH4", "S_N2O", 
+                      "F_CO2", "F_CH4", "F_N2O",
+                      "D_CO2", "D_CH4", "D_N2O",
+                      "swRFV", "latent", "crv")
+      names(listResult) <- c("name", "lat", "lng", 
+                             lapply(unit_names, function(x) { paste(x, units) }))
         
       #Output
       out[[site]][[listResult$name]] <- listResult
     }
   }
-  
   out_json <- toJSON(out) 
   #write the data to a file if specified
   if(write_data == TRUE) {

@@ -14,7 +14,7 @@ decay <- function(r, t) {
 #' @param ecosystem a named list of ecosystem traits.
 #' @param inclAnth boolean whether to include Anthro flux
 #' @return a matrix of greenhouse gas parameters.
-extract_ghg_params <- function(ecosystem, includeANTH = TRUE) {
+extract_ghg_params <- function(ecosystem, include_anth = TRUE) {
   m = matrix(nrow = 8, ncol = 3)
   colnames(m) <- c("CO2", "CH4", "N20")
   rownames(m) <- c("combust", "flux", "FR", "new_flux",
@@ -25,7 +25,7 @@ extract_ghg_params <- function(ecosystem, includeANTH = TRUE) {
   
   #Flux
   m['flux',] <- unlist(ecosystem[c('F_CO2', 'F_CH4', 'F_N2O')])
-  if (includeANTH) m['flux','CO2'] = m['flux','CO2'] + unlist(ecosystem[['F_anth']])
+  if (include_anth) m['flux','CO2'] = m['flux','CO2'] + unlist(ecosystem[['F_anth']])
   
   #TODO: ??
   m['FR',] <- unlist(ecosystem[c('FR_CO2', 'FR_CH4', 'FR_N2O')])
@@ -105,14 +105,17 @@ extract_pool_params <- function(ecosystem) {
 #' @return a data frame of ghgvc results.
 json2DF <- function(json) {
   print(json)
+  json_list <- fromJSON(json)
+  col_names <- names(json_list[[1]][[1]])
+  
   #convert to list of data.frames
-  d <- lapply(fromJSON(json), function(r) { data.frame(do.call(rbind.data.frame, r)) })
+  d <- lapply(json_list, function(r) { data.frame(do.call(rbind.data.frame, r)) })
   ncols <- length(names(d[[1]]))
   
   #out data frame
   outdf <- data.frame(matrix(vector(), 
                              ncol=ncols + 1, 
-                             dimnames = list(c(), c("Location", names(d[[1]]))))
+                             dimnames = list(c(), c("Location", col_names)))
   )
   
   #iterate through sites and append to data.frame
@@ -123,12 +126,13 @@ json2DF <- function(json) {
     outdf <- rbind(outdf, r1[c(ncols+1, 1:ncols)])
   }
   
-  #round the results
-  outdf[!colnames(outdf) %in% c("Location", "name")] <- round(outdf[!colnames(outdf) %in% c("Location", "name")], digits = 1)
-  
   #fix column names
-  colnames(outdf)[colnames(outdf) == "name"] <- "Biome"
-  colnames(outdf) <- gsub("D_", "GHGV_", colnames(outdf))
+  names(outdf) <- c("Location", "Biome", col_names[-1])
+  names(outdf) <- gsub("D_", "GHGV_", names(outdf))
+  
+  #round the results
+  outdf[!colnames(outdf) %in% c("Location", "Biome")] <- round(outdf[!colnames(outdf) %in% c("Location", "Biome")], digits = 1)
+  
   
   #total ghgv
   outdf$GHGV <- outdf$GHGV_CO2 + outdf$GHGV_CH4 + outdf$GHGV_N2O

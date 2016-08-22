@@ -4,7 +4,7 @@
 \alias{extract_ghg_params}
 \title{Extract GHG parameters into a matrix.}
 \usage{
-extract_ghg_params(ecosystem, includeANTH = TRUE)
+extract_ghg_params(ecosystem, include_anth = TRUE)
 }
 \arguments{
 \item{ecosystem}{a named list of ecosystem traits.}

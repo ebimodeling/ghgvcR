@@ -28,11 +28,11 @@ Several example ecosystem data files are kept in `inst/config_examples/`. These 
 library(ghgvcr)
 
 #load example config data
-config_file <- system.file("config_examples/multisite_config.xml", package = "ghgvcr")
+config_file <- system.file("config/multisite_config.xml", package = "ghgvcr")
 config <- XML::xmlToList(XML::xmlParse(config_file))  
 
 #Calculate 
-res <- ghgvc(config)
+res <- ghgvc(config, write_data=FALSE, make_plots=FALSE)
 
 #Write the data to a file:
 #outdir <- "./"
@@ -54,6 +54,7 @@ The same calculation can be done for a specific location if biome data is availa
 ```{r eval=FALSE}
 #NOT RUN 
 library(ghgvcr)
+data(biome_defaults)
 
 #Example location
 latitude <- 40.18
@@ -61,10 +62,9 @@ longitude <- -89.82
 
 #paths
 netcdf_dir <- "<data directory>"
-named_ecosystems <- "<named ecosystems file>"
 
 #Load the biome data for that location
-biome <- get_biome(latitude, longitude, netcdf_dir, named_ecosystems, write_data = FALSE)
+biome <- get_biome(latitude, longitude, netcdf_dir, biome_defaults, write_data = FALSE)
 head(biome)
 
 #Calculate GHGV

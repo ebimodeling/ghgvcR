@@ -7,7 +7,7 @@
 #' @param latitude the selected latitude.
 #' @param longitude the selected longitude.
 #' @param netcdf_dir full path to the directory containing the netcdf data files.
-#' @param named_ecosystems full path of the name-indexed ecosystem json file.
+#' @param biome_defaults_file full path of the name-indexed ecosystem json file.
 #' @param output_dir full path of the directory to write results to.
 #' @param output_filename name of file to write (without extension).
 #' @param output_format format to save data in.
@@ -16,7 +16,6 @@
 get_biome <- function(latitude, 
                       longitude,
                       netcdf_dir, 
-                      named_ecosystems, 
                       output_dir, 
                       output_filename = "biome",
                       output_format = c("json", "cvs"),
@@ -104,6 +103,11 @@ get_biome <- function(latitude,
       ncdir = "GCS/Crops/US/Corn/fractioncover/",
       ncfile = "fcorn_2.7_us.0.5deg.nc",
       variable = "fcorn"
+    ),
+    "br_sugc_latent_heat_flux_num" = list(
+      ncdir = "GCS/Crops/Brazil/Sugarcane/",
+      ncfile = "brazil_sugc_latent_10yr_avg.nc",
+      variable = "latent"
     ),
     "br_bare_sugc_net_radiation_num" = list(
       ncdir = "GCS/Crops/Brazil/Bare/",
@@ -212,8 +216,23 @@ get_biome <- function(latitude,
     #   ncfile = "fswh_2.7_us.0.5deg.nc",
     #   variable = "fswh"
     # ),
-    "biome_num" = list(
-      ncdir = "",
+    "synmap" = list(
+      ncdir = "GCS/Maps/",
+      ncfile = "Hurtt_SYNMAP_Global_HD_2010.nc",
+      variable = "biome_type"
+    ),
+    "koppen" = list(
+      ncdir = "GCS/Maps/",
+      ncfile = "koppen_geiger.nc",
+      variable = "Band1"
+    ),
+    "fao" = list(
+      ncdir = "GCS/Maps/",
+      ncfile = "gez_2010_wgs84.nc",
+      variable = "gez_abbrev"
+    ),
+    "ibis" = list(
+      ncdir = "GCS/Maps/",
       ncfile = "vegtype.nc",
       variable = "vegtype"
     )
@@ -225,125 +244,190 @@ get_biome <- function(latitude,
     get_ncdf(paste0(netcdf_dir, x$ncdir), x$ncfile, latitude, longitude, x$variable)[[x$variable]][[1]]
   })
   
-  #specific calculations based on loaded data
+  ### specific calculations based on loaded data
+  # US Latent
   res$us_switch_latent_heat_flux_diff <- res$us_switch_latent_heat_flux_num - 
     res$global_bare_latent_heat_flux_num
   res$us_corn_latent_heat_flux_diff <- res$us_corn_latent_heat_flux_num  - 
     res$global_bare_latent_heat_flux_num
-  res$us_misc_latent_heat_flux_diff <- res$us_misc_latent_heat_flux_num  - 
-    res$global_bare_latent_heat_flux_num
   res$us_soy_latent_heat_flux_diff <- res$us_soy_latent_heat_flux_num - 
     res$global_bare_latent_heat_flux_num
-  res$br_sugc_latent_heat_flux_diff <- res$br_sugc_latent_heat_flux_num  - 
-    res$br_bare_sugc_latent_heat_flux_num
-  res$br_sugc_net_radiation_diff <- res$br_sugc_net_radiation_num - 
-    res$br_bare_sugc_net_radiation_num 
-  res$us_corn_net_radiation_diff <- res$us_corn_net_radiation_num - 
-    res$global_bare_net_radiation_num
+  res$us_misc_latent_heat_flux_diff <- res$us_misc_latent_heat_flux_num  - 
+    res$global_bare_latent_heat_flux_num
+  
+  # US Net
   res$us_misc_net_radiation_diff <- res$us_misc_net_radiation_num - 
     res$global_bare_net_radiation_num
   res$us_soy_net_radiation_diff <- res$us_soy_net_radiation_num - 
     res$global_bare_net_radiation_num
   res$us_switch_net_radiation_diff <- res$us_switch_net_radiation_num - 
     res$global_bare_net_radiation_num
+  res$us_corn_net_radiation_diff <- res$us_corn_net_radiation_num - 
+    res$global_bare_net_radiation_num
   
-  #Get the named ecosystem data
-  name_indexed_ecosystems = fromJSON(file(named_ecosystems))
+  # BR Latent
+  res$br_sugc_latent_heat_flux_diff <- res$br_sugc_latent_heat_flux_num  - 
+    res$br_bare_sugc_latent_heat_flux_num
+  
+  # BR Net
+  res$br_sugc_net_radiation_diff <- res$br_sugc_net_radiation_num - 
+    res$br_bare_sugc_net_radiation_num 
+  
+  ###### Get the appropriate biome (new method)
+  data(fao_biomes)
+  data(map_vegtypes)
+  data(koppen_biomes)
+  vegtype_names <- names(map_vegtypes)[4:15]
+  
+  #Get vegtypes based on map values
+  synmap_vegtypes <- subset(map_vegtypes, Value == res$synmap & Map == "SYNMAP")
+  koppen_vegtypes <- subset(map_vegtypes, Value == res$koppen & Map == "KOPPEN")
+  fao_vegtypes <- subset(map_vegtypes, Value == tolower(res$fao) & Map == "FAO")
+  ibis_vegtypes <- subset(map_vegtypes, Value == res$ibis & Map == "IBIS")
+  
+  koppen_code <- koppen_vegtypes$Category
+  
+  # 1. get vegtypes for each map
+  vegtypes <- vegtype_names[as.logical(array(synmap_vegtypes[4:14]))]
+  biome_codes <- filter(koppen_biomes, Zone == koppen_code)[vegtypes]
+  
+  ### GET BIOME DATA
+  # Load biome default data
+  data(biome_defaults)
   
   biome_data <- list(
     "native_eco" = list(),
     "agroecosystem_eco" = list()
   )
   
-  ############ Here we set the additional logic threshold levels ############
-  if(is.na(res$biome_num) || res$biome_num == "") {
-    #do nothing
-  }
-  else if (res$biome_num <= 15) {
-    ## Logic for vegtype ecosystems
-    if (res$biome_num == 1) {
-      # Per Kristas request
-      # "tropical_peat_forest" only where SOC 30-100 cm > 75
-      if (res$soc_num > 75) {
-        biome_data$native_eco["tropical_peat_forest"] <- name_indexed_ecosystems["tropical peat forest"]
-      } 
-      biome_data$native_eco["tropical_forest"] <- name_indexed_ecosystems["tropical forest"]
-    }
-    else if (res$biome_num == 2) {
-      biome_data$native_eco["tropical_forest"] <- name_indexed_ecosystems["tropical forest"]
-      biome_data$native_eco["tropical_savanna"] <- name_indexed_ecosystems["tropical savanna"]
-    }
-    else if (3 <= res$biome_num & res$biome_num <= 5) {
-      biome_data$native_eco["temperate_forest"] <- name_indexed_ecosystems["temperate forest"]
-    }
-    else if (6 <= res$biome_num & res$biome_num <= 7) {
-      # Per Kristas request
-      # "northern_peatland" only where SOC 30-100 cm > 75
-      if (soc_num > 75) {
-        biome_data$native_eco["northern_peatland"] <- name_indexed_ecosystems["northern peatland"]
-      }
-      biome_data$native_eco["boreal_forest"] <- name_indexed_ecosystems["boreal forest"]
-    }
-    else if (res$biome_num == 8) {
-      if (latitude >= 50) {
-        biome_data$native_eco["boreal_forest"] <- name_indexed_ecosystems["boreal forest"]
-      }
-      else {
-        biome_data$native_eco["temperate_forest"] <- name_indexed_ecosystems["temperate forest"]
-      }
-    }
-    else if (res$biome_num == 9) {
-      if (abs(latitude) >= 50) { #TODO Check abs
-        biome_data$native_eco["boreal_forest"] <- name_indexed_ecosystems["boreal forest"]
-      }
-      else if (23.26 < abs(latitude) && abs(latitude) <= 50) {
-        biome_data$native_eco["temperate_grassland"] <- name_indexed_ecosystems["temperate grassland"]
-        biome_data$native_eco["scrub/woodland"] <- name_indexed_ecosystems["temperate scrub/woodland"]
-        biome_data$native_eco["temperate_forest"] <- name_indexed_ecosystems["temperate forest"]
-      }
-      else if (abs(latitude) <= 23.26) {
-        biome_data$native_eco["tropical_savanna"] <- name_indexed_ecosystems["tropical savanna"]
-      }
-    }
-    else if (res$biome_num == 10) {
-      biome_data$native_eco["temperate_grassland"] <- name_indexed_ecosystems["temperate grassland"]
-    }
-    else if (res$biome_num == 11) {
-      if (latitude <= 5) {
-        biome_data$native_eco["scrub/woodland"] <- name_indexed_ecosystems["temperate scrub/woodland"]
-      }
-    }
-    else if (res$biome_num == 12 | res$biome_num == 14) {
-      biome_data$native_eco["desert"] <- name_indexed_ecosystems["desert"]
-    }
-    else if (res$biome_num == 13 | res$biome_num == 15) {
-      biome_data$native_eco["tundra"] <- name_indexed_ecosystems["tundra"]
-    }
-  }
-  
-  #### Iterate through native ecosystems to apply logic
-  for (eco in names(biome_data$native_eco)) {
-    ## SOC Logic
-    if (res$soc_num != 0 && !is.na(res$soc_num)) {
-      biome_data$native_eco[[eco]]$OM_SOM$s002 <- (res$soc_num * 1.72)  # 0.30 x (soc 0-30 + soc 30-100).
-    }
-    ## Saatchi Logic
-    if (res$saatchi_bgb_num != 0 && !is.na(res$saatchi_bgb_num)) {
-      biome_data$native_eco[[eco]]$OM_root$s001 <- res$saatchi_bgb_num
-    } 
-    if (res$saatchi_agb_num != 0 && !is.na(res$saatchi_agb_num)) {
-      biome_data$native_eco[[eco]]$OM_ag$s001 <- res$saatchi_agb_num
+  #Iterate through each biome code to load the default biome data and apply
+  #other logic as needed according to:
+  #"Overview of biomes mapping & assignment of default values.docx"
+  for(i in 1:length(biome_codes)) {
+    biome_code <- biome_codes[[i]]
+    biome <- vegtypes[[i]]
+    #Use FAO for Grass/Pasture Types
+    if(biome_code %in% c("APX", "GX")) {
+      biome_code <- subset(fao_biomes, CODE == tolower(res$fao))[[biome_code]] 
     }
     
-    biome_data$native_eco[[eco]]$sw_radiative_forcing <- list(
-      "s000" = (res$global_potVeg_rnet_num - res$global_bare_net_radiation_num) /
-        51007200000*1000000000
-      )
-    biome_data$native_eco[[eco]]$latent <- list(
-      "s000" = (res$global_potVeg_latent_num - res$global_bare_latent_heat_flux_num) / 
-        51007200000*1000000000
-      )
-  }
+    #biome default data, depending on above selected code
+    biome_default <- as.list(as.character(biome_defaults[[biome_code]])) #values
+    names(biome_default) <- biome_defaults[['variable']] #keys
+    biome_default$code <- biome_code      #keep code name for posterity
+    biome_default$vegtype <- vegtypes[[i]]  #keep vegetation type name for posterity
+    
+    
+    
+    #Calculate OM
+    hswd <- 0
+    if(synmap == "Crop") {
+      biome_default$OM_SOM <- 0.43*hwsd
+    }
+    else {
+      biome_default$OM_SOM <- 0.3*hwsd
+    }
+    
+    #Biophysical
+    if(ibis_vegtypes[[i]] == 1) {
+      biophysical_net <- 
+      biome_default$biophysical_net <- biome_default$latent + biome_default+sensible 
+    }
+    else {
+      biome_default$biophysical_net <- 0
+    }
+    biome_data$native_eco[[biome]] <- biome_default
+  }  
+  
+  ############ Here we set the additional logic threshold levels ############
+  # if(is.na(res$biome_num) || res$biome_num == "") {
+  #   #do nothing
+  # }
+  # else if (res$biome_num <= 15) {
+  #   ## Logic for vegtype ecosystems
+  #   if (res$biome_num == 1) {
+  #     # Per Kristas request
+  #     # "tropical_peat_forest" only where SOC 30-100 cm > 75
+  #     if (res$soc_num > 75) {
+  #       biome_data$native_eco["tropical_peat_forest"] <- biome_defaults["tropical peat forest"]
+  #     } 
+  #     biome_data$native_eco["tropical_forest"] <- biome_defaults["tropical forest"]
+  #   }
+  #   else if (res$biome_num == 2) {
+  #     biome_data$native_eco["tropical_forest"] <- biome_defaults["tropical forest"]
+  #     biome_data$native_eco["tropical_savanna"] <- biome_defaults["tropical savanna"]
+  #   }
+  #   else if (3 <= res$biome_num & res$biome_num <= 5) {
+  #     biome_data$native_eco["temperate_forest"] <- biome_defaults["temperate forest"]
+  #   }
+  #   else if (6 <= res$biome_num & res$biome_num <= 7) {
+  #     # Per Kristas request
+  #     # "northern_peatland" only where SOC 30-100 cm > 75
+  #     if (soc_num > 75) {
+  #       biome_data$native_eco["northern_peatland"] <- biome_defaults["northern peatland"]
+  #     }
+  #     biome_data$native_eco["boreal_forest"] <- biome_defaults["boreal forest"]
+  #   }
+  #   else if (res$biome_num == 8) {
+  #     if (latitude >= 50) {
+  #       biome_data$native_eco["boreal_forest"] <- biome_defaults["boreal forest"]
+  #     }
+  #     else {
+  #       biome_data$native_eco["temperate_forest"] <- biome_defaults["temperate forest"]
+  #     }
+  #   }
+  #   else if (res$biome_num == 9) {
+  #     if (abs(latitude) >= 50) { #TODO Check abs
+  #       biome_data$native_eco["boreal_forest"] <- biome_defaults["boreal forest"]
+  #     }
+  #     else if (23.26 < abs(latitude) && abs(latitude) <= 50) {
+  #       biome_data$native_eco["temperate_grassland"] <- biome_defaults["temperate grassland"]
+  #       biome_data$native_eco["scrub/woodland"] <- biome_defaults["temperate scrub/woodland"]
+  #       biome_data$native_eco["temperate_forest"] <- biome_defaults["temperate forest"]
+  #     }
+  #     else if (abs(latitude) <= 23.26) {
+  #       biome_data$native_eco["tropical_savanna"] <- biome_defaults["tropical savanna"]
+  #     }
+  #   }
+  #   else if (res$biome_num == 10) {
+  #     biome_data$native_eco["temperate_grassland"] <- biome_defaults["temperate grassland"]
+  #   }
+  #   else if (res$biome_num == 11) {
+  #     if (latitude <= 5) {
+  #       biome_data$native_eco["scrub/woodland"] <- biome_defaults["temperate scrub/woodland"]
+  #     }
+  #   }
+  #   else if (res$biome_num == 12 | res$biome_num == 14) {
+  #     biome_data$native_eco["desert"] <- biome_defaults["desert"]
+  #   }
+  #   else if (res$biome_num == 13 | res$biome_num == 15) {
+  #     biome_data$native_eco["tundra"] <- biome_defaults["tundra"]
+  #   }
+  # }
+  
+  #### Iterate through native ecosystems to apply logic
+  # for (eco in names(biome_data$native_eco)) {
+  #   ## SOC Logic
+  #   if (res$soc_num != 0 && !is.na(res$soc_num)) {
+  #     biome_data$native_eco[[eco]]$OM_SOM$s002 <- (res$soc_num * 1.72)  # 0.30 x (soc 0-30 + soc 30-100).
+  #   }
+  #   ## Saatchi Logic
+  #   if (res$saatchi_bgb_num != 0 && !is.na(res$saatchi_bgb_num)) {
+  #     biome_data$native_eco[[eco]]$OM_root$s001 <- res$saatchi_bgb_num
+  #   } 
+  #   if (res$saatchi_agb_num != 0 && !is.na(res$saatchi_agb_num)) {
+  #     biome_data$native_eco[[eco]]$OM_ag$s001 <- res$saatchi_agb_num
+  #   }
+  #   
+  #   biome_data$native_eco[[eco]]$sw_radiative_forcing <- list(
+  #     "s000" = (res$global_potVeg_rnet_num - res$global_bare_net_radiation_num) /
+  #       51007200000*1000000000
+  #     )
+  #   biome_data$native_eco[[eco]]$latent <- list(
+  #     "s000" = (res$global_potVeg_latent_num - res$global_bare_latent_heat_flux_num) / 
+  #       51007200000*1000000000
+  #     )
+  # }
   
   # Will we have a saatchi match without a vegtype?
   # Which ecosystems does the saatchi data get places into? ... 
@@ -353,22 +437,22 @@ get_biome <- function(latitude,
   ###   temperate cropland, wetland rice
   #if (!is.na(res$us_springwheat_num)) {
   #  # disabled per kristas request
-  #  biome_data$agroecosystem_eco["springwheat"] = name_indexed_ecosystems["switchgrass"]
+  #  biome_data$agroecosystem_eco["springwheat"] = biome_defaults["switchgrass"]
   #}
   if (!is.na(res$global_pasture_num) & res$global_pasture_num > 0.01 & res$global_pasture_num < 1.0) {
     if (abs(latitude) < 23.26) {
-      biome_data$agroecosystem_eco["tropical_pasture"] = name_indexed_ecosystems["tropical pasture"]
+      biome_data$agroecosystem_eco["tropical_pasture"] = biome_defaults["tropical pasture"]
     }
     else {
-      biome_data$agroecosystem_eco["temperate_pasture"] = name_indexed_ecosystems["temperate pasture"]
+      biome_data$agroecosystem_eco["temperate_pasture"] = biome_defaults["temperate pasture"]
     }
   }
   if (!is.na(res$global_cropland_num) & res$global_cropland_num > 0.01 & res$global_cropland_num < 1.0) {
     if (abs(latitude) < 23.26) {
-      biome_data$agroecosystem_eco["tropical_cropland"] = name_indexed_ecosystems["tropical cropland"]
+      biome_data$agroecosystem_eco["tropical_cropland"] = biome_defaults["tropical cropland"]
     }
     else {
-      biome_data$agroecosystem_eco["temperate_cropland"] = name_indexed_ecosystems["temperate cropland"]
+      biome_data$agroecosystem_eco["temperate_cropland"] = biome_defaults["temperate cropland"]
     }
   }
   
@@ -376,56 +460,61 @@ get_biome <- function(latitude,
   custom <- list("s000" = 0, "User defined" = "custom")
   
   if (!is.na(res$us_corn_num) && res$us_corn_num > 0.01) {
-    biome_data$agroecosystem_eco["US_corn"] <- name_indexed_ecosystems["US corn"]
+    biome_data$agroecosystem_eco["US_corn"] <- biome_defaults["US corn"]
     biome_data$agroecosystem_eco[["US_corn"]]$latent <- custom 
     biome_data$agroecosystem_eco[["US_corn"]]$sw_radiative_forcing <- custom 
   }
   if (!is.na(res$us_soybean_num) && res$us_soybean_num > 0.01) {
-    biome_data$agroecosystem_eco["soybean"] <- name_indexed_ecosystems["US soy"]
+    biome_data$agroecosystem_eco["soybean"] <- biome_defaults["US soy"]
     biome_data$agroecosystem_eco[["soybean"]]$latent <- custom 
     biome_data$agroecosystem_eco[["soybean"]]$sw_radiative_forcing <- custom 
   }
   if (!is.na(res$braz_sugarcane_num) & 
       res$braz_sugarcane_num > 0.01 & 
       res$braz_sugarcane_num < 110.0) {
-    biome_data$agroecosystem_eco["BR_sugarcane"] <- name_indexed_ecosystems["BR sugarcane"]
+    biome_data$agroecosystem_eco["BR_sugarcane"] <- biome_defaults["BR sugarcane"]
     biome_data$agroecosystem_eco[["BR_sugarcane"]]$latent <- custom 
     biome_data$agroecosystem_eco[["BR_sugarcane"]]$sw_radiative_forcing <- custom 
   }
   if (res$braz_fractional_soybean_num == 1 & 
       !is.na(res$br_sugc_latent_heat_flux_diff)) {
-    biome_data$agroecosystem_eco["BR_soy"] <- name_indexed_ecosystems["BR soy"]
+    biome_data$agroecosystem_eco["BR_soy"] <- biome_defaults["BR soy"]
     biome_data$agroecosystem_eco[["BR_soy"]]$latent <- custom 
     biome_data$agroecosystem_eco[["BR_soy"]]$sw_radiative_forcing <- custom 
   }
   if (res$braz_fractional_sugarcane_num == 1 & 
       !is.na(res$br_sugc_latent_heat_flux_diff)) {
-    biome_data$agroecosystem_eco["BR_sugarcane"] <- name_indexed_ecosystems["BR sugarcane"]
+    biome_data$agroecosystem_eco["BR_sugarcane"] <- biome_defaults["BR sugarcane"]
     biome_data$agroecosystem_eco[["BR_sugarcane"]]$latent <- custom 
     biome_data$agroecosystem_eco[["BR_sugarcane"]]$sw_radiative_forcing <- custom 
   }
   if (res$braz_fractional_sugarcane_num == 1 & 
       !is.na(res$br_sugc_latent_heat_flux_diff)) {
-    biome_data$agroecosystem_eco["BR_sugarcane"] <- name_indexed_ecosystems["BR sugarcane"]
+    biome_data$agroecosystem_eco["BR_sugarcane"] <- biome_defaults["BR sugarcane"]
     biome_data$agroecosystem_eco[["BR_sugarcane"]]$latent <- custom 
     biome_data$agroecosystem_eco[["BR_sugarcane"]]$sw_radiative_forcing <- custom 
   }
   if (!is.na(res$us_misc_latent_heat_flux_diff) == 1) {
-    biome_data$agroecosystem_eco["miscanthus"] <- name_indexed_ecosystems["BR sugarcane"]
+    biome_data$agroecosystem_eco["miscanthus"] <- biome_defaults["BR sugarcane"]
     biome_data$agroecosystem_eco[["miscanthus"]]$latent <- custom 
     biome_data$agroecosystem_eco[["miscanthus"]]$sw_radiative_forcing <- custom 
-    biome_data$biofuel_eco["miscanthus"] <- name_indexed_ecosystems["BR sugarcane"]
+    biome_data$biofuel_eco["miscanthus"] <- biome_defaults["BR sugarcane"]
     biome_data$biofuel_eco[["miscanthus"]]$latent <- custom 
     biome_data$biofuel_eco[["miscanthus"]]$sw_radiative_forcing <- custom 
   } 
   if (!is.na(res$us_switch_latent_heat_flux_diff) == 1) {
-    biome_data$agroecosystem_eco["switchgrass"] <- name_indexed_ecosystems["BR sugarcane"]
+    biome_data$agroecosystem_eco["switchgrass"] <- biome_defaults["BR sugarcane"]
     biome_data$agroecosystem_eco[["switchgrass"]]$latent <- custom 
     biome_data$agroecosystem_eco[["switchgrass"]]$sw_radiative_forcing <- custom 
-    biome_data$biofuel_eco["switchgrass"] <- name_indexed_ecosystems["BR sugarcane"]
+    biome_data$biofuel_eco["switchgrass"] <- biome_defaults["BR sugarcane"]
     biome_data$biofuel_eco[["switchgrass"]]$latent <- custom 
     biome_data$biofuel_eco[["switchgrass"]]$sw_radiative_forcing <- custom 
   } 
+ 
+  # Set OM_SOM to 0
+  for(eco in names(biome_data$agroecosystem_eco)) {
+    biome_data$agroecosystem_eco[[eco]]$OM_SOM <- 0
+  }
   
   #For these ecosystems, we set latent and forcing to 0
   for (n in c("native_eco", "agroecosystem_eco")) {

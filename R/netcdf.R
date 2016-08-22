@@ -59,15 +59,25 @@ get_ncdf <- function(data_dir, ncfile, latitude, longitude, variables = "all") {
     
     #Set up start and count vectors. Just a single value is retreived.
     #old netcdf files had 4 dimensions. New just has lat/lng and a time
-    start <- c(lng_idx, lat_idx)
-    count <- c(1,1)
+    
+    #Hack to fix wrong ordering of FAO/GEZ data file.
+    if("gez_abbrev" %in% variables) {
+      start <- c(1, lng_idx, lat_idx)
+      count <- c(1, 1,1)
+    }
+    else {
+      start <- c(lng_idx, lat_idx)
+      count <- c(1,1)
+    }
   }
   
   d <- list()
   for (v in variables) {
     if (inbounds) {
-      ndims <- con$var[[v]]$ndims - 2
-      d[v] <- ncvar_get(con, v, c(start, rep(1,ndims)), c(count, rep(1,ndims)))
+      ndims_leftover <- con$var[[v]]$ndims - length(start)
+      d[v] <- ncvar_get(con, v, 
+                        c(start, rep(1,ndims_leftover)), 
+                        c(count, rep(1,ndims_leftover)))
     } else {
       d[v] <- NA
     }

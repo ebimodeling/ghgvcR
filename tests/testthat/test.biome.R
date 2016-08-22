@@ -1,6 +1,8 @@
 library("ghgvcr")
 context("testing biome functions.")
 
+data(biome_defaults)
+
 test_that("remap_range() returns correct values.", {
   #test data
   expect_equal(remap_range(45, -45, 45, 0, 90), 90)
@@ -11,15 +13,15 @@ test_that("remap_range() returns correct values.", {
 })
 
 test_that("get_biome() correctly reads values from biome ncdf4 files.", {
+  
   latitude <- 40.18
   longitude <- -89.82
   
   #paths
   netcdf_dir <- "/run/media/potterzot/zfire1/work/ebimodeling/netcdf/"
-  named_ecosystems <- "/run/media/potterzot/zfire1/work/ebimodeling/public/data/final_ecosystems.json"
   
   #Load the biome data for that location
-  biome <- get_biome(latitude, longitude, netcdf_dir, named_ecosystems, write_data = FALSE)
+  biome <- get_biome(latitude, longitude, netcdf_dir, write_data = FALSE)
 
   #tests of biome results
   expect_equal(typeof(biome), "list")
