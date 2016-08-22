@@ -63,7 +63,7 @@ get_ncdf <- function(data_dir, ncfile, latitude, longitude, variables = "all") {
     #Hack to fix wrong ordering of FAO/GEZ data file.
     if("gez_abbrev" %in% variables) {
       start <- c(1, lng_idx, lat_idx)
-      count <- c(1, 1,1)
+      count <- c(5, 1,1)
     }
     else {
       start <- c(lng_idx, lat_idx)

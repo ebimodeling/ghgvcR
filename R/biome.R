@@ -289,7 +289,7 @@ get_biome <- function(latitude,
   koppen_code <- koppen_vegtypes$Category
   
   # 1. get vegtypes for each map
-  vegtypes <- vegtype_names[as.logical(array(synmap_vegtypes[4:14]))]
+  vegtypes <- vegtype_names[as.logical(array(synmap_vegtypes[4:12]))]
   biome_codes <- subset(koppen_biomes, Zone == koppen_code)[vegtypes]
   
   ### GET BIOME DATA
@@ -312,6 +312,8 @@ get_biome <- function(latitude,
     if(biome_code %in% c("APX", "GX")) {
       biome_code <- subset(fao_biomes, CODE == tolower(res$fao))[[biome_code]] 
     }
+    print(biome_code)
+    print(biome)
     
     #biome default data, depending on above selected code
     biome_default <- as.list(as.character(biome_defaults[[biome_code]])) #values
