@@ -287,10 +287,12 @@ get_biome <- function(latitude,
   ibis_vegtypes <- subset(map_vegtypes, Value == res$ibis & Map == "IBIS")
   
   koppen_code <- koppen_vegtypes$Category
+  synmap_category <- synmap_vegtypes$Category
   
   # 1. get vegtypes for each map
-  vegtypes <- vegtype_names[as.logical(array(synmap_vegtypes[4:12]))]
+  vegtypes <- vegtype_names[as.logical(array(synmap_vegtypes[4:14]))]
   biome_codes <- subset(koppen_biomes, Zone == koppen_code)[vegtypes]
+  
   
   ### GET BIOME DATA
   # Load biome default data
@@ -312,11 +314,14 @@ get_biome <- function(latitude,
     if(biome_code %in% c("APX", "GX")) {
       biome_code <- subset(fao_biomes, CODE == tolower(res$fao))[[biome_code]] 
     }
-    print(biome_code)
-    print(biome)
     
     #biome default data, depending on above selected code
     biome_default <- as.list(as.character(biome_defaults[[biome_code]])) #values
+
+    #fix for blank biomes that are selected - hopefully remove
+    if(length(biome_default) == 0) biome_default <- as.list(rep(0, nrow(biome_defaults))) 
+    
+    #continue on...
     names(biome_default) <- biome_defaults[['variable']] #keys
     biome_default$code <- biome_code      #keep code name for posterity
     biome_default$vegtype <- vegtypes[[i]]  #keep vegetation type name for posterity
@@ -340,7 +345,16 @@ get_biome <- function(latitude,
       biome_default$biophysical_net <- 0
     }
     biome_data$native_eco[[biome]] <- biome_default
-  }  
+  }
+  
+  ### ADD "OTHER" biomes if needed
+  # TODO - note that in this line:
+  # vegtypes <- vegtype_names[as.logical(array(synmap_vegtypes[4:14]))]
+  # from above we exclude column 14 (ending on 13). Col 15 is "Other", for which
+  # we have no data and the above loop breaks. Rather than testing each iteration
+  # in the loop for other, just exclude it and do any custom other data assignment
+  # here.
+  
   
   ############ Here we set the additional logic threshold levels ############
   # if(is.na(res$biome_num) || res$biome_num == "") {

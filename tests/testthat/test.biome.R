@@ -14,8 +14,8 @@ test_that("remap_range() returns correct values.", {
 
 test_that("get_biome() correctly reads values from biome ncdf4 files.", {
   
-  latitude <- -6
-  longitude <- -69
+  latitude <- 24
+  longitude <- 12
   
   #paths
   #netcdf_dir <- "/run/media/potterzot/zfire1/work/ebimodeling/netcdf/"
