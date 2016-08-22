@@ -105,14 +105,17 @@ ghgvc <- function(config,
     # loop through "pft"
     for(ecosystem in which(names(site_config) %in% "pft")){
       ecosystem_data <- lapply(site_config[[ecosystem]], str2LogicalOrNumeric)
+      
+      #There should be no "MAP" values, but replace with 0 if so.
+      ecosystem_data[ecosystem_data == "MAP"] <- 0
+      
       ###Ecosystem data
       termite <- ecosystem_data[['termite']] / 100
       #Biophysical
       sw_radiative_forcing <- ecosystem_data$sw_radiative_forcing
       latent_cooling <- ecosystem_data$latent
       sensible_heat <- ecosystem_data$sensible
-      biophysical_net <- latent_cooling + sensible_heat
-      if(is.null(biophysical_net)) biophysical_net <- 0
+      biophysical_net <- ecosystem_data$biophysical_net
       
       sw_radiative_flux <- rep(biophysical_net, num_years_analysis)
       
@@ -186,7 +189,6 @@ ghgvc <- function(config,
       #cat(length(storage * options$storage))
       #cat(length(-flux * options$flux))
       #cat(length(-disturbance * options$disturbance))
-      cat(num_years_emissions)
       input <- array(
         cbind(
           storage * options$storage,

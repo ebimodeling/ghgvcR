@@ -14,12 +14,12 @@ test_that("remap_range() returns correct values.", {
 
 test_that("get_biome() correctly reads values from biome ncdf4 files.", {
   
-  latitude <- 0
-  longitude <- -68
+  latitude <- -6
+  longitude <- -57
   
   #paths
-  #netcdf_dir <- "/run/media/potterzot/zfire1/work/ebimodeling/netcdf/"
-  netcdf_dir <- "/opt/ghgvc/ghgvc/netcdf/"
+  netcdf_dir <- "/run/media/potterzot/zfire1/work/ebimodeling/netcdf/"
+  #netcdf_dir <- "/opt/ghgvc/ghgvc/netcdf/"
   biome_defaults_file <- "inst/extdata/final_ecosystems.json"
   mapdata_dir <- "inst/extdata/"
   

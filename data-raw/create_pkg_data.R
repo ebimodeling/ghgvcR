@@ -20,7 +20,7 @@ write_csv(koppen_biomes, "inst/extdata/koppen_biomes.csv")
 #devtools::use_data(koppen_biomes, overwrite = TRUE)
 
 ### Biome Defaults
-biome_defaults <- read_csv("data-raw/biome_defaults.csv")
+biome_defaults <- read_csv("data-raw/biome_defaults.csv", na=c("", "NA", "NaN"))
 write_csv(biome_defaults, "inst/extdata/biome_defaults.csv")
 #devtools::use_data(biome_defaults, overwrite = TRUE)
 

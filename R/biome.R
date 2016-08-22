@@ -212,6 +212,11 @@ get_biome <- function(latitude,
       ncfile = "global_veg_rnet_10yr_avg.nc",
       variable = "rnet"
     ),
+    "hwsd" = list(
+      ncdir = "GCS/Maps/",
+      ncfile = "hwsd.nc",
+      variable = "soil_code"
+    ),
     #Disabled per request in ruby code
     # "us_springwheat_num" = list(
     #   ncdir = "GCS/Crops/US/SpringWheat/fractioncover/",
@@ -233,6 +238,11 @@ get_biome <- function(latitude,
       ncfile = "gez_2010_wgs84.nc",
       variable = "gez_abbrev"
     ),
+    # "ramankutty" = list(
+    #   ncdir = "GCS/Maps/",
+    #   ncfile = "ramankutty.nc",
+    #   variable = ""
+    # ),
     "ibis" = list(
       ncdir = "GCS/Maps/",
       ncfile = "vegtype.nc",
@@ -285,21 +295,26 @@ get_biome <- function(latitude,
   vegtype_names <- names(map_vegtypes)[4:14]
   
   #Get vegtypes based on map values
-  synmap_vegtypes <- subset(map_vegtypes, Value == res$synmap & Map == "SYNMAP")
-  koppen_vegtypes <- subset(map_vegtypes, Value == res$koppen & Map == "KOPPEN")
-  fao_vegtypes <- subset(map_vegtypes, Value == tolower(res$fao) & Map == "FAO")
-  ibis_vegtypes <- subset(map_vegtypes, Value == res$ibis & Map == "IBIS")
+  synmap_vegtypes_df <- subset(map_vegtypes, Value == res$synmap & Map == "SYNMAP")
+  koppen_vegtypes_df <- subset(map_vegtypes, Value == res$koppen & Map == "KOPPEN")
+  fao_vegtypes_df <- subset(map_vegtypes, Value == tolower(res$fao) & Map == "FAO")
+  ibis_vegtypes_df <- subset(map_vegtypes, Value == res$ibis & Map == "IBIS")
+  #ramankutty_vegtypes <- subset(map_vegtypes, Value == res$ramankutty & Map == "RAMANKUTTY")
   
-  #print(synmap_vegtypes)
-  #print(koppen_vegtypes)
-  
-  koppen_code <- koppen_vegtypes$Category
-  synmap_category <- synmap_vegtypes$Category
+  koppen_code <- koppen_vegtypes_df$Category
+  synmap_category <- synmap_vegtypes_df$Category
   
   # 1. get vegtypes for each map
-  vegtypes <- vegtype_names[as.logical(array(synmap_vegtypes[4:14]))]
+  synmap_vegtypes <- vegtype_names[as.logical(array(synmap_vegtypes_df[4:14]))]
+  koppen_vegtypes <- vegtype_names[as.logical(array(koppen_vegtypes_df[4:14]))]
+  fao_vegtypes <- vegtype_names[as.logical(array(fao_vegtypes_df[4:14]))]
+  ibis_vegtypes <- vegtype_names[as.logical(array(ibis_vegtypes_df[4:14]))]
+  #ramankutty_vegtypes <- vegtype_names[as.logical(array(ramankutty_vegtypes_df[4:14]))]
+  vegtypes <- na.omit(unique(c(synmap_vegtypes, koppen_vegtypes, fao_vegtypes, ibis_vegtypes)))
+  print(vegtypes)
+  # vegtypes <- unique(c(synmap_vegtypes, koppen_vegtypes, fao_vegtypes, 
+  #                      ibis_vegtypes, ramankutty_vegtypes))
   biome_codes <- subset(koppen_biomes, Zone == koppen_code)[vegtypes]
-  print(biome_codes)
   
   ### GET BIOME DATA
   biome_data <- list(
@@ -312,13 +327,14 @@ get_biome <- function(latitude,
   #"Overview of biomes mapping & assignment of default values.docx"
   for(i in 1:length(biome_codes)) {
     biome_code <- biome_codes[[i]]
-    biome <- gsub("\\.", " ", vegtypes[[i]])
+    vegtype <- gsub("\\.", " ", vegtypes[[i]])
+    biome <- vegtype
     
     #Use FAO for Grass/Pasture Types
     if(biome_code %in% c("APX", "GX")) {
-      biome_code <- subset(fao_biomes, CODE == tolower(res$fao))[[biome_code]] 
+      biome_code <- subset(fao_biomes, CODE == tolower(res$fao))[[biome_code]]
     }
-    
+      
     #biome default data, depending on above selected code
     biome_default <- as.list(as.character(biome_defaults[[biome_code]])) #values
 
@@ -328,27 +344,35 @@ get_biome <- function(latitude,
     #continue on...
     names(biome_default) <- biome_defaults[['variable']] #keys
     biome_default$code <- biome_code      #keep code name for posterity
-    biome_default$vegtype <- vegtypes[[i]]  #keep vegetation type name for posterity
+    biome_default$vegtype <- vegtype  #keep vegetation type name for posterity
+    biome_default$name <- biome
     
     #Calculate OM
-    hwsd <- 0
+    res$hwsd <- 0
     if(biome == "Cropland") {
-      biome_default$OM_SOM <- 0.43*hwsd
+      biome_default$OM_SOM <- 0.43*res$hwsd
     }
     else {
-      biome_default$OM_SOM <- 0.3*hwsd
+      biome_default$OM_SOM <- 0.3*res$hwsd
     }
     
     #Biophysical
     ibis_vegtypes <- rep(0, length(vegtypes)) #REMOVE ONCE WE HAVE IBIS VALUES
     if(ibis_vegtypes[[i]] == 1) {
-      biophysical_net <- 
       biome_default$biophysical_net <- biome_default$latent + biome_default+sensible 
     }
     else {
       biome_default$biophysical_net <- 0
     }
-    biome_data$native_eco[[biome]] <- biome_default
+    
+    #Set biome type
+    biome_type <- if(biome_code %in% c("AP1", "AP2", "AC1", "AC2")) {
+      "agroecosystem_eco"
+    } else { "native_eco"}
+    
+    #convert to numeric if possible
+    #biome_default <- lapply(biome_default, str2LogicalOrNumeric)
+    biome_data[[biome_type]][[biome]] <- biome_default
   }
   
   ### ADD "OTHER" biomes if needed
@@ -461,24 +485,25 @@ get_biome <- function(latitude,
   #  # disabled per kristas request
   #  biome_data$agroecosystem_eco["springwheat"] = biome_defaults["switchgrass"]
   #}
-  name_indexed_ecosystems <- fromJSON(file(biome_defaults_file))
-  if (!is.na(res$global_pasture_num) & res$global_pasture_num > 0.01 & res$global_pasture_num < 1.0) {
-    if (abs(latitude) < 23.26) {
-      biome_data$agroecosystem_eco["tropical_pasture"] = name_indexed_ecosystems["tropical pasture"]
-    }
-    else {
-      biome_data$agroecosystem_eco["temperate_pasture"] = name_indexed_ecosystems["temperate pasture"]
-    }
-  }
-  if (!is.na(res$global_cropland_num) & res$global_cropland_num > 0.01 & res$global_cropland_num < 1.0) {
-    if (abs(latitude) < 23.26) {
-      biome_data$agroecosystem_eco["tropical_cropland"] = name_indexed_ecosystems["tropical cropland"]
-    }
-    else {
-      biome_data$agroecosystem_eco["temperate_cropland"] = name_indexed_ecosystems["temperate cropland"]
-    }
-  }
+  # name_indexed_ecosystems <- fromJSON(file(biome_defaults_file))
+  # if (!is.na(res$global_pasture_num) & res$global_pasture_num > 0.01 & res$global_pasture_num < 1.0) {
+  #   if (abs(latitude) < 23.26) {
+  #     biome_data$agroecosystem_eco["tropical_pasture"] = name_indexed_ecosystems["tropical pasture"]
+  #   }
+  #   else {
+  #     biome_data$agroecosystem_eco["temperate_pasture"] = name_indexed_ecosystems["temperate pasture"]
+  #   }
+  # }
+  # if (!is.na(res$global_cropland_num) & res$global_cropland_num > 0.01 & res$global_cropland_num < 1.0) {
+  #   if (abs(latitude) < 23.26) {
+  #     biome_data$agroecosystem_eco["tropical_cropland"] = name_indexed_ecosystems["tropical cropland"]
+  #   }
+  #   else {
+  #     biome_data$agroecosystem_eco["temperate_cropland"] = name_indexed_ecosystems["temperate cropland"]
+  #   }
+  # }
   
+  name_indexed_ecosystems <- fromJSON(file(biome_defaults_file))
   ### Custom additions
   custom <- list("s000" = 0, "User defined" = "custom")
   
@@ -511,25 +536,19 @@ get_biome <- function(latitude,
     biome_data$agroecosystem_eco[["BR_sugarcane"]]$latent <- custom 
     biome_data$agroecosystem_eco[["BR_sugarcane"]]$sw_radiative_forcing <- custom 
   }
-  if (res$braz_fractional_sugarcane_num == 1 & 
-      !is.na(res$br_sugc_latent_heat_flux_diff)) {
-    biome_data$agroecosystem_eco["BR_sugarcane"] <- name_indexed_ecosystems["BR sugarcane"]
-    biome_data$agroecosystem_eco[["BR_sugarcane"]]$latent <- custom 
-    biome_data$agroecosystem_eco[["BR_sugarcane"]]$sw_radiative_forcing <- custom 
-  }
   if (!is.na(res$us_misc_latent_heat_flux_diff) == 1) {
-    biome_data$agroecosystem_eco["miscanthus"] <- name_indexed_ecosystems["BR sugarcane"]
+    biome_data$agroecosystem_eco["miscanthus"] <- name_indexed_ecosystems["miscanthus"]
     biome_data$agroecosystem_eco[["miscanthus"]]$latent <- custom 
     biome_data$agroecosystem_eco[["miscanthus"]]$sw_radiative_forcing <- custom 
-    biome_data$biofuel_eco["miscanthus"] <- name_indexed_ecosystems["BR sugarcane"]
+    biome_data$biofuel_eco["miscanthus"] <- name_indexed_ecosystems["miscanthus"]
     biome_data$biofuel_eco[["miscanthus"]]$latent <- custom 
     biome_data$biofuel_eco[["miscanthus"]]$sw_radiative_forcing <- custom 
   } 
   if (!is.na(res$us_switch_latent_heat_flux_diff) == 1) {
-    biome_data$agroecosystem_eco["switchgrass"] <- name_indexed_ecosystems["BR sugarcane"]
+    biome_data$agroecosystem_eco["switchgrass"] <- name_indexed_ecosystems["switchgrass"]
     biome_data$agroecosystem_eco[["switchgrass"]]$latent <- custom 
     biome_data$agroecosystem_eco[["switchgrass"]]$sw_radiative_forcing <- custom 
-    biome_data$biofuel_eco["switchgrass"] <- name_indexed_ecosystems["BR sugarcane"]
+    biome_data$biofuel_eco["switchgrass"] <- name_indexed_ecosystems["switchgrass"]
     biome_data$biofuel_eco[["switchgrass"]]$latent <- custom 
     biome_data$biofuel_eco[["switchgrass"]]$sw_radiative_forcing <- custom 
   } 
