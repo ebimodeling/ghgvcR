@@ -212,10 +212,25 @@ get_biome <- function(latitude,
       ncfile = "global_veg_rnet_10yr_avg.nc",
       variable = "rnet"
     ),
-    "hwsd" = list(
+    "hwsd_toc" = list(
       ncdir = "GCS/Maps/",
       ncfile = "hwsd.nc",
-      variable = "soil_code"
+      variable = "t_oc"
+    ),
+    "hwsd_trefbulk" = list(
+      ncdir = "GCS/Maps/",
+      ncfile = "hwsd.nc",
+      variable = "t_ref_bulk"
+    ),
+    "hwsd_soc" = list(
+      ncdir = "GCS/Maps/",
+      ncfile = "hwsd.nc",
+      variable = "s_oc"
+    ),
+    "hwsd_srefbulk" = list(
+      ncdir = "GCS/Maps/",
+      ncfile = "hwsd.nc",
+      variable = "s_ref_bulk"
     ),
     #Disabled per request in ruby code
     # "us_springwheat_num" = list(
@@ -328,7 +343,7 @@ get_biome <- function(latitude,
   for(i in 1:length(biome_codes)) {
     biome_code <- biome_codes[[i]]
     vegtype <- gsub("\\.", " ", vegtypes[[i]])
-    biome <- vegtype
+    biome <- gsub(" ", "_", vegtype)
     
     #Use FAO for Grass/Pasture Types
     if(biome_code %in% c("APX", "GX")) {
@@ -348,12 +363,12 @@ get_biome <- function(latitude,
     biome_default$name <- biome
     
     #Calculate OM
-    res$hwsd <- 0
+    hwsd_soc <- (res$hwsd_toc * 0.3 * res$hwsd_trefbulk + res$hwsd_soc * 0.7 * res$hwsd_srefbulk) * 10000
     if(biome == "Cropland") {
-      biome_default$OM_SOM <- 0.43*res$hwsd
+      biome_default$OM_SOM <- 0.43*hwsd_soc
     }
     else {
-      biome_default$OM_SOM <- 0.3*res$hwsd
+      biome_default$OM_SOM <- 0.3*hwsd_soc
     }
     
     #Biophysical
@@ -366,9 +381,15 @@ get_biome <- function(latitude,
     }
     
     #Set biome type
-    biome_type <- if(biome_code %in% c("AP1", "AP2", "AC1", "AC2")) {
-      "agroecosystem_eco"
-    } else { "native_eco"}
+    if(biome_code %in% c("AP1", "AP2", "AC1", "AC2")) {
+      biome_type <- "agroecosystem_eco"
+      biome_default$sw_radiative_forcing <- 0
+      biome_default$sensible <- 0
+      biome_default$latent <- 0
+    } 
+    else { 
+      biome_type <- "native_eco"
+    }
     
     #convert to numeric if possible
     #biome_default <- lapply(biome_default, str2LogicalOrNumeric)
@@ -509,48 +530,48 @@ get_biome <- function(latitude,
   
   if (!is.na(res$us_corn_num) && res$us_corn_num > 0.01) {
     biome_data$agroecosystem_eco["US_corn"] <- name_indexed_ecosystems["US corn"]
-    biome_data$agroecosystem_eco[["US_corn"]]$latent <- custom 
-    biome_data$agroecosystem_eco[["US_corn"]]$sw_radiative_forcing <- custom 
+    biome_data$agroecosystem_eco[["US_corn"]]$latent <- 0 
+    biome_data$agroecosystem_eco[["US_corn"]]$sw_radiative_forcing <- 0 
   }
   if (!is.na(res$us_soybean_num) && res$us_soybean_num > 0.01) {
     biome_data$agroecosystem_eco["soybean"] <- name_indexed_ecosystems["US soy"]
-    biome_data$agroecosystem_eco[["soybean"]]$latent <- custom 
-    biome_data$agroecosystem_eco[["soybean"]]$sw_radiative_forcing <- custom 
+    biome_data$agroecosystem_eco[["soybean"]]$latent <- 0
+    biome_data$agroecosystem_eco[["soybean"]]$sw_radiative_forcing <- 0 
   }
   if (!is.na(res$braz_sugarcane_num) & 
       res$braz_sugarcane_num > 0.01 & 
       res$braz_sugarcane_num < 110.0) {
     biome_data$agroecosystem_eco["BR_sugarcane"] <- name_indexed_ecosystems["BR sugarcane"]
-    biome_data$agroecosystem_eco[["BR_sugarcane"]]$latent <- custom 
-    biome_data$agroecosystem_eco[["BR_sugarcane"]]$sw_radiative_forcing <- custom 
+    biome_data$agroecosystem_eco[["BR_sugarcane"]]$latent <- 0 
+    biome_data$agroecosystem_eco[["BR_sugarcane"]]$sw_radiative_forcing <- 0 
   }
   if (res$braz_fractional_soybean_num == 1 & 
       !is.na(res$br_sugc_latent_heat_flux_diff)) {
     biome_data$agroecosystem_eco["BR_soy"] <- name_indexed_ecosystems["BR soy"]
-    biome_data$agroecosystem_eco[["BR_soy"]]$latent <- custom 
-    biome_data$agroecosystem_eco[["BR_soy"]]$sw_radiative_forcing <- custom 
+    biome_data$agroecosystem_eco[["BR_soy"]]$latent <- 0 
+    biome_data$agroecosystem_eco[["BR_soy"]]$sw_radiative_forcing <- 0 
   }
   if (res$braz_fractional_sugarcane_num == 1 & 
       !is.na(res$br_sugc_latent_heat_flux_diff)) {
     biome_data$agroecosystem_eco["BR_sugarcane"] <- name_indexed_ecosystems["BR sugarcane"]
-    biome_data$agroecosystem_eco[["BR_sugarcane"]]$latent <- custom 
-    biome_data$agroecosystem_eco[["BR_sugarcane"]]$sw_radiative_forcing <- custom 
+    biome_data$agroecosystem_eco[["BR_sugarcane"]]$latent <- 0 
+    biome_data$agroecosystem_eco[["BR_sugarcane"]]$sw_radiative_forcing <- 0 
   }
   if (!is.na(res$us_misc_latent_heat_flux_diff) == 1) {
     biome_data$agroecosystem_eco["miscanthus"] <- name_indexed_ecosystems["miscanthus"]
-    biome_data$agroecosystem_eco[["miscanthus"]]$latent <- custom 
-    biome_data$agroecosystem_eco[["miscanthus"]]$sw_radiative_forcing <- custom 
+    biome_data$agroecosystem_eco[["miscanthus"]]$latent <- 0 
+    biome_data$agroecosystem_eco[["miscanthus"]]$sw_radiative_forcing <- 0 
     biome_data$biofuel_eco["miscanthus"] <- name_indexed_ecosystems["miscanthus"]
-    biome_data$biofuel_eco[["miscanthus"]]$latent <- custom 
-    biome_data$biofuel_eco[["miscanthus"]]$sw_radiative_forcing <- custom 
+    biome_data$biofuel_eco[["miscanthus"]]$latent <- 0 
+    biome_data$biofuel_eco[["miscanthus"]]$sw_radiative_forcing <- 0 
   } 
   if (!is.na(res$us_switch_latent_heat_flux_diff) == 1) {
     biome_data$agroecosystem_eco["switchgrass"] <- name_indexed_ecosystems["switchgrass"]
-    biome_data$agroecosystem_eco[["switchgrass"]]$latent <- custom 
-    biome_data$agroecosystem_eco[["switchgrass"]]$sw_radiative_forcing <- custom 
+    biome_data$agroecosystem_eco[["switchgrass"]]$latent <- 0 
+    biome_data$agroecosystem_eco[["switchgrass"]]$sw_radiative_forcing <- 0 
     biome_data$biofuel_eco["switchgrass"] <- name_indexed_ecosystems["switchgrass"]
-    biome_data$biofuel_eco[["switchgrass"]]$latent <- custom 
-    biome_data$biofuel_eco[["switchgrass"]]$sw_radiative_forcing <- custom 
+    biome_data$biofuel_eco[["switchgrass"]]$latent <- 0 
+    biome_data$biofuel_eco[["switchgrass"]]$sw_radiative_forcing <- 0 
   } 
  
   # Set OM_SOM to 0
@@ -566,8 +587,8 @@ get_biome <- function(latitude,
                          "temperate_cropland", 
                          "tropical_pasture", 
                          "tropical_cropland")) {
-        biome_data[[n]][[eco]]$sw_radiative_forcing <- custom
-        biome_data[[n]][[eco]]$latent <- custom
+        biome_data[[n]][[eco]]$sw_radiative_forcing <- 0
+        biome_data[[n]][[eco]]$latent <- 0
       }
     }
   }

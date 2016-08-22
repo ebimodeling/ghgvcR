@@ -104,7 +104,6 @@ extract_pool_params <- function(ecosystem) {
 #' @param res a json object containing results from \code{ghgvc()}.
 #' @return a data frame of ghgvc results.
 json2DF <- function(json) {
-  print(json)
   json_list <- fromJSON(json)
   col_names <- names(json_list[[1]][[1]])
   
@@ -122,7 +121,8 @@ json2DF <- function(json) {
   for(i in 1:length(d)) {
     r1 <- d[[i]]
     r1$Location <- length(d) + 1 - i
-    r1[r1 == "NaN"] <- NA
+    r1[r1 == "NaN"] <- 0
+    r1[is.na(r1)] <- 0
     outdf <- rbind(outdf, r1[c(ncols+1, 1:ncols)])
   }
   
@@ -192,6 +192,7 @@ str2LogicalOrNumeric <- function(string) {
   if (grepl("TRUE|FALSE", string)) x <- as.logical(string)
   else if (!grepl("[a-zA-Z]", string)) x <- as.numeric(string)
   else x <- string
+  if(x == "null") { x <- 0 }
   x
 }
 
