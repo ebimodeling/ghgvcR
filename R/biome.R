@@ -17,6 +17,7 @@ get_biome <- function(latitude,
                       longitude,
                       biome_defaults_file,
                       netcdf_dir,
+                      mapdata_dir,
                       output_dir, 
                       output_filename = "biome",
                       output_format = c("json", "cvs"),
@@ -275,10 +276,13 @@ get_biome <- function(latitude,
     res$br_bare_sugc_net_radiation_num 
   
   ###### Get the appropriate biome (new method)
-  data(fao_biomes)
-  data(map_vegtypes)
-  data(koppen_biomes)
-  vegtype_names <- names(map_vegtypes)[4:15]
+  #read in the map data
+  map_vegtypes <- read.csv(paste0(mapdata_dir, "map_vegtypes.csv"), stringsAsFactors = FALSE) 
+  koppen_biomes <- read.csv(paste0(mapdata_dir, "koppen_biomes.csv"), stringsAsFactors = FALSE) 
+  fao_biomes <- read.csv(paste0(mapdata_dir, "fao_biomes.csv"), stringsAsFactors = FALSE) 
+  biome_defaults <- read.csv(paste0(mapdata_dir, "biome_defaults.csv"), stringsAsFactors = FALSE) 
+  
+  vegtype_names <- names(map_vegtypes)[4:14]
   
   #Get vegtypes based on map values
   synmap_vegtypes <- subset(map_vegtypes, Value == res$synmap & Map == "SYNMAP")
@@ -286,18 +290,18 @@ get_biome <- function(latitude,
   fao_vegtypes <- subset(map_vegtypes, Value == tolower(res$fao) & Map == "FAO")
   ibis_vegtypes <- subset(map_vegtypes, Value == res$ibis & Map == "IBIS")
   
+  #print(synmap_vegtypes)
+  #print(koppen_vegtypes)
+  
   koppen_code <- koppen_vegtypes$Category
   synmap_category <- synmap_vegtypes$Category
   
   # 1. get vegtypes for each map
   vegtypes <- vegtype_names[as.logical(array(synmap_vegtypes[4:14]))]
   biome_codes <- subset(koppen_biomes, Zone == koppen_code)[vegtypes]
-  
+  print(biome_codes)
   
   ### GET BIOME DATA
-  # Load biome default data
-  data(biome_defaults)
-  
   biome_data <- list(
     "native_eco" = list(),
     "agroecosystem_eco" = list()
@@ -308,7 +312,7 @@ get_biome <- function(latitude,
   #"Overview of biomes mapping & assignment of default values.docx"
   for(i in 1:length(biome_codes)) {
     biome_code <- biome_codes[[i]]
-    biome <- vegtypes[[i]]
+    biome <- gsub("\\.", " ", vegtypes[[i]])
     
     #Use FAO for Grass/Pasture Types
     if(biome_code %in% c("APX", "GX")) {
@@ -350,11 +354,11 @@ get_biome <- function(latitude,
   ### ADD "OTHER" biomes if needed
   # TODO - note that in this line:
   # vegtypes <- vegtype_names[as.logical(array(synmap_vegtypes[4:14]))]
-  # from above we exclude column 14 (ending on 13). Col 15 is "Other", for which
+  # from above we exclude column 15 (ending on 14). Col 15 is "Other", for which
   # we have no data and the above loop breaks. Rather than testing each iteration
   # in the loop for other, just exclude it and do any custom other data assignment
   # here.
-  
+  # if(synmap_vegtypes$Other == 1) { stuff here... }
   
   ############ Here we set the additional logic threshold levels ############
   # if(is.na(res$biome_num) || res$biome_num == "") {
