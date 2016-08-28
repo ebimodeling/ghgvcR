@@ -326,7 +326,6 @@ get_biome <- function(latitude,
   ibis_vegtypes <- vegtype_names[as.logical(array(ibis_vegtypes_df[4:14]))]
   #ramankutty_vegtypes <- vegtype_names[as.logical(array(ramankutty_vegtypes_df[4:14]))]
   vegtypes <- na.omit(unique(c(synmap_vegtypes, koppen_vegtypes, fao_vegtypes, ibis_vegtypes)))
-  print(vegtypes)
   # vegtypes <- unique(c(synmap_vegtypes, koppen_vegtypes, fao_vegtypes, 
   #                      ibis_vegtypes, ramankutty_vegtypes))
   biome_codes <- subset(koppen_biomes, Zone == koppen_code)[vegtypes]
@@ -363,7 +362,8 @@ get_biome <- function(latitude,
     biome_default$name <- biome
     
     #Calculate OM
-    hwsd_soc <- (res$hwsd_toc * 0.3 * res$hwsd_trefbulk + res$hwsd_soc * 0.7 * res$hwsd_srefbulk) * 10000
+    hwsd_soc <- ((res$hwsd_toc/100) * 0.3 * res$hwsd_trefbulk + 
+                   (res$hwsd_soc/100) * 0.7 * res$hwsd_srefbulk) * 10000
     if(biome == "Cropland") {
       biome_default$OM_SOM <- 0.43*hwsd_soc
     }
@@ -371,12 +371,20 @@ get_biome <- function(latitude,
       biome_default$OM_SOM <- 0.3*hwsd_soc
     }
     
-    #Biophysical
-    ibis_vegtypes <- rep(0, length(vegtypes)) #REMOVE ONCE WE HAVE IBIS VALUES
-    if(ibis_vegtypes[[i]] == 1) {
-      biome_default$biophysical_net <- biome_default$latent + biome_default+sensible 
-    }
+    #SW Radiative Forcing
+    ### Biophysical
+    # If ibis_vegtypes is the same length as synmap_vegtypes, so for that vegtype
+    # 
+    if(vegtypes[[i]] %in% ibis_vegtypes) {
+      biome_default$sw_radiative_forcing <- (res$global_potVeg_rnet_num - 
+                                               res$global_bare_net_radiation_num) / 51007200000*1000000000
+      biome_default$latent <- (res$global_potVeg_latent_num - 
+                                 res$global_bare_latent_heat_flux_num) / 51007200000*1000000000
+      biome_default$biophysical_net <- biome_default$latent 
+    } 
     else {
+      biome_default$sw_radiative_forcing <- 0
+      biome_default$latent <- 0
       biome_default$biophysical_net <- 0
     }
     
@@ -384,7 +392,6 @@ get_biome <- function(latitude,
     if(biome_code %in% c("AP1", "AP2", "AC1", "AC2")) {
       biome_type <- "agroecosystem_eco"
       biome_default$sw_radiative_forcing <- 0
-      biome_default$sensible <- 0
       biome_default$latent <- 0
     } 
     else { 

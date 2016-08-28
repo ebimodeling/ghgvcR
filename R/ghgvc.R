@@ -114,7 +114,6 @@ ghgvc <- function(config,
       #Biophysical
       sw_radiative_forcing <- ecosystem_data$sw_radiative_forcing
       latent_cooling <- ecosystem_data$latent
-      sensible_heat <- ecosystem_data$sensible
       biophysical_net <- ecosystem_data$biophysical_net
       
       sw_radiative_flux <- rep(biophysical_net, num_years_analysis)
