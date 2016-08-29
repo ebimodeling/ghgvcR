@@ -219,10 +219,16 @@ ghgvc <- function(config,
       
       #Radiative flux and final calculations
       res <- as.vector(apply(clearing, MARGIN=c(2,3), sum) * ghg_radiative_efficiency) / cRF_Cpulse[100]
-      names(res) <- c("S_CO2", "S_CH4", "S_N2O", 
+      out_names <- c("S_CO2", "S_CH4", "S_N2O", 
                       "F_CO2", "F_CH4", "F_N2O", 
                       "D_CO2", "D_CH4", "D_N2O")
-      
+      names(res) <- out_names
+     
+      #Why these aren't calculated above we don't know...
+      res[7] <- res["S_CO2"] + res["F_CO2"]
+      res[8] <- res["S_CH4"] + res["F_CH4"]
+      res[9] <- res["S_N2O"] + res["F_N2O"]
+       
       storage_group = sum(res[1:3])
       flux_group = sum(res[4:6])
 
@@ -282,7 +288,7 @@ ghgvc <- function(config,
   }
   
   if(make_plots == TRUE) {
-    plot_ghgv(json2DF(out_json), output_dir = output_dir)
+    p <- plot_ghgv(json2DF(out_json), output_dir = output_dir)
   }
 
   return(out)

@@ -1,0 +1,22 @@
+library("ghgvcr")
+library("jsonlite")
+context("test that plots work without generating errors.")
+
+test_that("plots are generated without errors", {
+  config_file <- system.file("multisite_config2.xml", package = "ghgvcr")
+  if (!file.exists(config_file)) config_file <- "/opt/ghgvc/ghgvcR/inst/config/multisite_config2.xml"
+  
+  config <- XML::xmlToList(XML::xmlParse(config_file))  
+  
+  #Calculator
+  y <- ghgvc(config, write_data = FALSE, make_plots = FALSE)
+
+  plot_data <- json2DF(toJSON(y))
+  
+  p <- plot_ghgv(plot_data, save=FALSE)
+  grid.arrange(p)
+  expect_is(p, c('gtable', 'grob', 'gDesc'))
+})
+  
+
+

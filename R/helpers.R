@@ -197,7 +197,28 @@ str2LogicalOrNumeric <- function(string) {
 }
 
 
-
+#' Determine factor order of a vegtype.
+#' 
+#' Provides an integer used to order biomes by vegtype.
+#' 
+#' @param vegtypes (character list) list or array of vegtype names.
+#' @return (integer list) order factor.
+vegtype_order <- function(vegtypes) {
+  output <- c()
+  for(i in 1:length(vegtypes)) {
+    vegtype <- vegtypes[[i]]
+    print(vegtype)
+    if(grepl("Forest", vegtype)) res <- 1
+    else if(vegtype == "Savanna") res <- 2
+    else if(vegtype == "Shrub") res <- 3
+    else if(vegtype == "Grass") res <- 4
+    else if(vegtype == "Grass") res <- 5
+    else if(vegtype %in% c("Grassland Pasture", "Cropland", "Soybean", "Sugarcane", "Maize")) res <- 6
+    else res <- NA
+    output[i] <- res
+  }
+  output
+}
 
 
 

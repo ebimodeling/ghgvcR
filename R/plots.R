@@ -19,20 +19,20 @@ plot_ghgv <- function(df, output_dir,
                       save = TRUE, 
                       savefile = "output.svg") {
 
-  if (missing(output_dir) && save == TRUE) stop("output_dir must be specified if save is TRUE.")
-  print(df)
+  if (missing(output_dir) && save == TRUE) warning("output_dir must be specified if save is TRUE.")
+  
   #Format data for plotting
-  print(df)
   plotdata <- data.frame(
     Biome = capitalize(paste(gsub("_", " ", gsub("BR", "Brazil", df$Biome)),
                              "Site",
                              df$Location)),
+    Location = df$Location,
+    Order = vegtype_order(df$Biome),
     Storage = rowSums(df[,grepl("S_", colnames(df))], na.rm = TRUE),
     Ongoing_Exchange = rowSums(df[,grepl("F_", colnames(df))], na.rm = TRUE),
     Rnet = df$swRFV,
     LE = df$latent)
 
-  print(plotdata)
   #Create sums
   plotdata$CRV_BGC <- plotdata$Storage + plotdata$Ongoing_Exchange
   plotdata$CRV_BIOPHYS <- plotdata$Rnet + plotdata$LE
@@ -43,13 +43,18 @@ plot_ghgv <- function(df, output_dir,
   plotdata$CRV_BGC[plotdata$CRV_NET == 0] <- 0
   plotdata$CRV_BIOPHYS[plotdata$CRV_NET == 0] <- 0
   plotdata$CRV_NET[plotdata$CRV_NET == 0] <- NA
+  
+  #Don't plot CRV_NET if BIOPHYS is 0, and 
+  #Don't plot CRV_BGC if Ongoing_Exchange is 0
+  plotdata$CRV_NET[plotdata$CRV_BIOPHYS == 0] <- NA
+  plotdata$CRV_BGC[plotdata$Ongoing_Exchange == 0] <- NA
 
   ## Build data for subplots
-  longdata <- gather(plotdata, variable, value, -Biome)
-  longdata <- longdata[order(longdata$Biome, decreasing = TRUE), ]
+  longdata <- gather(plotdata, variable, value, -Biome, -Location, -Order)
+  longdata <- longdata[order(longdata$Location, longdata$Order, decreasing = FALSE), ]
   longdata$label <- gsub(" Site", "\nSite", longdata$Biome)
+  longdata$Biome <- factor(longdata$Biome, ordered = TRUE)
   
-  print(longdata)
   #baseplot for use in grid plots
   baseplot <- ggplot(data = plotdata) + 
     geom_hline(aes(yintercept = 0)) +      #horizontal line
@@ -80,7 +85,7 @@ plot_ghgv <- function(df, output_dir,
                                 baseplot = baseplot) 
   biophys_plot <- biophys_plot + 
                  scale_fill_manual(values = brewer_pal(pal = "Blues")(6)[c(4,6)], 
-                                   labels = c(expression("LE", "R"["net"]))) + 
+                                   labels = c(expression("Latent Heat Flux", "Net Radiation"))) + 
                  labs(fill = "") + 
                  ggtitle("Biophysical")
   
@@ -89,28 +94,39 @@ plot_ghgv <- function(df, output_dir,
                             data = longdata,
                             baseplot = baseplot) 
   crv_plot <- crv_plot +
-             scale_fill_manual(values= c(brewer_pal(pal = "Greens")(6)[5], 
-                                         brewer_pal(pal = "Blues")(6)[5]), 
-                               labels = c("Biogeochemical", "Biophysical")) + 
-             labs(fill = "") +
-             geom_point(data = subset(longdata, variable == "CRV_NET"), 
-                        aes(x = Biome, y = value)) +
-             ggtitle("Climate Regulating Value")
+    scale_fill_manual(values= c(brewer_pal(pal = "Greens")(6)[5], 
+                                brewer_pal(pal = "Blues")(6)[5]), 
+                      labels = c("Biogeochemical", "Biophysical")) + 
+    labs(fill = "") +
+    ggtitle("Climate Regulating Value")
+  
+  #Add the net CRV point only if there is biophysical
+  crv_plot <- crv_plot +
+    geom_point(data = subset(longdata, variable == "CRV_NET"), 
+               aes(x = Biome, y = value))
 
   #Create the x label
   xlabels <- as.expression(bquote(paste("CO"[2], " Emission Equivalents (Mg CO"[2],"-eq ha"^{-1}, " ", .(years)," yrs"^{-1},")")))
- 
+  
+  final_plot <- arrangeGrob(bgc_plot, 
+                             biophys_plot, 
+                             crv_plot, 
+                             ncol = 3, 
+                             widths = c(2,1,1),
+                             sub = textGrob(xlabels, 
+                                            x = unit(1, "npc"), 
+                                            y = unit(.9, "npc"),
+                                            just = c("centre", "bottom")))
   if(save) {
     #Create the SVG Plot image
     svg(filename=file.path(output_dir, savefile), width = 10, height = 2.5 + 1.5*nrow(plotdata))
-    
-    #Create the gridded plot image
-    grid.arrange(bgc_plot, 
-                 biophys_plot, 
-                 crv_plot, 
-                 ncol = 3, 
-                 widths = c(2,1,1),
-                 sub = textGrob(xlabels, hjust = 0.2))
+    # final_plot <- grid.arrange(bgc_plot, 
+    #                            biophys_plot, 
+    #                            crv_plot, 
+    #                            ncol = 3, 
+    #                            widths = c(2,1,1),
+    #                            textGrob(xlabels, just = c("centre", "bottom")))
+      grid.arrange(final_plot)
     dev.off()
     
     #Fix to remove overflow
@@ -118,8 +134,8 @@ plot_ghgv <- function(df, output_dir,
                        file.path(output_dir, savefile))
     system(svgfixcmd)
     #sub = annotate("text", x = 2, y = 0.3, parse = T, label = xlabels)))
-  } 
-  
+  }
+  final_plot
 }
 
 #' Plot ghgcv subplot.

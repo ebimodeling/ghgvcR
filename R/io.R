@@ -16,6 +16,7 @@ write_ghgv <- function(json, output_dir, filename="ghgv", format=c("json", "csv"
   #CSV
   if ("csv" %in% formats) {
     outdf <- json2DF(json)
+    outdf[outdf == 0] <- NA
     write.csv(outdf, file.path(output_dir, paste0(filename,".csv")), row.names = FALSE)
   }
 }
