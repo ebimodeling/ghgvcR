@@ -400,7 +400,7 @@ get_biome <- function(latitude,
     
     ### Various fixes
     # naming
-    if(biome == "Pasture") biome <- "Grassland Pasture"
+    if(biome == "Pasture") biome <- "Grassland_Pasture"
     
     # add synmap flag
     biome_default$in_synmap <- (vegtypes[[i]] %in% synmap_vegtypes)
