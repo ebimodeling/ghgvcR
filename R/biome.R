@@ -348,7 +348,7 @@ get_biome <- function(latitude,
     if(biome_code %in% c("APX", "GX")) {
       biome_code <- subset(fao_biomes, CODE == tolower(res$fao))[[biome_code]]
     }
-      
+     
     #biome default data, depending on above selected code
     biome_default <- as.list(as.character(biome_defaults[[biome_code]])) #values
 

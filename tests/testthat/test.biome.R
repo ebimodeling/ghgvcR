@@ -1,8 +1,6 @@
 library("ghgvcr")
 context("testing biome functions.")
 
-data(biome_defaults)
-
 test_that("remap_range() returns correct values.", {
   #test data
   expect_equal(remap_range(45, -45, 45, 0, 90), 90)
@@ -14,8 +12,8 @@ test_that("remap_range() returns correct values.", {
 
 test_that("get_biome() correctly reads values from biome ncdf4 files.", {
   
-  latitude <- -15
-  longitude <- -51
+  latitude <- 31
+  longitude <- 121
   
   #paths
   netcdf_dir <- "/run/media/potterzot/zfire1/work/ebimodeling/netcdf/"
