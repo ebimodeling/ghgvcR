@@ -262,6 +262,36 @@ get_biome <- function(latitude,
       ncdir = "GCS/Maps/",
       ncfile = "vegtype.nc",
       variable = "vegtype"
+    ),
+    "IPCC_AGB__Mg_ha" = list(
+      ncdir = "",
+      ncfile = "IPCC_AGB__Mg_ha.nc",
+      variable = "ipcc"
+    ),
+    "NACP_FI_AGB_US" = list(
+      ncdir = "",
+      ncfile = "NACP_FI_AGB_US.nc",
+      variable = "biomass"
+    ),
+    "NACP_LiDAR_Boreal_AGB" = list(
+      ncdir = "",
+      ncfile = "NACP_LiDAR_Boreal_AGB.nc",
+      variable = "AGB_Mg_ha"
+    ),
+    "US_Forest biomass data" = list(
+      ncdir = "",
+      ncfile = "US Forest biomass data.nc",
+      variable = "biomass"
+    ),
+    "LiDAR_AGB_Boreal_Eurasia" = list(
+      ncdir = "",
+      ncfile = "LiDAR_AGB_Boreal_Eurasia.nc",
+      variable = "ACG_Mg_ha"
+    ),
+    "SOC" = list(
+    ncdir = "",
+    ncfile = "SOC.nc",
+    variable = "soc"
     )
   )
   
@@ -369,6 +399,12 @@ get_biome <- function(latitude,
     }
     else {
       biome_default$OM_SOM <- 0.3*hwsd_soc
+      biome_default$IPCC_AGB_Mg_ha <- res$IPCC_AGB_Mg_ha
+      biome_default$NACP_FI_AGB_US <- res$NACP_FI_AGB_US * 0.1736111111
+      biome_default$NACP_LiDAR_Boreal_AGB <- res$NACP_LiDAR_Boreal_AGB
+      biome_default$US_Forest biomass data <- res$US_Forest biomass data * 2.241244
+      biome_default$LiDAR_AGB_Boreal_Eurasia <- res$LiDAR_AGB_Boreal_Eurasia
+      biome_default$SOC <- res$SOC * 17.2413793103448
     }
     
     #SW Radiative Forcing
