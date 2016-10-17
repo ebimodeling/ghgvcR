@@ -1,0 +1,85 @@
+---
+title: "Getting Started with GHGVCR"
+author: "Nicholas Potter"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting Started with GHGVCR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The Greenhouse Gas Value Calculator ([GHGVC](http://www.ecosystemservicescalc.org/)) uses the `ghgvcR` package to calculate greenhouse gas emissions. GHGVC can be installed at [https://github.com/ebimodeling/ghgvc](https://github.com/ebimodeling/ghgvc).
+
+Citation: Kristina J. Teixeira and Evan H. Delucia 2011. The greenhouse gas value of ecosystems. Global Change Biology. 17(1):425438 doi: 10.1111/j.1365-2486.2010.02220.x
+
+####Overview
+`ghgvcR` has two principal functions:
+
+1. `get_ncdf()` reads in netcdf biome data.
+2. `ghgvcr()` calculates the greenhouse gas emissions of a specific ecosystem. 
+
+These functions are implemented in two scripts in the `inst/scripts` directory of the `ghgvcR` package: `get_biome.R` and `calc_ghgv.R`. `get_biome.R` is used by GHGVC to load biome data from netcdf4 files. `calc_ghgv.R` is used by GHGVC to calculate greenhouse gas emissions and write the results to a json file.
+
+####Quick Example
+Several example ecosystem data files are kept in `inst/config_examples/`. These can be used in place of biome data to run the calculator entirely within R:
+
+```{r}
+library(ghgvcr)
+
+#load example config data
+config_file <- system.file("config/multisite_config.xml", package = "ghgvcr")
+config <- XML::xmlToList(XML::xmlParse(config_file))  
+
+#Calculate 
+res <- ghgvc(config, write_data=FALSE, make_plots=FALSE)
+
+#Write the data to a file:
+#outdir <- "./"
+#write_json(res, outdir, filename = "ghgvc_example", format="json")
+```
+
+`ghgvcR` can also plot the greenhouse gas values that are returned by `ghgvc()`:
+
+``` {r, fig.show='hold'}
+df <- as.data.frame(res$site_1_data)
+#p <- ghgvc_plot(df, save = FALSE)
+#p
+
+```
+
+####Biome Example 
+The same calculation can be done for a specific location if biome data is available.
+
+```{r eval=FALSE}
+#NOT RUN 
+library(ghgvcr)
+data(biome_defaults)
+
+#Example location
+latitude <- 40.18
+longitude <- -89.82
+
+#paths
+netcdf_dir <- "<data directory>"
+
+#Load the biome data for that location
+biome <- get_biome(latitude, longitude, netcdf_dir, biome_defaults, write_data = FALSE)
+head(biome)
+
+#Calculate GHGV
+#res <- ghgvc(biome)
+```
+
+####Working with GHGVC
+`ghgvcR` works in concert with `ghgvc` through the `ghgvcR` scripts. This requires a certain amount of configuration. Once `ghgvc` is set up correctly, the following settings must be configured in `app/workflows_controller.rb`:
+
+**Where to find the `ghgvcR` scripts**
+`ghgvcR_scripts_path` needs to be set. In development this is currently "<ghgvcR repository directory>/inst/scripts". In production, it may be better to place the scripts directory within the `ghgvc` app itself (e.g. "<ghgvc directory>/ghgvcR/").
+
+**Where the netcdf data is stored**
+By default the netcdf data is stored at "<ghgvc directory>/netcdf/".
+
+**Where the name-indexed ecosystem json file is stored**
+By default this is "<ghgvc directory>/public/data/final_ecosystems.json".
+
