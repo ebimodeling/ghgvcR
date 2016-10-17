@@ -11,7 +11,7 @@ Citation: Kristina J. Teixeira and Evan H. Delucia 2011. The greenhouse gas valu
 
 ### Inputs
 
-* `inst/config.xml` example input file
+* `inst/config/config.xml` example input file
 * `inst/extdata/ghgvc1.Rdata` all objects used and provided by ghgvc 1.0
 * `inputs.Rdata` example of inputs as R objects for ghgvcr example (below)
 * `inst/extdata/multipft_input.xml`
@@ -27,7 +27,7 @@ produced by example below:
 
 The bash and R code snippets below install dependencies, and only need to be run once. 
 
-```{r eval=FALSE}
+```sh
 sudo apt-get install git
 sudo apt-get install libcurl4-openssl-dev # dependency of Rcurl, 
 
@@ -36,97 +36,39 @@ git clone https://github.com/dlebauer/ghgvcR.git ghgvcR
 R 
 ```
 
-```{r eval = FALSE, include=TRUE}
-install.packages(c("devtools", "roxygen2"), 
-                 repos= "http://cran.us.r-project.org")
-library(devtools)
-install(ghgvcr)
-install(pecan/utils)
+```{r include = TRUE, message = FALSE}
+library(ghgvcr)
+library(XML)
+library(jsonlite)
+options(warn=FALSE)
+
 ```
 
 ### Example of how to run the calculator
 
 * This can be run at the command line: `./src/ghgvc_script.R`
 
-```{r echo = FALSE, message=FALSE}
-library(ghgvcr)
-```
-
 ```{r results='hide', comment=NA, warning=FALSE}
 
-options(warn=FALSE)
-#test("../ghgvcR")
-#example(ghgvcr)
+config_file <- system.file("config/config.xml", package = "ghgvcr")
 
+config <- xmlToList(xmlParse(config_file, validate=F))  
 
-## the following is equivalent to 
-config.xml <- system.file("config.xml", package = "ghgvcr")
-config.list <- xmlToList(xmlParse(config.xml))
-ecosystem_data <- config.list$ecosystem_data
+#Calculator
+ghgvc_output <- ghgvc(config, , make_plots = FALSE, write_data = FALSE)
 
-x <- ghgvcr::ghgvc(options = config.list$options,
-                   ecosystem_data = config.list$ecosystem_data)
+ghgvc_output.json <- toJSON(ghgvc_output)
 
-
-writeLines(x, "inst/extdata/output.json")
-write.csv(as.data.frame(fromJSON(x)), "inst/extdata/output.csv")
 
 ```
 
 ```{r results='hide', comment=NA, warning=FALSE}
-multisite_config.xml <- system.file("multisite_config.xml", package = "ghgvcr")
-multipft_config.list <- xmlToList(xmlParse(multipft_config.xml))
+multisite_config.xml <- system.file("config/multisite_config.xml", package = "ghgvcr")
+multipft_config.list <- xmlToList(xmlParse(multisite_config.xml))
 
-x2 <- ghgvcr::ghgvc2(multipft_config.list)
+x2 <- ghgvc(multipft_config.list, make_plots = FALSE, write_data = FALSE)
 
 writeLines(x2, "inst/extdata/multipft_output.json")
 write.csv(as.data.frame(fromJSON(x2)), "inst/extdata/multipft_output.csv")
-
-```
-
-### Plots:
-
-```{r results='hide', comment=NA, warning=FALSE}
-library(ggplot2)
-# number of ecosystems:
-n.ecosystems <- length(names(ecosystem_data)) 
-for(i in 1:n.ecosystems){
-  result  <- ecosystem_data[[i]]
-  ecosystem.name <- result$name
-  if(i == 1){
-    result.df <- as.data.frame(result)
-    
-    } else {
-      result.df <- rbind(result.df, as.data.frame(result))      
-    }
-  rownames(result.df)[i] <- gsub(" ", "", ecosystem.name)
-}
-
-# identify cols with numbers
-result.num <- suppressWarnings(as.numeric(result))
-num.logical <- !(is.na(result.num) | result.num == -9999)
-result.df <- result.df[,!(result.num == -9999 | is.na(result.num))]
-
-# transpose data.frame for plotting:
-result.tdf <- cbind(variable = names(result.df),
-                    as.data.frame(t(result.df)))
-
-forcings.index <- grepl("F", names(result.df))
-forcings.names <- names(result.df)[forcings.index]
-
-
-forcings <- result.tdf[forcings.index,]
-forcings.long <- melt(forcings, id.vars= "variable")
-colnames(forcings.long) <- c("variable", "ecosystem", "value")
-
-
-```
-
-
-```{r  fig.width=10, fig.height=4}
-ggplot(data = forcings.long, 
-       aes(x = variable, y = value, fill = ecosystem)) + 
-  geom_bar(position="dodge", stat = "identity") + ggtitle(label="Example plot: values of F for two ecosystems") + 
-  xlab("Variable") + ylab("Units of F") + coord_flip()
 
 ```
