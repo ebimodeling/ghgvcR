@@ -265,7 +265,7 @@ get_biome <- function(latitude,
     ),
     "IPCC_AGB__Mg_ha" = list(
       ncdir = "",
-      ncfile = "IPCC_AGB__Mg_ha.nc",
+      ncfile = "IPCC_AGB_Mg_ha.nc",
       variable = "ipcc"
     ),
     "NACP_FI_AGB_US" = list(
@@ -280,7 +280,7 @@ get_biome <- function(latitude,
     ),
     "US_Forest biomass data" = list(
       ncdir = "",
-      ncfile = "US Forest biomass data.nc",
+      ncfile = "US_Forest_biomass_data.nc",
       variable = "biomass"
     ),
     "LiDAR_AGB_Boreal_Eurasia" = list(
@@ -402,7 +402,7 @@ get_biome <- function(latitude,
       biome_default$IPCC_AGB_Mg_ha <- res$IPCC_AGB_Mg_ha
       biome_default$NACP_FI_AGB_US <- res$NACP_FI_AGB_US * 0.1736111111
       biome_default$NACP_LiDAR_Boreal_AGB <- res$NACP_LiDAR_Boreal_AGB
-      biome_default$US_Forest biomass data <- res$US_Forest biomass data * 2.241244
+      biome_default$US_Forest_biomass_data <- res$US_Forest_biomass_data * 2.241244
       biome_default$LiDAR_AGB_Boreal_Eurasia <- res$LiDAR_AGB_Boreal_Eurasia
       biome_default$SOC <- res$SOC * 17.2413793103448
     }
