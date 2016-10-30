@@ -100,6 +100,7 @@ extract_pool_params <- function(ecosystem) {
 #' Convert GHGVC json results to data.frame.
 #' 
 #' @importFrom jsonlite fromJSON
+#' @export
 #' 
 #' @param res a json object containing results from \code{ghgvc()}.
 #' @return a data frame of ghgvc results.

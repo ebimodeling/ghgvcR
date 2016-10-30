@@ -6,12 +6,9 @@
 #'
 #' @format A data frame with 53940 rows and 10 variables:
 #' \describe{
-#'   \item{price}{price, in US dollars}
-#'   \item{carat}{weight of the diamond, in carats}
-#'   ...
 #' }
-#' @source \url{http://www.diamondse.info/}
-"biome_defaults"
+#' @source \url{?}
+#"biome_defaults"
 
 #' FAO Biomes. 
 #' 
@@ -24,7 +21,7 @@
 #'   \item{APX}{Pasture biome code.}
 #' }
 #' @source \url{?}
-"fao_biomes"
+#"fao_biomes"
 
 #' Koppen-Geiger Climate Zones and Biome Codes.
 #' 
@@ -37,7 +34,7 @@
 #'   \item{Zone}{Climate zone.}
 #'   \item{...}{Vegetation types.}
 #' }
-"koppen_biomes"
+#"koppen_biomes"
 
 #' Vegetation types by map value.
 #' 
@@ -50,4 +47,4 @@
 #'   \item{Category}{Vegetation type category}
 #'   \item{...}{Vegetation types (int).}
 #' }
-"map_vegtypes"
+#"map_vegtypes"
