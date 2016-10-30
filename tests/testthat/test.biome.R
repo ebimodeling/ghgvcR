@@ -22,7 +22,7 @@ test_that("get_biome() correctly reads values from biome ncdf4 files.", {
   mapdata_dir <- "inst/extdata/"
   
   #Load the biome data for that location
-  biome <- get_biome(latitude, longitude, biome_defaults_file, 
+  biome <- ghgvcr::get_biome(latitude, longitude, biome_defaults_file, 
                      netcdf_dir, mapdata_dir, 
                      write_data = FALSE)
 

@@ -283,15 +283,15 @@ get_biome <- function(latitude,
       ncfile = "US_Forest_biomass_data.nc",
       variable = "biomass"
     ),
-    "LiDAR_AGB_Boreal_Eurasia" = list(
-      ncdir = "",
-      ncfile = "LiDAR_AGB_Boreal_Eurasia.nc",
-      variable = "AGB_Mg_ha"
-    ),
     "SOC" = list(
       ncdir = "",
       ncfile = "SOC.nc",
       variable = "soc"
+    ),
+    "LiDAR_AGB_Boreal_Eurasia" = list(
+      ncdir = "",
+      ncfile = "LiDAR_AGB_Boreal_Eurasia.nc",
+      variable = "AGB_Mg_ha"
     )
   )
   
