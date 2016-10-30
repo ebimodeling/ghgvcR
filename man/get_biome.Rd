@@ -5,8 +5,8 @@
 \title{Get biome data from netcdf and json files and return and/or write a config 
 file.}
 \usage{
-get_biome(latitude, longitude, netcdf_dir, biome_defaults_file, output_dir,
-  output_filename = "biome", output_format = c("json", "cvs"),
+get_biome(latitude, longitude, biome_defaults_file, netcdf_dir, mapdata_dir,
+  output_dir, output_filename = "biome", output_format = c("json", "cvs"),
   write_data = TRUE)
 }
 \arguments{
@@ -14,9 +14,9 @@ get_biome(latitude, longitude, netcdf_dir, biome_defaults_file, output_dir,
 
 \item{longitude}{the selected longitude.}
 
-\item{netcdf_dir}{full path to the directory containing the netcdf data files.}
-
 \item{biome_defaults_file}{full path of the name-indexed ecosystem json file.}
+
+\item{netcdf_dir}{full path to the directory containing the netcdf data files.}
 
 \item{output_dir}{full path of the directory to write results to.}
 

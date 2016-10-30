@@ -1,4 +1,6 @@
 library("ghgvcr")
+library("ggplot2")
+library("gridExtra")
 library("jsonlite")
 context("test that plots work without generating errors.")
 
