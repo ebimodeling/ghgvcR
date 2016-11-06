@@ -442,7 +442,13 @@ get_biome <- function(latitude,
     biome_default$in_synmap <- (vegtypes[[i]] %in% synmap_vegtypes)
     
     ### Add to our list of biome data
-    biome_data[[biome_type]][[biome]] <- biome_default
+    # Add to the list of exclusions here if needed. If all exclusions don't 
+    # apply, the biome is added to the biome_data.
+    if(biome_default$vegtype == "Savanna" && biome_default$code != "S1") {
+      #dont include if savannah and not S1 since we don't have data.
+    } else {
+      biome_data[[biome_type]][[biome]] <- biome_default
+    }
   }
   
   ### ADD "OTHER" biomes if needed
