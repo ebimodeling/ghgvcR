@@ -152,8 +152,9 @@ plot_ghgv <- function(df, output_dir,
 ghgvc_subplot <- function(vars, data, baseplot) {
   #subset the data just including vars
   d <- subset(data, variable %in% vars)
+  print(head(d))
   d$variable <- factor(d$variable, levels = vars)
-  
+
   # plot <- geom_bar(data = d,
   #                  aes(x = Biome, y = value, fill = variable),
   #                  width = 0.25, stat = "identity")
@@ -161,6 +162,8 @@ ghgvc_subplot <- function(vars, data, baseplot) {
   
   # #Positive Plot
   pos <- d$value > 0
+  pos[is.na(pos)] <- FALSE #fix cases with NA
+  
   posplot <- if(any(pos)) {
     geom_bar(data = d[pos,],
              aes(x = Biome, y = value, fill = variable),
