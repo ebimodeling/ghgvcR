@@ -218,7 +218,7 @@ calc_ghgv <- function(config,
       }
       
       #Radiative flux and final calculations
-      res <- as.vector(apply(clearing, MARGIN=c(2,3), sum) * ghg_radiative_efficiency) / cRF_Cpulse[100]
+      res <- as.vector(apply(clearing, MARGIN=c(2,3), sum) * ghg_radiative_efficiency) / cRF_Cpulse[num_years_emissions]
       out_names <- c("S_CO2", "S_CH4", "S_N2O", 
                       "F_CO2", "F_CH4", "F_N2O", 
                       "D_CO2", "D_CH4", "D_N2O")
