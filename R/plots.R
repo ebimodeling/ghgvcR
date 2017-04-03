@@ -33,12 +33,13 @@ plot_ghgv <- function(df, output_dir,
   plotdata <- data.frame(
     Biome = Biome,
     Location = df$Location,
-    Order = vegtype_order(Biome),
+    Order = df$Location * 10 +vegtype_order(Biome),
     Storage = rowSums(df[,grepl("S_", colnames(df))], na.rm = TRUE),
     Ongoing_Exchange = rowSums(df[,grepl("F_", colnames(df))], na.rm = TRUE),
     Rnet = df$swRFV,
     LE = df$latent)
   
+  print(plotdata)
   #Create sums
   plotdata$CRV_BGC <- plotdata$Storage + plotdata$Ongoing_Exchange
   plotdata$CRV_BIOPHYS <- plotdata$Rnet + plotdata$LE
@@ -57,9 +58,13 @@ plot_ghgv <- function(df, output_dir,
 
   ## Build data for subplots
   longdata <- gather(plotdata, variable, value, -Biome, -Location, -Order)
-  longdata <- longdata[order(longdata$Location, longdata$Order, decreasing = FALSE), ]
+  longdata <- longdata[with(longdata, order(Order, Biome)), ]
   longdata$label <- gsub(" Site", "\nSite", longdata$Biome)
-  longdata$Biome <- factor(longdata$Biome, ordered = TRUE)
+  longdata$Biome <- with(longdata, factor(Biome, levels = unique(Biome), ordered = TRUE))
+  
+  
+  print(longdata)
+  print(levels(longdata$Biome))
   
   #baseplot for use in grid plots
   baseplot <- ggplot(data = plotdata) + 
@@ -83,7 +88,10 @@ plot_ghgv <- function(df, output_dir,
              labs(fill = "") + 
              ggtitle("Biogeochemical") + 
              theme(axis.text.y = element_text(size = 12, hjust = 1)) 
-  bgc_plot 
+  
+  bgc_plot <- bgc_plot +
+    geom_point(data = subset(longdata, variable == "CRV_NET"), 
+               aes(x = Biome, y = value))
   
   #BIOPHYS
   biophys_plot <- ghgvc_subplot(c("LE", "Rnet"), 
@@ -94,6 +102,10 @@ plot_ghgv <- function(df, output_dir,
                                    labels = c(expression("Latent Heat Flux", "Net Radiation"))) + 
                  labs(fill = "") + 
                  ggtitle("Biophysical")
+  
+  biophys_plot <- biophys_plot +
+    geom_point(data = subset(longdata, variable == "CRV_NET"), 
+               aes(x = Biome, y = value))
   
   #CRV
   crv_plot <-  ghgvc_subplot(c("CRV_BGC", "CRV_BIOPHYS"), 

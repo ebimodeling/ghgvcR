@@ -207,14 +207,13 @@ str2LogicalOrNumeric <- function(string) {
 vegtype_order <- function(vegtypes) {
   output <- c()
   for(i in 1:length(vegtypes)) {
-    vegtype <- vegtypes[[i]]
-    print(vegtype)
+    vegtype <- strsplit(vegtypes[[i]], " Site ")[[1]][1]
     if(grepl("Forest", vegtype)) res <- 1
     else if(vegtype == "Savanna") res <- 2
     else if(vegtype == "Shrub") res <- 3
     else if(vegtype == "Grass") res <- 4
-    else if(vegtype == "Grass") res <- 5
     else if(vegtype %in% c("Grassland Pasture", "Cropland", "Soybean", "Sugarcane", "Maize")) res <- 6
+    else if(vegtype == "Barren") res <- 7
     else res <- NA
     output[i] <- res
   }
