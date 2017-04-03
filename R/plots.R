@@ -39,8 +39,6 @@ plot_ghgv <- function(df, output_dir,
     Rnet = df$swRFV,
     LE = df$latent)
   
-  print(names(plotdata))
-  
   #Create sums
   plotdata$CRV_BGC <- plotdata$Storage + plotdata$Ongoing_Exchange
   plotdata$CRV_BIOPHYS <- plotdata$Rnet + plotdata$LE
