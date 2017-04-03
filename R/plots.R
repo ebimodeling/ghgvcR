@@ -21,18 +21,26 @@ plot_ghgv <- function(df, output_dir,
 
   if (missing(output_dir) && save == TRUE) warning("output_dir must be specified if save is TRUE.")
   
+  ### Format biome name
+  # first remove underscores and concatenate
+  Biome <- capitalize(paste(gsub("_", " ", df$Biome), "Site", df$Location))
+  # convert BR to Brazil
+  Biome <- gsub("BR", "Brazil", Biome)
+  # convert broadleaf conifer forest
+  Biome <- gsub("Mixed Broadleaf Conifer Forest", "Mixed Forest", Biome)
+    
   #Format data for plotting
   plotdata <- data.frame(
-    Biome = capitalize(paste(gsub("_", " ", gsub("BR", "Brazil", df$Biome)),
-                             "Site",
-                             df$Location)),
+    Biome = Biome,
     Location = df$Location,
-    Order = vegtype_order(df$Biome),
+    Order = vegtype_order(Biome),
     Storage = rowSums(df[,grepl("S_", colnames(df))], na.rm = TRUE),
     Ongoing_Exchange = rowSums(df[,grepl("F_", colnames(df))], na.rm = TRUE),
     Rnet = df$swRFV,
     LE = df$latent)
-
+  
+  print(names(plotdata))
+  
   #Create sums
   plotdata$CRV_BGC <- plotdata$Storage + plotdata$Ongoing_Exchange
   plotdata$CRV_BIOPHYS <- plotdata$Rnet + plotdata$LE
@@ -152,7 +160,6 @@ plot_ghgv <- function(df, output_dir,
 ghgvc_subplot <- function(vars, data, baseplot) {
   #subset the data just including vars
   d <- subset(data, variable %in% vars)
-  print(head(d))
   d$variable <- factor(d$variable, levels = vars)
 
   # plot <- geom_bar(data = d,
