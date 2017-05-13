@@ -19,6 +19,13 @@ test_that("plots are generated without errors", {
   grid.arrange(p)
   expect_is(p, c('gtable', 'grob', 'gDesc'))
 })
+
+test_that("sites are ordered correctly", {
+  longdata <- data.frame(
+    Biome = c("Grass Site 1", "Forest Site 1", "Grass Site 2"), 
+    Order = c(12, 11, 22), 
+    Location = c(1,1,2))
+})
   
 
 

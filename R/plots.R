@@ -21,11 +21,17 @@ plot_ghgv <- function(df, output_dir,
   
   if (missing(output_dir) && save == TRUE) warning("output_dir must be specified if save is TRUE.")
   
+  ### Format biome name
+  # first remove underscores and concatenate
+  Biome <- capitalize(paste(gsub("_", " ", df$Biome), "Site", df$Location))
+  # convert BR to Brazil
+  Biome <- gsub("BR", "Brazil", Biome)
+  # convert broadleaf conifer forest
+  Biome <- gsub("Mixed Broadleaf Conifer Forest", "Mixed Forest", Biome)
+    
   #Format data for plotting
   plotdata <- data.frame(
-    Biome = capitalize(paste(gsub("_", " ", gsub("BR", "Brazil", df$Biome)),
-                             "Site",
-                             df$Location)),
+    Biome = Biome,
     Location = df$Location,
     Order = order(df$Location, vegtype_order(df$Biome)),
     Storage = rowSums(df[,grepl("S_", colnames(df))], na.rm = TRUE),
@@ -55,9 +61,13 @@ plot_ghgv <- function(df, output_dir,
   
   ## Build data for subplots
   longdata <- gather(plotdata, variable, value, -Biome, -Location, -Order)
-  longdata <- longdata[order(longdata$Location, longdata$Order, decreasing = FALSE), ]
+  longdata <- longdata[with(longdata, order(Order, Biome)), ]
   longdata$label <- gsub(" Site", "\nSite", longdata$Biome)
-  longdata$Biome <- factor(longdata$Biome, ordered = TRUE)
+  longdata$Biome <- with(longdata, factor(Biome, levels = unique(Biome), ordered = TRUE))
+  
+  
+  print(longdata)
+  print(levels(longdata$Biome))
   
   #baseplot for use in grid plots
   baseplot <- ggplot(data = plotdata) + 
@@ -76,6 +86,7 @@ plot_ghgv <- function(df, output_dir,
                             data = longdata, 
                             baseplot = baseplot)
   bgc_plot <- bgc_plot + 
+
     scale_fill_manual(values= brewer_pal(pal = "Greens")(6)[c(4,6)], 
                       labels = c("Ongoing Exchange", "Storage")) + 
     labs(fill = "") + 
@@ -92,6 +103,10 @@ plot_ghgv <- function(df, output_dir,
                       labels = c(expression("Latent Heat Flux", "Net Radiation"))) + 
     labs(fill = "") + 
     ggtitle("Biophysical")
+  
+  biophys_plot <- biophys_plot +
+    geom_point(data = subset(longdata, variable == "CRV_NET"), 
+               aes(x = Biome, y = value))
   
   #CRV
   crv_plot <-  ghgvc_subplot(c("BGC_NET", "BIOPHYS_NET"), 
@@ -169,7 +184,6 @@ plot_ghgv <- function(df, output_dir,
 ghgvc_subplot <- function(vars, data, baseplot) {
   #subset the data just including vars
   d <- subset(data, variable %in% vars)
-  print(head(d))
   d$variable <- factor(d$variable, levels = vars)
 
   d$Biome <- reorder(d$Biome, rev(d$Order))
