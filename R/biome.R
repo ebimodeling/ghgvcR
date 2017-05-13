@@ -20,7 +20,7 @@ get_biome <- function(latitude,
                       mapdata_dir,
                       output_dir, 
                       output_filename = "biome",
-                      output_format = c("json", "cvs"),
+                      output_format = c("json", "csv"),
                       write_data = TRUE) {
   if (write_data== TRUE && missing(output_dir)) 
     stop("'output_dir' cannot be missing if write_data is TRUE.")
