@@ -279,12 +279,10 @@ ghgvc <- function(config,
   out_json <- toJSON(out) 
   #write the data to a file if specified
   if(write_data == TRUE) {
-    write_ghgv(out_json, 
-               output_dir, 
-               format = "json")
-    write_ghgv(out_json, 
-               output_dir,
-               format = "csv")
+    sapply(output_format, 
+           function(x){
+             write_ghgvc(out_json, output_dir, format = x))
+           }
   }
   
   if(make_plots == TRUE) {
