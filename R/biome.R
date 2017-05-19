@@ -450,7 +450,7 @@ get_biome <- function(latitude,
                format = output_format)
   }
 
-  return(biome_data)
+  return(toJSON(biome_data))
 }
 
 
