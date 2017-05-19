@@ -1,8 +1,6 @@
 #' Plot Greenhouse Gas values.
 #' 
 #' @import ggplot2
-#' @import grid
-#' @import gridExtra
 #' @import scales
 #' @importFrom Hmisc capitalize
 #' @importFrom tidyr gather
@@ -14,13 +12,8 @@
 #' @param save boolean to save plot as an image.
 #' @param savefile name of svg file to save.
 #' @return a ggplot2 plot object.
-plot_ghgv <- function(df, output_dir, 
-                      years = 50,
-                      save = TRUE, 
-                      savefile = "output.svg") {
+plot_ghgv <- function(df, years = 50) {
 
-  if (missing(output_dir) && save == TRUE) warning("output_dir must be specified if save is TRUE.")
-  
   ### Format biome name
   # first remove underscores and concatenate
   Biome <- capitalize(paste(gsub("_", " ", df$Biome), "Site", df$Location))
@@ -39,7 +32,6 @@ plot_ghgv <- function(df, output_dir,
     Rnet = df$swRFV,
     LE = df$latent)
   
-  print(plotdata)
   #Create sums
   plotdata$CRV_BGC <- plotdata$Storage + plotdata$Ongoing_Exchange
   plotdata$CRV_BIOPHYS <- plotdata$Rnet + plotdata$LE
@@ -61,10 +53,6 @@ plot_ghgv <- function(df, output_dir,
   longdata <- longdata[with(longdata, order(Order, Biome)), ]
   longdata$label <- gsub(" Site", "\nSite", longdata$Biome)
   longdata$Biome <- with(longdata, factor(Biome, levels = unique(Biome), ordered = TRUE))
-  
-  
-  print(longdata)
-  print(levels(longdata$Biome))
   
   #baseplot for use in grid plots
   baseplot <- ggplot(data = plotdata) + 
@@ -135,25 +123,8 @@ plot_ghgv <- function(df, output_dir,
                                             x = unit(1, "npc"), 
                                             y = unit(.9, "npc"),
                                             just = c("centre", "bottom")))
-  if(save) {
-    #Create the SVG Plot image
-    svg(filename=file.path(output_dir, savefile), width = 10, height = 2.5 + 1.5*nrow(plotdata))
-    # final_plot <- grid.arrange(bgc_plot, 
-    #                            biophys_plot, 
-    #                            crv_plot, 
-    #                            ncol = 3, 
-    #                            widths = c(2,1,1),
-    #                            textGrob(xlabels, just = c("centre", "bottom")))
-      grid.arrange(final_plot)
-    dev.off()
-    
-    #Fix to remove overflow
-    svgfixcmd <- paste("sed -i 's/symbol id/symbol overflow=\"visible\" id/g'", 
-                       file.path(output_dir, savefile))
-    system(svgfixcmd)
-    #sub = annotate("text", x = 2, y = 0.3, parse = T, label = xlabels)))
-  }
-  final_plot
+  
+  return(final_plot)
 }
 
 #' Plot ghgcv subplot.

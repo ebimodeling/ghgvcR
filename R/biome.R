@@ -6,25 +6,19 @@
 #'
 #' @param latitude the selected latitude.
 #' @param longitude the selected longitude.
-#' @param biome_defaults_file full path of the name-indexed ecosystem json file.
-#' @param netcdf_dir full path to the directory containing the netcdf data files.
-#' @param output_dir full path of the directory to write results to.
-#' @param output_filename name of file to write (without extension).
+#' @param data_dir path of the netcdf and map csv data files.
+#' @param output_filename name of file to write (without extension). Only needed if write is TRUE.
 #' @param output_format format to save data in.
-#' @param write boolean whether to write the data.
+#' @param write_data boolean whether to write the data.
 #' @return JSON of biome data. 
 get_biome <- function(latitude, 
                       longitude,
-                      biome_defaults_file,
-                      netcdf_dir,
-                      mapdata_dir,
-                      output_dir, 
+                      data_dir = "/home/ghgvcr/data/",
                       output_filename = "biome",
                       output_format = c("json", "cvs"),
-                      write_data = TRUE) {
-  if (write_data== TRUE && missing(output_dir)) 
-    stop("'output_dir' cannot be missing if write_data is TRUE.")
- 
+                      write_data = FALSE) {
+  
+  #get the write format
   output_format <- match.arg(output_format)
   
   #convert lat/lon to floats if they are strings
@@ -253,7 +247,7 @@ get_biome <- function(latitude,
   #iterate through the list of data sources and 
   #load the data for the lat/lon pair.
   res <- lapply(variable_query_list, function(x) { 
-    get_ncdf(paste0(netcdf_dir, x$ncdir), x$ncfile, latitude, longitude, x$variable)[[x$variable]][[1]]
+    get_ncdf(paste0(data_dir, "netcdf/", x$ncdir), x$ncfile, latitude, longitude, x$variable)[[x$variable]][[1]]
   })
   
   ### specific calculations based on loaded data
@@ -287,10 +281,10 @@ get_biome <- function(latitude,
   
   ###### Get the appropriate biome (new method)
   #read in the map data
-  map_vegtypes <- read.csv(paste0(mapdata_dir, "map_vegtypes.csv"), stringsAsFactors = FALSE) 
-  koppen_biomes <- read.csv(paste0(mapdata_dir, "koppen_biomes.csv"), stringsAsFactors = FALSE) 
-  fao_biomes <- read.csv(paste0(mapdata_dir, "fao_biomes.csv"), stringsAsFactors = FALSE) 
-  biome_defaults <- read.csv(paste0(mapdata_dir, "biome_defaults.csv"), stringsAsFactors = FALSE) 
+  map_vegtypes <- read.csv(paste0(data_dir, "maps/map_vegtypes.csv"), stringsAsFactors = FALSE) 
+  koppen_biomes <- read.csv(paste0(data_dir, "maps/koppen_biomes.csv"), stringsAsFactors = FALSE) 
+  fao_biomes <- read.csv(paste0(data_dir, "maps/fao_biomes.csv"), stringsAsFactors = FALSE) 
+  biome_defaults <- read.csv(paste0(data_dir, "maps/biome_defaults.csv"), stringsAsFactors = FALSE) 
   
   vegtype_names <- names(map_vegtypes)[4:14]
   
@@ -411,7 +405,8 @@ get_biome <- function(latitude,
   
   
   ### Agricultural ecosystems
-  name_indexed_ecosystems <- fromJSON(file(biome_defaults_file))
+  name_indexed_file <- paste0(data_dir, "name_indexed_ecosystems.json")
+  name_indexed_ecosystems <- fromJSON(file(name_indexed_file))
   if (!is.na(res$us_corn_num) && res$us_corn_num > 0.01) {
     biome_data$agroecosystem_eco["Maize"] <- name_indexed_ecosystems["US corn"]
   }

@@ -18,25 +18,25 @@
 #' @export
 #' 
 #' @param config A list of configuration settings and data parameters. 
-#' @param output_dir directory to write results to.
-#' @param output_filename name of file to write.
-#' @param output_format format of output file, either json or csv.
-#' @param write_data logical indicating whether or not to write the results.
-#' @param make_plots logical indicating whether or not to create svg plots from
+#' @param output_filename (character) name of file to write.
+#' @param output_format (character) format of output file, either json or csv.
+#' @param write_output (logical) indicating whether or not to write the results.
+#' @param plot_filename (character) name of file to write.
+#' @param plot_format (character) format of output file, either json or csv.
+#' @param write_plot (logical) indicating whether or not to write the results.
 #'   the results.
 #' @return List of GHGVC results for each location specified in \code{config}.
 #' @author Chris Schauer, David LeBauer, Nicholas Potter
-ghgvc <- function(config,
-                  output_dir, 
+calc_ghgv <- function(config,
                   output_filename = "ghgv",
                   output_format = c("json", "csv"),
-                  write_data = TRUE,
-                  make_plots = TRUE
+                  write_output = FALSE,
+                  plot_filename = "ghgv_plot",
+                  plot_format = c("svg", "png"),
+                  write_plot = FALSE
                   ) {
-                    
-  if (missing(output_dir) && (write_data == TRUE || make_plots == TRUE )) 
-    stop("'output_dir' cannot be missing if write_data or make_plots is TRUE.")
- 
+  
+  #get output format for file
   output_format <- match.arg(output_format)
   
   #get config information
@@ -276,20 +276,21 @@ ghgvc <- function(config,
       out[[site]][[listResult$name]] <- listResult
     }
   }
-  out_json <- toJSON(out) 
-  #write the data to a file if specified
-  if(write_data == TRUE) {
-    write_ghgv(out_json, 
-               output_dir, 
-               format = "json")
-    write_ghgv(out_json, 
-               output_dir,
-               format = "csv")
-  }
   
-  if(make_plots == TRUE) {
-    p <- plot_ghgv(json2DF(out_json), output_dir = output_dir)
+  #get the outputs
+  out_json <- toJSON(out) 
+  plt <- plot_ghgv(json2DF(out_json), years = )
+  #write the data to a file if specified
+  if(write_output == TRUE) {
+    write_ghgv(out_json, 
+               output_filename, 
+               format = output_format)
+  }
+  if(write_plot == TRUE) {
+    write_plot(plt, 
+               plot_filename, 
+               format = plot_format)
   }
 
-  return(out)
+  return(list(results = out_json, plot = p))
 }
