@@ -147,51 +147,6 @@ get_biome <- function(latitude,
       ncfile = "brazil_sugc_latent_10yr_avg.nc",
       variable = "latent"
     ),
-    "global_biome_tundra_num" = list(
-      ncdir = "GCS/biomes/",
-      ncfile = "Tundra.nc",
-      variable = "Tndra"
-    ),
-    "global_biome_savanna_num" = list(
-      ncdir = "GCS/biomes/",
-      ncfile = "TropicalSavanna.nc",
-      variable = "TrpSvna"
-    ),
-    "global_biome_peat_num" = list(
-      ncdir = "GCS/biomes/",
-      ncfile = "TopicalForestAndPeatForest.nc",
-      variable = "Trp_PtFrst"
-    ),
-    "global_biome_temperate_scrub_num" = list(
-      ncdir = "GCS/biomes/",
-      ncfile = "TemperateScrubAndWoodland.nc",
-      variable = "TmpScrb_Wdlnd"
-    ),
-    "global_biome_temperate_grassland_num" = list(
-      ncdir = "GCS/biomes/",
-      ncfile = "TemperateGrassland.nc",
-      variable = "TmpGrslnd"
-    ),
-    "global_biome_temperate_forest_num" = list(
-      ncdir = "GCS/biomes/",
-      ncfile = "TemperateForest.nc",
-      variable = "TmprtFrst"
-    ),
-    "global_biome_boreal_num" = list(
-      ncdir = "GCS/biomes/",
-      ncfile = "NorthernPeatlandAndBorealForest.nc",
-      variable = "NPt_BrlFrst"
-    ),
-    "global_biome_marsh_num" = list(
-      ncdir = "GCS/biomes/",
-      ncfile = "MarshAndSwampland.nc",
-      variable = "Mrsh_Swmp"
-    ),
-    "global_biome_desert_num" = list(
-      ncdir = "GCS/biomes/",
-      ncfile = "Desert.nc",
-      variable = "dsrt"
-    ),
     "global_pasture_num" = list(
       ncdir = "GCS/",
       ncfile = "Pasture2000_5min.nc",
@@ -302,7 +257,7 @@ get_biome <- function(latitude,
   })
   
   ### specific calculations based on loaded data
-  # US Latent
+  # US Latent (LE)
   res$us_switch_latent_heat_flux_diff <- res$us_switch_latent_heat_flux_num - 
     res$global_bare_latent_heat_flux_num
   res$us_corn_latent_heat_flux_diff <- res$us_corn_latent_heat_flux_num  - 
@@ -312,7 +267,7 @@ get_biome <- function(latitude,
   res$us_misc_latent_heat_flux_diff <- res$us_misc_latent_heat_flux_num  - 
     res$global_bare_latent_heat_flux_num
   
-  # US Net
+  # US Net (Rnet)
   res$us_misc_net_radiation_diff <- res$us_misc_net_radiation_num - 
     res$global_bare_net_radiation_num
   res$us_soy_net_radiation_diff <- res$us_soy_net_radiation_num - 
@@ -356,8 +311,7 @@ get_biome <- function(latitude,
   ibis_vegtypes <- vegtype_names[as.logical(array(ibis_vegtypes_df[4:14]))]
   #ramankutty_vegtypes <- vegtype_names[as.logical(array(ramankutty_vegtypes_df[4:14]))]
   vegtypes <- na.omit(unique(c(synmap_vegtypes, koppen_vegtypes, fao_vegtypes, ibis_vegtypes)))
-  # vegtypes <- unique(c(synmap_vegtypes, koppen_vegtypes, fao_vegtypes, 
-  #                      ibis_vegtypes, ramankutty_vegtypes))
+  
   biome_codes <- subset(koppen_biomes, Zone == koppen_code)[vegtypes]
   
   ### GET BIOME DATA
