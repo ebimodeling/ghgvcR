@@ -15,9 +15,9 @@ Imports:
     gridExtra,
     Hmisc,
     jsonlite,
-    ncdf4
+    ncdf4,
     scales,
-    tidyr,
+    tidyr
 Suggests: 
     knitr,
     readr,
