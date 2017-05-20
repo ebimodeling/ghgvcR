@@ -17,7 +17,7 @@
 #' @importFrom jsonlite toJSON
 #' @export
 #' 
-#' @param config A list of configuration settings and data parameters. 
+#' @param eco_json (json string) A JSON list of configuration settings and data parameters. 
 #' @param output_filename (character) name of file to write.
 #' @param output_format (character) format of output file, either json or csv.
 #' @param write_output (logical) indicating whether or not to write the results.
@@ -25,23 +25,29 @@
 #' @param plot_format (character) format of output file, either json or csv.
 #' @param write_plot (logical) indicating whether or not to write the results.
 #'   the results.
-#' @return List of GHGVC results for each location specified in \code{config}.
+#' @return List of GHGVC results for each location specified in \code{eco_json}.
 #' @author Chris Schauer, David LeBauer, Nicholas Potter
-calc_ghgv <- function(config,
+calc_ghgv <- function(eco_json,
                       output_filename = "ghgv",
-                      output_format = c("json", "csv"),
+                      output_formats = c("json", "csv"),
                       write_output = FALSE,
                       plot_filename = "ghgv_plot",
-                      plot_format = c("svg", "png"),
+                      plot_formats = c("svg", "png"),
+                      plot_units = c("co2", "mi"),
                       write_plots = FALSE
                       ) {
   
-  #get output format for file
-  output_format <- match.arg(output_format)
+  #set options from parameters
+  output_formats <- match.arg(output_formats, several.ok = TRUE)
+  plot_formats <- match.arg(plot_formats, several.ok = TRUE)
+  plot_units <- match.arg(plot_units, several.ok = TRUE)
   
+  #convert from json to list
+  eco_params <- fromJSON(eco_json)
+   
   #get config information
-  options <- config$options
-  options <- lapply(config$options, str2LogicalOrNumeric)
+  options <- eco_params$options
+  options <- lapply(eco_params$options, str2LogicalOrNumeric)
   
   ### 
   #Constants for use in calculation
@@ -86,26 +92,26 @@ calc_ghgv <- function(config,
   
   ###
   #Sites for analysis 
-  sites <- names(config)[-which(names(config) %in% "options")]
+  sites <- names(eco_params)[-which(names(eco_params) %in% "options")]
   
   out <- list()
   
   for (site in sites) {
-    site_config <- config[[site]]
+    site_params <- eco_params[[site]]
     
     #site lat/lon for later
-    site_lat <- as.numeric(site_config$.attrs[['lat']])
-    site_lng <- as.numeric(site_config$.attrs[['lng']])
+    site_lat <- as.numeric(site_params$.attrs[[1]])
+    site_lng <- as.numeric(site_params$.attrs[[2]])
     
-    if("pft" %in% names(site_config)) { 
+    if("pft" %in% names(site_params)) { 
       #fix issue of blank site (user selects a site but doesn't click a biome)
       #this way the calculator doesn't try to include results for an empty site.
       out[[site]] <- list()
     }
     
     # loop through "pft"
-    for(ecosystem in which(names(site_config) %in% "pft")){
-      ecosystem_data <- lapply(site_config[[ecosystem]], str2LogicalOrNumeric)
+    for(ecosystem in which(names(site_params) %in% "pft")){
+      ecosystem_data <- lapply(site_params[[ecosystem]], str2LogicalOrNumeric)
       
       #There should be no "MAP" values, but replace with 0 if so.
       ecosystem_data[ecosystem_data == "MAP"] <- 0
@@ -150,7 +156,7 @@ calc_ghgv <- function(config,
       #Components of Inputs (Ix), Eq. 4:
       #Sx, Eq. 5:
       storage <- rbind(
-        crossprod(pool_params['storage',], pool_params['combust',]) * 
+        as.vector(crossprod(pool_params['storage',], pool_params['combust',])) * 
           ghg_params['combust',],
         t(t(pool_params['storage',] * (1 - pool_params['combust',]) * 
              ghg_params[5:8,]) %*% decay_decomp[,1:num_years_emissions])
@@ -170,7 +176,7 @@ calc_ghgv <- function(config,
       #First the flux disturbance
       flux_disturb <- c(1:disturb_years, 
                         rep(disturb_years, 
-                            num_years_emissions - disturb_years+1)) *
+                            num_years_emissions - 1)) *
         t(ghg_params['FR',] - t(flux))
       
       #storage disturbance
@@ -283,9 +289,9 @@ calc_ghgv <- function(config,
   out_json <- toJSON(out) 
   #write the data to a file if specified
   if(write_output == TRUE) {
-    sapply(output_format, 
+    sapply(output_formats, 
            function(x){
-             write_output(out_json, output_filename, format = x)
+             write_output(out_json, paste0(output_filename, ".", x))
            })
   }
  
@@ -294,17 +300,22 @@ calc_ghgv <- function(config,
   for(units in plot_units) {
     plt <- plot_ghgv(json2DF(out_json), years = num_years_analysis, units = units)
     if(write_plots == TRUE) {
-      write_plot(plot[[units]], 
-                 plot_filename, 
-                 format = plot_format)
+      sapply(plot_formats, 
+             function(x){
+               write_plot(plt, paste0(plot_filename, ".", x))
+             })
     }
-    plots[units] = base64_enc(plt)
+    tmpfile <- tempfile(fileext = ".svg")
+    write_plot(plt, tmpfile)
+    plots[units] <- base64_enc(readBin(tmpfile, 
+                                       what = "raw"))
+    #, 
+    #                                   size = file.info(tmpfile)[1, "size"]))
   }
 
-  return(
-    list(
-      results = out_json, 
-      plots = plots
-    )
+  res <- list(
+    results = out_json, 
+    plots = plots
   )
+  return(toJSON(res))
 }

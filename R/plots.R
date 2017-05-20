@@ -23,12 +23,12 @@ plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.8
   Biome <- gsub("BR", "Brazil", Biome)
   # convert broadleaf conifer forest
   Biome <- gsub("Mixed Broadleaf Conifer Forest", "Mixed Forest", Biome)
-    
+  
   #Format data for plotting
   plotdata <- data.frame(
     Biome = Biome,
     Location = df$Location,
-    Order = order(df$Location, vegtype_order(df$Biome)),
+    Order = order(df$Location, vegtype_order(Biome)),
     Storage = rowSums(df[,grepl("S_", colnames(df))], na.rm = TRUE),
     Ongoing_Exchange = rowSums(df[,grepl("F_", colnames(df))], na.rm = TRUE),
     Rnet = df$swRFV,

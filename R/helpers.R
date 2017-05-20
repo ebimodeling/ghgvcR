@@ -115,8 +115,8 @@ json2DF <- function(json) {
   #out data frame
   outdf <- data.frame(matrix(vector(), 
                              ncol=ncols + 1, 
-                             dimnames = list(c(), c("Location", col_names)))
-  )
+                             dimnames = list(c(), c("Location", col_names))),
+                      stringsAsFactors = FALSE)
   
   #iterate through sites and append to data.frame
   for(i in 1:length(d)) {
@@ -206,6 +206,7 @@ str2LogicalOrNumeric <- function(string) {
 #' @return (integer list) order factor.
 vegtype_order <- function(vegtypes) {
   output <- c()
+  print(vegtypes)
   for(i in 1:length(vegtypes)) {
     vegtype <- strsplit(vegtypes[[i]], " Site ")[[1]][1]
     if(grepl("Forest", vegtype)) res <- 1
