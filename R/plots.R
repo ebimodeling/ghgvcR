@@ -29,7 +29,7 @@ plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.8
   plotdata <- data.frame(
     Biome = Biome,
     Location = df$Location,
-    Order = df$Location * 10 +vegtype_order(Biome),
+    Order = order(df$Location, vegtype_order(df$Biome)),
     Storage = rowSums(df[,grepl("S_", colnames(df))], na.rm = TRUE),
     Ongoing_Exchange = rowSums(df[,grepl("F_", colnames(df))], na.rm = TRUE),
     Rnet = df$swRFV,
@@ -37,6 +37,8 @@ plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.8
   
   #Create sums
   plotdata$CRV_BGC <- plotdata$Storage + plotdata$Ongoing_Exchange
+  plotdata$BGC_NET <- plotdata$Storage + plotdata$Ongoing_Exchange
+  
   plotdata$CRV_BIOPHYS <- plotdata$Rnet + plotdata$LE
   plotdata$CRV_NET <- plotdata$CRV_BGC + plotdata$CRV_BIOPHYS
  
@@ -55,7 +57,7 @@ plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.8
   #Don't plot CRV_BGC if Ongoing_Exchange is 0
   plotdata$CRV_NET[plotdata$CRV_BIOPHYS == 0] <- NA
   plotdata$CRV_BGC[plotdata$Ongoing_Exchange == 0] <- NA
-
+  
   ## Build data for subplots
   longdata <- gather(plotdata, variable, value, -Biome, -Location, -Order)
   longdata <- longdata[with(longdata, order(Order, Biome)), ]
@@ -76,37 +78,35 @@ plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.8
   
   #BGC
   bgc_plot <- ghgvc_subplot(c("Ongoing_Exchange", "Storage"), 
-                           data = longdata, 
-                           baseplot = baseplot)
+                            data = longdata, 
+                            baseplot = baseplot)
   bgc_plot <- bgc_plot + 
-             scale_fill_manual(values= brewer_pal(pal = "Greens")(6)[c(4,6)], 
-                               labels = c("Ongoing Exchange", "Storage")) + 
-             labs(fill = "") + 
-             ggtitle("Biogeochemical") + 
-             theme(axis.text.y = element_text(size = 12, hjust = 1)) 
-  
-  bgc_plot <- bgc_plot +
-    geom_point(data = subset(longdata, variable == "CRV_NET"), 
-               aes(x = Biome, y = value))
+
+    scale_fill_manual(values= brewer_pal(pal = "Greens")(6)[c(4,6)], 
+                      labels = c("Ongoing Exchange", "Storage")) + 
+    labs(fill = "") + 
+    ggtitle("Biogeochemical") + 
+    theme(axis.text.y = element_text(size = 12, hjust = 1)) 
+  bgc_plot 
   
   #BIOPHYS
   biophys_plot <- ghgvc_subplot(c("LE", "Rnet"), 
                                 data = longdata,
                                 baseplot = baseplot) 
   biophys_plot <- biophys_plot + 
-                 scale_fill_manual(values = brewer_pal(pal = "Blues")(6)[c(4,6)], 
-                                   labels = c(expression("Latent Heat Flux", "Net Radiation"))) + 
-                 labs(fill = "") + 
-                 ggtitle("Biophysical")
+    scale_fill_manual(values = brewer_pal(pal = "Blues")(6)[c(4,6)], 
+                      labels = c(expression("Latent Heat Flux", "Net Radiation"))) + 
+    labs(fill = "") + 
+    ggtitle("Biophysical")
   
   biophys_plot <- biophys_plot +
     geom_point(data = subset(longdata, variable == "CRV_NET"), 
                aes(x = Biome, y = value))
   
   #CRV
-  crv_plot <-  ghgvc_subplot(c("CRV_BGC", "CRV_BIOPHYS"), 
-                            data = longdata,
-                            baseplot = baseplot) 
+  crv_plot <-  ghgvc_subplot(c("BGC_NET", "BIOPHYS_NET"), 
+                             data = longdata,
+                             baseplot = baseplot) 
   crv_plot <- crv_plot +
     scale_fill_manual(values= c(brewer_pal(pal = "Greens")(6)[5], 
                                 brewer_pal(pal = "Blues")(6)[5]), 
@@ -114,11 +114,23 @@ plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.8
     labs(fill = "") +
     ggtitle("Climate Regulating Value")
   
+  
+  #Add the net Biogeochemical point
+  bgc_plot <- bgc_plot +
+    geom_point(data = subset(longdata, variable == "BGC_NET"), 
+               aes(x = Biome, y = value))
+  
+  #Add the net Biophysical point
+  biophys_plot <- biophys_plot +
+    geom_point(data = subset(longdata, variable == "BIOPHYS_NET"), 
+               aes(x = Biome, y = value))
+  
+  
   #Add the net CRV point only if there is biophysical
   crv_plot <- crv_plot +
     geom_point(data = subset(longdata, variable == "CRV_NET"), 
                aes(x = Biome, y = value))
-
+  
   #Create the x label
   if(units == "mi") {
     xlabels <- as.expression(bquote(paste("Miles driven per 100 ft"^{2}, " cleared")))
@@ -127,17 +139,18 @@ plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.8
     xlabels <- as.expression(bquote(paste("CO"[2], " Emission Equivalents (Mg CO"[2],"-eq ha"^{-1}, " ", .(years)," yrs"^{-1},")")))
   }
   final_plot <- arrangeGrob(bgc_plot, 
-                             biophys_plot, 
-                             crv_plot, 
-                             ncol = 3, 
-                             widths = c(2,1,1),
-                             sub = textGrob(xlabels, 
-                                            x = unit(1, "npc"), 
-                                            y = unit(.9, "npc"),
-                                            just = c("centre", "bottom")))
+                            biophys_plot, 
+                            crv_plot, 
+                            ncol = 3, 
+                            widths = c(2,1,1),
+                            sub = textGrob(xlabels, 
+                                           x = unit(1, "npc"), 
+                                           y = unit(.9, "npc"),
+                                           just = c("centre", "bottom")))
   
   return(final_plot)
 }
+
 
 #' Plot ghgcv subplot.
 #' 
@@ -155,36 +168,42 @@ ghgvc_subplot <- function(vars, data, baseplot) {
   d <- subset(data, variable %in% vars)
   d$variable <- factor(d$variable, levels = vars)
 
+  d$Biome <- reorder(d$Biome, rev(d$Order))
+  
+  if(all(vars == c("LE", "Rnet"))){
+    d[d$variable == "LE",]$value <- abs(d[d$variable == "LE", ]$value )
+    d[d$variable == "Rnet",]$value <- -abs(d[d$variable == "Rnet", ]$value )
+  }
+
   # plot <- geom_bar(data = d,
   #                  aes(x = Biome, y = value, fill = variable),
   #                  width = 0.25, stat = "identity")
   # return(baseplot + plot)
   
   # #Positive Plot
-  pos <- d$value > 0
-  pos[is.na(pos)] <- FALSE #fix cases with NA
+  # pos <- d$value > 0
+  # pos[is.na(pos)] <- FALSE #fix cases with NA
   
-  posplot <- if(any(pos)) {
-    geom_bar(data = d[pos,],
+  # posplot <- if(any(pos)) {
+  posplot <-geom_bar(data = d, #[pos,],
              aes(x = Biome, y = value, fill = variable),
              width = 0.25, stat = "identity")
-  } else {
-    NULL
-  }
-
-  #Negative Plot
-  negplot <- if(any(!pos)) {
-    geom_bar(data = d[!pos,],
-             aes(x = Biome, y = value, fill = variable),
-             width = 0.25, stat = "identity")
-  } else {
-    NULL
-  }
-
+  # } else {
+  #   NULL
+  # }
+  
+  # #Negative Plot
+  # negplot <- if(any(!pos)) {
+  #   geom_bar(data = d[!pos,],
+  #            aes(x = Biome, y = value, fill = variable),
+  #            width = 0.25, stat = "identity")
+  # } else {
+  #   NULL
+  # }
+  
   #return all plots as one object
-  return(baseplot + negplot + posplot)
+  return(baseplot + posplot) # + negplot
 }
-
 
 
 
