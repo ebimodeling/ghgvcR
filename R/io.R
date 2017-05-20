@@ -4,7 +4,7 @@
 #' @param output_filename (character) the filename to output, without extension.
 #' @param format (character) file format to write.
 #' @return TRUE if written with no errors.
-write_ghgv <- function(json, output_filename, format=c("json", "csv")) {
+write_output <- function(json, output_filename, format=c("json", "csv")) {
   formats <- match.arg(format, several.ok = TRUE)
   
   #JSON
@@ -38,7 +38,7 @@ write_plot <- function(plt, plot_filename, format=c("svg", "png")) {
   }
   #Fix to remove overflow
   svgfixcmd <- paste("sed -i 's/symbol id/symbol overflow=\"visible\" id/g'", 
-                     file.path(output_dir, savefile))
+                     file.path(paste0(plot_filename, ".svg")))
   system(svgfixcmd)
 }
 

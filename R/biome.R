@@ -443,8 +443,7 @@ get_biome <- function(latitude,
   
   #write the data to a file if specified
   if (write_data == TRUE) { 
-    write_ghgv(toJSON(biome_data), 
-               output_dir, 
+    write_output(toJSON(biome_data), 
                output_filename, 
                format = output_format)
   }

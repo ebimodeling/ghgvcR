@@ -7,10 +7,9 @@
 #' @export
 #' 
 #' @param df a data.frame of output from \code{ghgvc()}.
-#' @param output_dir the directory to save the plot image.
-#' @param years number of years considered in the analysis.
-#' @param save boolean to save plot as an image.
-#' @param savefile name of svg file to save.
+#' @param years (integer) years considered in the analysis.
+#' @param units (character) either co2 or mi to plot in co2 equivalents or miles.
+#' @param crv_to_miles (numeric) conversion factor for crv to miles.
 #' @return a ggplot2 plot object.
 plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.86) {
 
