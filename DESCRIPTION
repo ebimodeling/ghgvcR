@@ -3,7 +3,7 @@ Type: Package
 Title: Greenhouse Gas Value Calculator
 Version: 2.0
 Date: 2012-11-15
-Author: Chris Schauer, Krista Anderson-Teixeira, David LeBauer
+Author: Chris Schauer, Krista Anderson-Teixeira, David LeBauer, Nicholas Potter
 Maintainer: David LeBauer <dlebauer@illinois.edu>
 Description: This package runs the Greenhouse Gas Value Calculator, as
     described in Kristina J. Anderson-Teixeira and Evan H. DeLucia. 2010. The
@@ -15,10 +15,9 @@ Imports:
     gridExtra,
     Hmisc,
     jsonlite,
+    ncdf4,
     scales,
-    tidyr,
-    XML,
-    ncdf4
+    tidyr
 Suggests: 
     knitr,
     readr,

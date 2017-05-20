@@ -6,25 +6,18 @@
 #'
 #' @param latitude the selected latitude.
 #' @param longitude the selected longitude.
-#' @param biome_defaults_file full path of the name-indexed ecosystem json file.
-#' @param netcdf_dir full path to the directory containing the netcdf data files.
-#' @param output_dir full path of the directory to write results to.
-#' @param output_filename name of file to write (without extension).
+#' @param data_dir path of the netcdf and map csv data files.
+#' @param output_filename name of file to write (without extension). Only needed if write is TRUE.
 #' @param output_format format to save data in.
-#' @param write boolean whether to write the data.
+#' @param write_data boolean whether to write the data.
 #' @return JSON of biome data. 
 get_biome <- function(latitude, 
                       longitude,
-                      biome_defaults_file,
-                      netcdf_dir,
-                      mapdata_dir,
-                      output_dir, 
+                      data_dir = "/home/ghgvcr/data/",
                       output_filename = "biome",
                       output_format = c("json", "csv"),
                       write_data = TRUE) {
-  if (write_data== TRUE && missing(output_dir)) 
-    stop("'output_dir' cannot be missing if write_data is TRUE.")
- 
+  
   output_format <- match.arg(output_format)
   
   #convert lat/lon to floats if they are strings
@@ -147,51 +140,6 @@ get_biome <- function(latitude,
       ncfile = "brazil_sugc_latent_10yr_avg.nc",
       variable = "latent"
     ),
-    "global_biome_tundra_num" = list(
-      ncdir = "GCS/biomes/",
-      ncfile = "Tundra.nc",
-      variable = "Tndra"
-    ),
-    "global_biome_savanna_num" = list(
-      ncdir = "GCS/biomes/",
-      ncfile = "TropicalSavanna.nc",
-      variable = "TrpSvna"
-    ),
-    "global_biome_peat_num" = list(
-      ncdir = "GCS/biomes/",
-      ncfile = "TopicalForestAndPeatForest.nc",
-      variable = "Trp_PtFrst"
-    ),
-    "global_biome_temperate_scrub_num" = list(
-      ncdir = "GCS/biomes/",
-      ncfile = "TemperateScrubAndWoodland.nc",
-      variable = "TmpScrb_Wdlnd"
-    ),
-    "global_biome_temperate_grassland_num" = list(
-      ncdir = "GCS/biomes/",
-      ncfile = "TemperateGrassland.nc",
-      variable = "TmpGrslnd"
-    ),
-    "global_biome_temperate_forest_num" = list(
-      ncdir = "GCS/biomes/",
-      ncfile = "TemperateForest.nc",
-      variable = "TmprtFrst"
-    ),
-    "global_biome_boreal_num" = list(
-      ncdir = "GCS/biomes/",
-      ncfile = "NorthernPeatlandAndBorealForest.nc",
-      variable = "NPt_BrlFrst"
-    ),
-    "global_biome_marsh_num" = list(
-      ncdir = "GCS/biomes/",
-      ncfile = "MarshAndSwampland.nc",
-      variable = "Mrsh_Swmp"
-    ),
-    "global_biome_desert_num" = list(
-      ncdir = "GCS/biomes/",
-      ncfile = "Desert.nc",
-      variable = "dsrt"
-    ),
     "global_pasture_num" = list(
       ncdir = "GCS/",
       ncfile = "Pasture2000_5min.nc",
@@ -298,11 +246,11 @@ get_biome <- function(latitude,
   #iterate through the list of data sources and 
   #load the data for the lat/lon pair.
   res <- lapply(variable_query_list, function(x) { 
-    get_ncdf(paste0(netcdf_dir, x$ncdir), x$ncfile, latitude, longitude, x$variable)[[x$variable]][[1]]
+    get_ncdf(paste0(data_dir, "netcdf/", x$ncdir), x$ncfile, latitude, longitude, x$variable)[[x$variable]][[1]]
   })
   
   ### specific calculations based on loaded data
-  # US Latent
+  # US Latent (LE)
   res$us_switch_latent_heat_flux_diff <- res$us_switch_latent_heat_flux_num - 
     res$global_bare_latent_heat_flux_num
   res$us_corn_latent_heat_flux_diff <- res$us_corn_latent_heat_flux_num  - 
@@ -312,7 +260,7 @@ get_biome <- function(latitude,
   res$us_misc_latent_heat_flux_diff <- res$us_misc_latent_heat_flux_num  - 
     res$global_bare_latent_heat_flux_num
   
-  # US Net
+  # US Net (Rnet)
   res$us_misc_net_radiation_diff <- res$us_misc_net_radiation_num - 
     res$global_bare_net_radiation_num
   res$us_soy_net_radiation_diff <- res$us_soy_net_radiation_num - 
@@ -332,10 +280,10 @@ get_biome <- function(latitude,
   
   ###### Get the appropriate biome (new method)
   #read in the map data
-  map_vegtypes <- read.csv(paste0(mapdata_dir, "map_vegtypes.csv"), stringsAsFactors = FALSE) 
-  koppen_biomes <- read.csv(paste0(mapdata_dir, "koppen_biomes.csv"), stringsAsFactors = FALSE) 
-  fao_biomes <- read.csv(paste0(mapdata_dir, "fao_biomes.csv"), stringsAsFactors = FALSE) 
-  biome_defaults <- read.csv(paste0(mapdata_dir, "biome_defaults.csv"), stringsAsFactors = FALSE) 
+  map_vegtypes <- read.csv(paste0(data_dir, "maps/map_vegtypes.csv"), stringsAsFactors = FALSE) 
+  koppen_biomes <- read.csv(paste0(data_dir, "maps/koppen_biomes.csv"), stringsAsFactors = FALSE) 
+  fao_biomes <- read.csv(paste0(data_dir, "maps/fao_biomes.csv"), stringsAsFactors = FALSE) 
+  biome_defaults <- read.csv(paste0(data_dir, "maps/biome_defaults.csv"), stringsAsFactors = FALSE) 
   
   vegtype_names <- names(map_vegtypes)[4:14]
   
@@ -356,8 +304,7 @@ get_biome <- function(latitude,
   ibis_vegtypes <- vegtype_names[as.logical(array(ibis_vegtypes_df[4:14]))]
   #ramankutty_vegtypes <- vegtype_names[as.logical(array(ramankutty_vegtypes_df[4:14]))]
   vegtypes <- na.omit(unique(c(synmap_vegtypes, koppen_vegtypes, fao_vegtypes, ibis_vegtypes)))
-  # vegtypes <- unique(c(synmap_vegtypes, koppen_vegtypes, fao_vegtypes, 
-  #                      ibis_vegtypes, ramankutty_vegtypes))
+  
   biome_codes <- subset(koppen_biomes, Zone == koppen_code)[vegtypes]
   
   ### GET BIOME DATA
@@ -457,7 +404,8 @@ get_biome <- function(latitude,
   
   
   ### Agricultural ecosystems
-  name_indexed_ecosystems <- fromJSON(file(biome_defaults_file))
+  name_indexed_file <- paste0(data_dir, "name_indexed_ecosystems.json")
+  name_indexed_ecosystems <- fromJSON(file(name_indexed_file))
   if (!is.na(res$us_corn_num) && res$us_corn_num > 0.01) {
     biome_data$agroecosystem_eco["Maize"] <- name_indexed_ecosystems["US corn"]
   }
@@ -501,7 +449,7 @@ get_biome <- function(latitude,
                format = output_format)
   }
 
-  return(biome_data)
+  return(toJSON(biome_data))
 }
 
 
