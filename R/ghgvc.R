@@ -33,7 +33,7 @@ calc_ghgv <- function(config,
                   write_output = FALSE,
                   plot_filename = "ghgv_plot",
                   plot_format = c("svg", "png"),
-                  write_plot = FALSE
+                  write_plots = FALSE
                   ) {
   
   #get output format for file
@@ -279,18 +279,28 @@ calc_ghgv <- function(config,
   
   #get the outputs
   out_json <- toJSON(out) 
-  plt <- plot_ghgv(json2DF(out_json), years = )
   #write the data to a file if specified
   if(write_output == TRUE) {
     write_ghgv(out_json, 
                output_filename, 
                format = output_format)
   }
-  if(write_plot == TRUE) {
-    write_plot(plt, 
-               plot_filename, 
-               format = plot_format)
+ 
+  #create the plots
+  plots <- list() 
+  for(units in plot_units) {
+    plots[units] <- plot_ghgv(json2DF(out_json), years = num_years_analysis, units = units)
+    if(write_plots == TRUE) {
+      write_plot(plot[[units]], 
+                 plot_filename, 
+                 format = plot_format)
+    }
   }
 
-  return(list(results = out_json, plot = p))
+  return(
+    list(
+      results = out_json, 
+      plots = 
+    )
+  )
 }

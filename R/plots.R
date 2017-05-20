@@ -12,8 +12,11 @@
 #' @param save boolean to save plot as an image.
 #' @param savefile name of svg file to save.
 #' @return a ggplot2 plot object.
-plot_ghgv <- function(df, years = 50) {
+plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.86) {
 
+  # set plot units
+  units <- match.arg(units)
+  
   ### Format biome name
   # first remove underscores and concatenate
   Biome <- capitalize(paste(gsub("_", " ", df$Biome), "Site", df$Location))
@@ -36,6 +39,11 @@ plot_ghgv <- function(df, years = 50) {
   plotdata$CRV_BGC <- plotdata$Storage + plotdata$Ongoing_Exchange
   plotdata$CRV_BIOPHYS <- plotdata$Rnet + plotdata$LE
   plotdata$CRV_NET <- plotdata$CRV_BGC + plotdata$CRV_BIOPHYS
+ 
+  #If units are in miles, convert
+  for (crv in c("CRV_BGC", "CRV_BIOPHYS", "CRV_NET")) {
+    plotdata[crv] <- plotdata[crv] * crv_to_miles
+  }
   
   #Replace NA/0 with 0
   plotdata[is.na(plotdata)] <- 0
@@ -112,8 +120,12 @@ plot_ghgv <- function(df, years = 50) {
                aes(x = Biome, y = value))
 
   #Create the x label
-  xlabels <- as.expression(bquote(paste("CO"[2], " Emission Equivalents (Mg CO"[2],"-eq ha"^{-1}, " ", .(years)," yrs"^{-1},")")))
-  
+  if(units == "mi") {
+    xlabels <- as.expression(bquote(paste("Miles driven per 100 ft"^{2}, " cleared")))
+  }
+  else {
+    xlabels <- as.expression(bquote(paste("CO"[2], " Emission Equivalents (Mg CO"[2],"-eq ha"^{-1}, " ", .(years)," yrs"^{-1},")")))
+  }
   final_plot <- arrangeGrob(bgc_plot, 
                              biophys_plot, 
                              crv_plot, 
