@@ -28,13 +28,13 @@
 #' @return List of GHGVC results for each location specified in \code{config}.
 #' @author Chris Schauer, David LeBauer, Nicholas Potter
 calc_ghgv <- function(config,
-                  output_filename = "ghgv",
-                  output_format = c("json", "csv"),
-                  write_output = FALSE,
-                  plot_filename = "ghgv_plot",
-                  plot_format = c("svg", "png"),
-                  write_plots = FALSE
-                  ) {
+                      output_filename = "ghgv",
+                      output_format = c("json", "csv"),
+                      write_output = FALSE,
+                      plot_filename = "ghgv_plot",
+                      plot_format = c("svg", "png"),
+                      write_plots = FALSE
+                      ) {
   
   #get output format for file
   output_format <- match.arg(output_format)
@@ -55,7 +55,8 @@ calc_ghgv <- function(config,
   w <- 1 / (1 + annual_discount_rate)**(1:num_years_analysis)
   
   ghg_radiative_efficiency <- 10^9 * 
-    c(1.4*10^-5, 3.7*10^-4*4/3, 3.03*10^-3)    
+    c(1.4*10^-5, 3.7*10^-4*4/3, 3.03*10^-3)
+  
   names(ghg_radiative_efficiency) <- c("co2", "ch4", "n2o")
   A <- 1.78e8 #TODO rename
 
@@ -111,6 +112,7 @@ calc_ghgv <- function(config,
       
       ###Ecosystem data
       termite <- ecosystem_data[['termite']] / 100
+      
       #Biophysical
       sw_radiative_forcing <- ecosystem_data$sw_radiative_forcing
       latent_cooling <- ecosystem_data$latent
@@ -283,25 +285,26 @@ calc_ghgv <- function(config,
   if(write_output == TRUE) {
     sapply(output_format, 
            function(x){
-             write_ghgvc(out_json, output_dir, format = x))
-           }
+             write_ghgvc(out_json, output_dir, format = x)
+           })
   }
  
   #create the plots
   plots <- list() 
   for(units in plot_units) {
-    plots[units] <- plot_ghgv(json2DF(out_json), years = num_years_analysis, units = units)
+    plt <- plot_ghgv(json2DF(out_json), years = num_years_analysis, units = units)
     if(write_plots == TRUE) {
       write_plot(plot[[units]], 
                  plot_filename, 
                  format = plot_format)
     }
+    plots[units] = base64_enc(plt)
   }
 
   return(
     list(
       results = out_json, 
-      plots = 
+      plots = plots
     )
   )
 }
