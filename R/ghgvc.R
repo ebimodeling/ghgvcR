@@ -285,7 +285,7 @@ calc_ghgv <- function(config,
   if(write_output == TRUE) {
     sapply(output_format, 
            function(x){
-             write_ghgvc(out_json, output_dir, format = x)
+             write_ghgvc(out_json, output_filename, format = x)
            })
   }
  
