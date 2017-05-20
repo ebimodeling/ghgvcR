@@ -15,10 +15,9 @@ get_biome <- function(latitude,
                       longitude,
                       data_dir = "/home/ghgvcr/data/",
                       output_filename = "biome",
-                      output_format = c("json", "cvs"),
-                      write_data = FALSE) {
+                      output_format = c("json", "csv"),
+                      write_data = TRUE) {
   
-  #get the write format
   output_format <- match.arg(output_format)
   
   #convert lat/lon to floats if they are strings
