@@ -1,8 +1,6 @@
 #' Plot Greenhouse Gas values.
 #' 
 #' @import ggplot2
-#' @import grid
-#' @import gridExtra
 #' @import scales
 #' @importFrom Hmisc capitalize
 #' @importFrom tidyr gather
@@ -14,12 +12,10 @@
 #' @param save boolean to save plot as an image.
 #' @param savefile name of svg file to save.
 #' @return a ggplot2 plot object.
-plot_ghgv <- function(df, output_dir, 
-                      years = 50,
-                      save = TRUE, 
-                      savefile = "output.svg") {
-  
-  if (missing(output_dir) && save == TRUE) warning("output_dir must be specified if save is TRUE.")
+plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.86) {
+
+  # set plot units
+  units <- match.arg(units)
   
   ### Format biome name
   # first remove underscores and concatenate
@@ -44,9 +40,12 @@ plot_ghgv <- function(df, output_dir,
   plotdata$BGC_NET <- plotdata$Storage + plotdata$Ongoing_Exchange
   
   plotdata$CRV_BIOPHYS <- plotdata$Rnet + plotdata$LE
-  plotdata$BIOPHYS_NET <- -abs(plotdata$Rnet) + abs(plotdata$LE)
-  
-  plotdata$CRV_NET <- plotdata$BGC_NET + plotdata$BIOPHYS_NET
+  plotdata$CRV_NET <- plotdata$CRV_BGC + plotdata$CRV_BIOPHYS
+ 
+  #If units are in miles, convert
+  for (crv in c("CRV_BGC", "CRV_BIOPHYS", "CRV_NET")) {
+    plotdata[crv] <- plotdata[crv] * crv_to_miles
+  }
   
   #Replace NA/0 with 0
   plotdata[is.na(plotdata)] <- 0
@@ -64,10 +63,6 @@ plot_ghgv <- function(df, output_dir,
   longdata <- longdata[with(longdata, order(Order, Biome)), ]
   longdata$label <- gsub(" Site", "\nSite", longdata$Biome)
   longdata$Biome <- with(longdata, factor(Biome, levels = unique(Biome), ordered = TRUE))
-  
-  
-  print(longdata)
-  print(levels(longdata$Biome))
   
   #baseplot for use in grid plots
   baseplot <- ggplot(data = plotdata) + 
@@ -137,8 +132,12 @@ plot_ghgv <- function(df, output_dir,
                aes(x = Biome, y = value))
   
   #Create the x label
-  xlabels <- as.expression(bquote(paste("CO"[2], " Emission Equivalents (Mg CO"[2],"-eq ha"^{-1}, " ", .(years)," yrs"^{-1},")")))
-  
+  if(units == "mi") {
+    xlabels <- as.expression(bquote(paste("Miles driven per 100 ft"^{2}, " cleared")))
+  }
+  else {
+    xlabels <- as.expression(bquote(paste("CO"[2], " Emission Equivalents (Mg CO"[2],"-eq ha"^{-1}, " ", .(years)," yrs"^{-1},")")))
+  }
   final_plot <- arrangeGrob(bgc_plot, 
                             biophys_plot, 
                             crv_plot, 
@@ -148,25 +147,8 @@ plot_ghgv <- function(df, output_dir,
                                            x = unit(1, "npc"), 
                                            y = unit(.9, "npc"),
                                            just = c("centre", "bottom")))
-  if(save) {
-    #Create the SVG Plot image
-    svg(filename=file.path(output_dir, savefile), width = 10, height = 2.5 + 1.5*nrow(plotdata))
-    # final_plot <- grid.arrange(bgc_plot, 
-    #                            biophys_plot, 
-    #                            crv_plot, 
-    #                            ncol = 3, 
-    #                            widths = c(2,1,1),
-    #                            textGrob(xlabels, just = c("centre", "bottom")))
-    grid.arrange(final_plot)
-    dev.off()
-    
-    #Fix to remove overflow
-    svgfixcmd <- paste("sed -i 's/symbol id/symbol overflow=\"visible\" id/g'", 
-                       file.path(output_dir, savefile))
-    system(svgfixcmd)
-    #sub = annotate("text", x = 2, y = 0.3, parse = T, label = xlabels)))
-  }
-  final_plot
+  
+  return(final_plot)
 }
 
 

@@ -18,25 +18,25 @@
 #' @export
 #' 
 #' @param config A list of configuration settings and data parameters. 
-#' @param output_dir directory to write results to.
-#' @param output_filename name of file to write.
-#' @param output_format format of output file, either json or csv.
-#' @param write_data logical indicating whether or not to write the results.
-#' @param make_plots logical indicating whether or not to create svg plots from
+#' @param output_filename (character) name of file to write.
+#' @param output_format (character) format of output file, either json or csv.
+#' @param write_output (logical) indicating whether or not to write the results.
+#' @param plot_filename (character) name of file to write.
+#' @param plot_format (character) format of output file, either json or csv.
+#' @param write_plot (logical) indicating whether or not to write the results.
 #'   the results.
 #' @return List of GHGVC results for each location specified in \code{config}.
 #' @author Chris Schauer, David LeBauer, Nicholas Potter
-ghgvc <- function(config,
-                  output_dir, 
+calc_ghgv <- function(config,
                   output_filename = "ghgv",
                   output_format = c("json", "csv"),
-                  write_data = TRUE,
-                  make_plots = TRUE
+                  write_output = FALSE,
+                  plot_filename = "ghgv_plot",
+                  plot_format = c("svg", "png"),
+                  write_plots = FALSE
                   ) {
-                    
-  if (missing(output_dir) && (write_data == TRUE || make_plots == TRUE )) 
-    stop("'output_dir' cannot be missing if write_data or make_plots is TRUE.")
- 
+  
+  #get output format for file
   output_format <- match.arg(output_format)
   
   #get config information
@@ -218,7 +218,7 @@ ghgvc <- function(config,
       }
       
       #Radiative flux and final calculations
-      res <- as.vector(apply(clearing, MARGIN=c(2,3), sum) * ghg_radiative_efficiency) / cRF_Cpulse[100]
+      res <- as.vector(apply(clearing, MARGIN=c(2,3), sum) * ghg_radiative_efficiency) / cRF_Cpulse[num_years_emissions]
       out_names <- c("S_CO2", "S_CH4", "S_N2O", 
                       "F_CO2", "F_CH4", "F_N2O", 
                       "D_CO2", "D_CH4", "D_N2O")
@@ -276,20 +276,32 @@ ghgvc <- function(config,
       out[[site]][[listResult$name]] <- listResult
     }
   }
+  
+  #get the outputs
   out_json <- toJSON(out) 
   #write the data to a file if specified
-  if(write_data == TRUE) {
-    write_ghgv(out_json, 
-               output_dir, 
-               format = "json")
-    write_ghgv(out_json, 
-               output_dir,
-               format = "csv")
+  if(write_output == TRUE) {
+    sapply(output_format, 
+           function(x){
+             write_ghgvc(out_json, output_dir, format = x))
+           }
   }
-  
-  if(make_plots == TRUE) {
-    p <- plot_ghgv(json2DF(out_json), output_dir = output_dir)
+ 
+  #create the plots
+  plots <- list() 
+  for(units in plot_units) {
+    plots[units] <- plot_ghgv(json2DF(out_json), years = num_years_analysis, units = units)
+    if(write_plots == TRUE) {
+      write_plot(plot[[units]], 
+                 plot_filename, 
+                 format = plot_format)
+    }
   }
 
-  return(out)
+  return(
+    list(
+      results = out_json, 
+      plots = 
+    )
+  )
 }

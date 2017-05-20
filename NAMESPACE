@@ -2,7 +2,7 @@
 
 export(get_biome)
 export(get_ncdf)
-export(ghgvc)
+export(calc_ghgv)
 export(json2DF)
 export(plot_ghgv)
 import(ggplot2)
