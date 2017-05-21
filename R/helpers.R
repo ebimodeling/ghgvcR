@@ -206,7 +206,6 @@ str2LogicalOrNumeric <- function(string) {
 #' @return (integer list) order factor.
 vegtype_order <- function(vegtypes) {
   output <- c()
-  print(vegtypes)
   for(i in 1:length(vegtypes)) {
     vegtype <- strsplit(vegtypes[[i]], " Site ")[[1]][1]
     if(grepl("Forest", vegtype)) res <- 1
