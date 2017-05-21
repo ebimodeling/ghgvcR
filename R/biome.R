@@ -14,9 +14,8 @@
 get_biome <- function(latitude, 
                       longitude,
                       data_dir = "/home/ghgvcr/data/",
-                      output_filename = "biome",
-                      output_format = c("json", "csv"),
-                      write_data = TRUE) {
+                      output_filename = "biome.csv",
+                      save_output = FALSE) {
   
   output_format <- match.arg(output_format)
   
@@ -35,7 +34,7 @@ get_biome <- function(latitude,
       variable = "agb_1km"
     ),
     "saatchi_bgb_num" = list(
-      ncdir = "",
+      icdir = "",
       ncfile = "saatchi.nc",
       variable = "bgb_1km"
     ),
@@ -442,10 +441,9 @@ get_biome <- function(latitude,
   }
   
   #write the data to a file if specified
-  if (write_data == TRUE) { 
+  if (save_output == TRUE) { 
     write_output(toJSON(biome_data), 
-               output_filename, 
-               format = output_format)
+                 output_filename)
   }
 
   return(toJSON(biome_data))
