@@ -296,12 +296,7 @@ calc_ghgv <- function(eco_json,
   plots <- list() 
   for(units in plot_units) {
     plt <- plot_ghgv(json2DF(out_json), years = num_years_analysis, units = units)
-    if(save_plots == TRUE) {
-      sapply(plot_formats, 
-             function(x){
-               write_plot(plt, paste0(plot_filename, ".", x))
-             })
-    }
+    if(save_plots == TRUE) write_plot(plt, plot_filename)
     tmpfile <- tempfile(fileext = ".svg")
     write_plot(plt, tmpfile)
     plots[units] <- base64_enc(readBin(tmpfile, 
