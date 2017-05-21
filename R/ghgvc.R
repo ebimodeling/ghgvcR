@@ -306,8 +306,6 @@ calc_ghgv <- function(eco_json,
     write_plot(plt, tmpfile)
     plots[units] <- base64_enc(readBin(tmpfile, 
                                        what = "raw"))
-    #, 
-    #                                   size = file.info(tmpfile)[1, "size"]))
   }
 
   res <- list(

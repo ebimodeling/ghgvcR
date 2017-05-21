@@ -4,19 +4,16 @@
 \alias{plot_ghgv}
 \title{Plot Greenhouse Gas values.}
 \usage{
-plot_ghgv(df, output_dir, years = 50, save = TRUE,
-  savefile = "output.svg")
+plot_ghgv(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.86)
 }
 \arguments{
 \item{df}{a data.frame of output from \code{ghgvc()}.}
 
-\item{output_dir}{the directory to save the plot image.}
+\item{years}{(integer) years considered in the analysis.}
 
-\item{years}{number of years considered in the analysis.}
+\item{units}{(character) either co2 or mi to plot in co2 equivalents or miles.}
 
-\item{save}{boolean to save plot as an image.}
-
-\item{savefile}{name of svg file to save.}
+\item{crv_to_miles}{(numeric) conversion factor for crv to miles.}
 }
 \value{
 a ggplot2 plot object.
