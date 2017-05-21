@@ -34,6 +34,8 @@ calc_ghgv <- function(eco_json,
                       save_plots = FALSE
                       ) {
   
+  print(eco_json)
+  
   #set options from parameters
   plot_units <- match.arg(plot_units, several.ok = TRUE)
   
@@ -288,7 +290,7 @@ calc_ghgv <- function(eco_json,
     if(save_plots == TRUE) write_plot(plt, plot_filename)
     tmpfile <- tempfile(fileext = ".svg")
     write_plot(plt, tmpfile)
-    plots[units] <- base64_enc(readBin("plot.svg", what = "raw", n = info$size, "txt"))
+    plots[units] <- base64_enc(readBin(tmpfile, what = "raw", n = info$size, "txt"))
   }
 
   res <- list(
