@@ -32,8 +32,7 @@ write_plot <- function(plt, plot_filename) {
     png(filename=file.path(plot_filename), width = 10, height = 2.5 + 1.5*nrows)
     grid.arrange(plt)
     dev.off()
-  }
-  else if(format == "svg") {
+  } else if(format == "svg") {
     svg(filename=file.path(plot_filename), width = 10, height = 2.5 + 1.5*nrows)
     grid.arrange(plt)
     dev.off()

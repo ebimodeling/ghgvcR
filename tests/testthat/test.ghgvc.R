@@ -6,9 +6,9 @@ context("ghgvc")
 test_that("calc_ghgv works for test config file",{
   #config file location 
   config_file <- system.file("config.xml", package = "ghgvcr")
-  if (!file.exists(config_file)) config_file <- "/opt/ghgvc/ghgvcR/inst/config/config.xml"
+  if (!file.exists(config_file)) config_file <- "inst/config/single_site.xml"
   
-  config <- XML::xmlToList(XML::xmlParse(config_file, validate=F))  
+  config <- XML::xmlToList(XML::xmlParse(config_file, validate=F))
   
   #Calculator
   x <- calc_ghgv(toJSON(config, auto_unbox = TRUE))

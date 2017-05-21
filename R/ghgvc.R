@@ -20,11 +20,9 @@
 #' 
 #' @param eco_json (json string) A JSON list of configuration settings and data parameters. 
 #' @param output_filename (character) name of file to write.
-#' @param output_format (character) format of output file, either json or csv.
-#' @param write_output (logical) indicating whether or not to write the results.
+#' @param save_output (logical) indicating whether or not to write the results.
 #' @param plot_filename (character) name of file to write.
-#' @param plot_format (character) format of output file, either json or csv.
-#' @param write_plot (logical) indicating whether or not to write the results.
+#' @param save_plots (logical) indicating whether or not to write the results.
 #'   the results.
 #' @return List of GHGVC results for each location specified in \code{eco_json}.
 #' @author Chris Schauer, David LeBauer, Nicholas Potter
@@ -96,19 +94,9 @@ calc_ghgv <- function(eco_json,
   for (site in site_names) {
     site_params <- eco_params$sites[[site]]
     
-    #site lat/lon for later
-    site_lat <- as.numeric(site_params$lat[[1]])
-    site_lng <- as.numeric(site_params$lng[[1]])
-    
-    if("pft" %in% names(site_params)) { 
-      #fix issue of blank site (user selects a site but doesn't click a biome)
-      #this way the calculator doesn't try to include results for an empty site.
-      out[[site]] <- list()
-    }
-    
-    # loop through "pft"
-    for(ecosystem in which(names(site_params) %in% "pft")){
-      ecosystem_data <- lapply(site_params[[ecosystem]], str2LogicalOrNumeric)
+    # loop through ecosystems
+    for(ecosystem in names(site_params$ecosystems)) {
+      ecosystem_data <- lapply(site_params$ecosystems[[ecosystem]], str2LogicalOrNumeric)
       
       #There should be no "MAP" values, but replace with 0 if so.
       ecosystem_data[ecosystem_data == "MAP"] <- 0
@@ -252,9 +240,9 @@ calc_ghgv <- function(eco_json,
         instance_output_latent
       
       listResult <- list(
-        name   = ecosystem_data$name,
-        lat    = site_lat,
-        lng    = site_lng,
+        name   = ecosystem,
+        lat    = as.numeric(site_params$lat),
+        lng    = as.numeric(site_params$lng),
         S_CO2  = res[1],
         S_CH4  = res[2],
         S_N2O  = res[3],
@@ -283,7 +271,8 @@ calc_ghgv <- function(eco_json,
   }
   
   #get the outputs
-  out_json <- toJSON(out) 
+  out_json <- toJSON(out)
+  
   #write the data to a file if specified
   if(save_output == TRUE) {
     x <- sapply(output_formats, 
@@ -299,8 +288,7 @@ calc_ghgv <- function(eco_json,
     if(save_plots == TRUE) write_plot(plt, plot_filename)
     tmpfile <- tempfile(fileext = ".svg")
     write_plot(plt, tmpfile)
-    plots[units] <- base64_enc(readBin(tmpfile, 
-                                       what = "raw"))
+    plots[units] <- base64_enc(readBin("plot.svg", what = "raw", n = info$size, "txt"))
   }
 
   res <- list(
