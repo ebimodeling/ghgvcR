@@ -8,7 +8,7 @@
 #' @param longitude the selected longitude.
 #' @param data_dir path of the netcdf and map csv data files.
 #' @param output_filename name of file to write (without extension). Only needed if write is TRUE.
-#' @param write_data boolean whether to write the data.
+#' @param save_output boolean whether to write the data.
 #' @return JSON of biome data. 
 get_biome <- function(latitude, 
                       longitude,
