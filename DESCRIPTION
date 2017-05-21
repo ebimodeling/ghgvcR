@@ -16,7 +16,6 @@ Imports:
     Hmisc,
     jsonlite,
     ncdf4,
-    Rserve,
     scales,
     tidyr
 Suggests:
