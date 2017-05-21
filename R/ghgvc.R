@@ -14,7 +14,7 @@
 #' R function implementation of GHGV_calculator_web.m
 #' @title GHGVC
 #' 
-#' @importFrom jsonlite toJSON
+#' @importFrom jsonlite toJSON base64_enc
 #' @export
 #' 
 #' @param eco_json (json string) A JSON list of configuration settings and data parameters. 
