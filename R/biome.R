@@ -8,7 +8,6 @@
 #' @param longitude the selected longitude.
 #' @param data_dir path of the netcdf and map csv data files.
 #' @param output_filename name of file to write (without extension). Only needed if write is TRUE.
-#' @param output_format format to save data in.
 #' @param write_data boolean whether to write the data.
 #' @return JSON of biome data. 
 get_biome <- function(latitude, 
@@ -16,8 +15,6 @@ get_biome <- function(latitude,
                       data_dir = "/home/ghgvcr/data/",
                       output_filename = "biome.csv",
                       save_output = FALSE) {
-  
-  output_format <- match.arg(output_format)
   
   #convert lat/lon to floats if they are strings
   if(typeof(latitude)=="character") latitude <- as.numeric(latitude)
