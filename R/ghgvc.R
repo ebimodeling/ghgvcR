@@ -89,12 +89,12 @@ calc_ghgv <- function(eco_json,
   
   ###
   #Sites for analysis 
-  sites <- names(eco_params)[-which(names(eco_params) %in% "options")]
+  #sites <- names(eco_params)[-which(names(eco_params) %in% "options")]
+  site_names <- names(eco_params$sites)
   
   out <- list()
-  
-  for (site in sites) {
-    site_params <- eco_params[[site]]
+  for (site in site_names) {
+    site_params <- eco_params$sites[[site]]
     
     #site lat/lon for later
     site_lat <- as.numeric(site_params$lat[[1]])
