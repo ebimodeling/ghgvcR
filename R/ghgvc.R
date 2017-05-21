@@ -309,7 +309,7 @@ calc_ghgv <- function(eco_json,
   }
 
   res <- list(
-    results = out_json, 
+    results = out, 
     plots = plots
   )
   return(toJSON(res))
