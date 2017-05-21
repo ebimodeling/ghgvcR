@@ -34,8 +34,6 @@ calc_ghgv <- function(eco_json,
                       save_plots = FALSE
                       ) {
   
-  print(eco_json)
-  
   #set options from parameters
   plot_units <- match.arg(plot_units, several.ok = TRUE)
   
