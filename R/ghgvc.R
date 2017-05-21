@@ -28,18 +28,14 @@
 #' @return List of GHGVC results for each location specified in \code{eco_json}.
 #' @author Chris Schauer, David LeBauer, Nicholas Potter
 calc_ghgv <- function(eco_json,
-                      output_filename = "ghgv",
-                      output_formats = c("json", "csv"),
-                      write_output = FALSE,
-                      plot_filename = "ghgv_plot",
-                      plot_formats = c("svg", "png"),
+                      output_filename = "ghgv.csv",
+                      save_output = FALSE,
+                      plot_filename = "ghgv_plot.png",
                       plot_units = c("co2", "mi"),
-                      write_plots = FALSE
+                      save_plots = FALSE
                       ) {
   
   #set options from parameters
-  output_formats <- match.arg(output_formats, several.ok = TRUE)
-  plot_formats <- match.arg(plot_formats, several.ok = TRUE)
   plot_units <- match.arg(plot_units, several.ok = TRUE)
   
   #convert from json to list
@@ -288,7 +284,7 @@ calc_ghgv <- function(eco_json,
   #get the outputs
   out_json <- toJSON(out) 
   #write the data to a file if specified
-  if(write_output == TRUE) {
+  if(save_output == TRUE) {
     sapply(output_formats, 
            function(x){
              write_output(out_json, paste0(output_filename, ".", x))
@@ -299,7 +295,7 @@ calc_ghgv <- function(eco_json,
   plots <- list() 
   for(units in plot_units) {
     plt <- plot_ghgv(json2DF(out_json), years = num_years_analysis, units = units)
-    if(write_plots == TRUE) {
+    if(save_plots == TRUE) {
       sapply(plot_formats, 
              function(x){
                write_plot(plt, paste0(plot_filename, ".", x))

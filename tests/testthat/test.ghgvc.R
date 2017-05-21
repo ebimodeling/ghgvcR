@@ -1,8 +1,9 @@
 library(ghgvcr)
 library(XML)
+library(jsonlite)
 context("ghgvc")
 
-test_that("run.ghgvc works for test config file",{
+test_that("calc_ghgv works for test config file",{
   #config file location 
   config_file <- system.file("config.xml", package = "ghgvcr")
   if (!file.exists(config_file)) config_file <- "/opt/ghgvc/ghgvcR/inst/config/config.xml"
@@ -10,7 +11,7 @@ test_that("run.ghgvc works for test config file",{
   config <- XML::xmlToList(XML::xmlParse(config_file, validate=F))  
   
   #Calculator
-  x <- ghgvc(config, write_data = FALSE, make_plots = FALSE)
+  x <- calc_ghgv(toJSON(config))
   
   expect_true(class(x) == "list")
   expect_true(grepl("Tropical Forest", names(x$ecosystem_data)))
