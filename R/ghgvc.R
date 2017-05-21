@@ -96,8 +96,8 @@ calc_ghgv <- function(eco_json,
     site_params <- eco_params[[site]]
     
     #site lat/lon for later
-    site_lat <- as.numeric(site_params$.attrs[[1]])
-    site_lng <- as.numeric(site_params$.attrs[[2]])
+    site_lat <- as.numeric(site_params$lat[[1]])
+    site_lng <- as.numeric(site_params$lng[[1]])
     
     if("pft" %in% names(site_params)) { 
       #fix issue of blank site (user selects a site but doesn't click a biome)
@@ -285,7 +285,7 @@ calc_ghgv <- function(eco_json,
   out_json <- toJSON(out) 
   #write the data to a file if specified
   if(save_output == TRUE) {
-    sapply(output_formats, 
+    x <- sapply(output_formats, 
            function(x){
              write_output(out_json, paste0(output_filename, ".", x))
            })

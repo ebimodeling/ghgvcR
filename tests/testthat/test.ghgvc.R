@@ -11,9 +11,9 @@ test_that("calc_ghgv works for test config file",{
   config <- XML::xmlToList(XML::xmlParse(config_file, validate=F))  
   
   #Calculator
-  x <- calc_ghgv(toJSON(config))
+  x <- calc_ghgv(toJSON(config, auto_unbox = TRUE))
   
-  expect_true(class(x) == "list")
+  expect_true(class(x) == "json")
   expect_true(grepl("Tropical Forest", names(x$ecosystem_data)))
   config_output <- "list(`Tropical Forest` = list(name = \"Tropical Forest\", S_CO2 = 715.481930448906, S_CH4 = 18.5897095138668, S_N2O = 11.2808552885403, F_CO2 = 264.088404311696, F_CH4 = 4.53053004775435, F_N2O = -43.9477537844218, D_CO2 = 0, D_CH4 = 0, D_N2O = 0, swRFV = 279.415509014268, latent = 238.297006650775, crv = 928.905173462847))"
   expect_equal(as.character(x), config_output)
@@ -21,13 +21,13 @@ test_that("calc_ghgv works for test config file",{
 
 test_that("run.ghgvc works for test multisite_config file",{
   #config file location 
-  config_file <- system.file("multisite_config2.xml", package = "ghgvcr")
-  if (!file.exists(config_file)) config_file <- "/opt/ghgvc/ghgvcR/inst/config/multisite_config2.xml"
+  ms_config_file <- system.file("multisite_config3.xml", package = "ghgvcr")
+  if (!file.exists(ms_config_file)) ms_config_file <- "/opt/ghgvc/ghgvcR/inst/config/multisite_config3.xml"
   
-  config <- XML::xmlToList(XML::xmlParse(config_file))  
+  ms_config <- XML::xmlToList(XML::xmlParse(ms_config_file))  
   
   #Calculator
-  y <- ghgvc(config, write_data = FALSE, make_plots = FALSE)
+  y <- calc_ghgv(toJSON(ms_config, auto_unbox = TRUE))
   
   expect_true(class(y) == "list")
   expect_equal(c("BR_sugarcane", "BR_soy"), names(y[["site_1_data"]]))

@@ -11,7 +11,7 @@ write_data <- TRUE
 
 #load configuration
 config_file <- file.path(in_dir, "multisite_config.xml")
-config <- xmlToList(xmlParse(config_file))
+config <- toJSON(xmlToList(xmlParse(config_file)), auto_unbox = TRUE)
 
 ### Run the GHG calculator V2
 res <- ghgvc(config, output_dir = out_dir, write_data = write_data)
