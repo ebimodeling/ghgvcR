@@ -51,7 +51,7 @@ test_that("str2LogicalOrNumeric() correctly returns logicals", {
   expect_true(!str2LogicalOrNumeric("false"))
 })
 
-test_that("man/str2LogicalOrNumeric() correctly resturns numerics and strings", {
+test_that("str2LogicalOrNumeric() correctly returns numerics and strings", {
   expect_true(str2LogicalOrNumeric("0.01") == 0.01)
   expect_true(str2LogicalOrNumeric("0.01s") == "0.01s")
   expect_true(is.na(str2LogicalOrNumeric("$0.01")))
