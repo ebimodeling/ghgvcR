@@ -11,7 +11,7 @@ test_that("calc_ghgv works for test config file",{
   config <- XML::xmlToList(XML::xmlParse(config_file, validate=F))
   
   #Calculator
-  x <- calc_ghgv(toJSON(config, auto_unbox = TRUE))
+  x <- calc_ghgv(toJSON(config, auto_unbox = FALSE))
   
   expect_true(class(x) == "json")
   expect_true(grepl("Tropical Forest", names(x$ecosystem_data)))
