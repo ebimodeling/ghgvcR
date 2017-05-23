@@ -288,7 +288,7 @@ calc_ghgv <- function(eco_json,
     if(save_plots == TRUE) write_plot(plt, plot_filename)
     tmpfile <- tempfile(fileext = ".svg")
     write_plot(plt, tmpfile)
-    plots[units] <- base64_enc(readBin(tmpfile, what = "raw", n = info$size, "txt"))
+    plots[units] <- base64_enc(readBin(tmpfile, what = "raw", n = file.info(tmpfile)$size, "txt"))
   }
 
   res <- list(
