@@ -190,11 +190,13 @@ remap_range <- function(input, input_min, input_max, output_min, output_max) {
 #'   str2LogicalOrNumeric("NaN") # -> "NaN"
 #' }
 str2LogicalOrNumeric <- function(string) {
-  if (string == "NA" || string == "") string <- "null"
-  if (grepl("TRUE|FALSE", string)) x <- as.logical(string)
+  if (string == "") x <- NA
+  else if (string == "NA") x <- NA
+  else if (string == "null") x <- NA
+  else if (string == "NaN") x <- NaN
+  else if (grepl("TRUE|True|true|FALSE|False|false", string)) x <- as.logical(string)
   else if (!grepl("[a-zA-Z]", string)) x <- as.numeric(string)
   else x <- string
-  if(x == "null") { x <- 0 }
   x
 }
 
