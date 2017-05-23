@@ -9,6 +9,21 @@ decay <- function(r, t) {
 }
 
 
+#' Decay Kinetics.
+#' 
+#' @param time_vector a vector of time moments.
+#' @return a matrix of decay kinetics for each time moment.
+kinetic_decay <- function(time_vector) {
+  t(matrix(c(.217 +
+               .259 * exp(-time_vector / 172.9) +
+               .338 * exp(-time_vector / 18.51) +
+               .186 * exp(-time_vector / 1.186), 
+             exp(-time_vector / 12), 
+             exp(-time_vector / 114)),
+           nrow = 3, byrow = TRUE))
+}
+
+
 #' Extract GHG parameters into a matrix.
 #'  
 #' @param ecosystem a named list of ecosystem traits.
@@ -100,12 +115,17 @@ extract_pool_params <- function(ecosystem) {
 #' Convert GHGVC json results to data.frame.
 #' 
 #' @importFrom jsonlite fromJSON
+#' @importFrom jsonlite validate
 #' @export
 #' 
 #' @param res a json object containing results from \code{ghgvc()}.
 #' @return a data frame of ghgvc results.
 json2DF <- function(json) {
+  validate(json)
+  
   json_list <- fromJSON(json)
+  if(class(json_list) != "list") stop("JSON malformed: Not able to parse to a list.")
+  
   col_names <- names(json_list[[1]][[1]])
   
   #convert to list of data.frames
@@ -134,30 +154,15 @@ json2DF <- function(json) {
   #round the results
   outdf[!colnames(outdf) %in% c("Location", "Biome")] <- round(outdf[!colnames(outdf) %in% c("Location", "Biome")], digits = 1)
   
-  
   #total ghgv
   outdf$GHGV <- outdf$GHGV_CO2 + outdf$GHGV_CH4 + outdf$GHGV_N2O
   
   #invert swRFV
   outdf$swRFV <- - outdf$swRFV
   
-  return(outdf)
+  return(as.data.frame(outdf))
 }
 
-
-#' Decay Kinetics.
-#' 
-#' @param time_vector a vector of time moments.
-#' @return a matrix of decay kinetics for each time moment.
-kinetic_decay <- function(time_vector) {
-  t(matrix(c(.217 +
-             .259 * exp(-time_vector / 172.9) +
-             .338 * exp(-time_vector / 18.51) +
-             .186 * exp(-time_vector / 1.186), 
-             exp(-time_vector / 12), 
-             exp(-time_vector / 114)),
-           nrow = 3, byrow = TRUE))
-}
 
 
 #' Remap latitude and longitude ranges.
