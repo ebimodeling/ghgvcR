@@ -44,7 +44,7 @@ out_multi <- list(
   `crv [Mg CO2-eq ha-1 100 yrs-1]`    = NA)
 
 test_that("calc_ghgv works with single site json",{
-  eco <- fromJSON(single_json_file)
+  eco <- fromJSON(fromJSON(single_json_file))
   out_json <- calc_ghgv(toJSON(eco, auto_unbox = FALSE))
   
   #validate the json

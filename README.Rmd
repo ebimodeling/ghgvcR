@@ -9,21 +9,70 @@ Citation: Kristina J. Teixeira and Evan H. Delucia 2011. The greenhouse gas valu
 
 -------
 
-### Inputs
+**ghgvcR* serves two main functions:
 
-* `inst/config/config.xml` example input file
-* `inst/extdata/ghgvc1.Rdata` all objects used and provided by ghgvc 1.0
-* `inputs.Rdata` example of inputs as R objects for ghgvcr example (below)
-* `inst/extdata/multipft_input.xml`
+1. Provide an `R` package to allow calculation of climate regulating values from within R by submitting an XML or JSON file of inputs.
 
-### Outputs
+2. Provide a web service capable of accepting web requests in XML or JSON format and providing climate regulating value results and figures.
 
-produced by example below:
+### Installation
 
-* `inst/extdata/output.csv`
-* `inst/extdata/output.json`
+If you like rstudio and `devtools`, simply `devtools::install_github("ebimodeling/ghgvcr")` will handle installation. Alternatively, clone this repository, then in a terminal at the root of the repository type `R CMD INSTALL .`. 
+
+
+### USE CASE 1: ghgvcR as an R package for CRV calculation
+
+`ghgvcr` provides two main functions: `calc_ghgv()` and `get_biome()`.
+
+`get_biome()` takes a lat/lng pair and returns a list of likely ecosystems at that location, as well as parameters that determine the CRV calculation for each. The ecosystems can be easily used to create a list of locations and ecosystems to submit as an input to `calc_ghgv()`, which will return a JSON string of CRV values and can optionally write results to a CSV file and save plot images.
+
+`get_biome()` requires a significant number of files to run. Those files are avialable as a zip file from [here](TODO: paste link). Unzipped they require nearly 10GB of disk space. By default this data is assumed to reside inside `/home/ghgvcr/data`, but the directory can be changed by specifying `data_dir` as a parameter passed to `get_biome()`. See the function documentation for more information on available parameters.
+
+#### A Simple Example
+
+``` {r}
+#get all ecosystems likely at latitude -15.62, longitude -50.69 and save them in a file named 'biome.csv'
+#returns a list of biomes in JSON format
+biomes_json <- get_biome(-15.62, -50.69, data_dir = '/data/ghgvcD/', output_filename = 'biome.csv', save_output = TRUE)
+
+#convert the biomes_json string to an R list
+biomes_list <- jsonlite::fromJSON(biomes_json)
+```
+
+The next step is to compose a list to send to `calc_ghgv()`. We can use the file at `inst/config/single_site.json` as a framework to construct our list of ecosystems.
+
+``` {r}
+#double fromJSON needed because of how R writes JSON objects to files.
+example_inputs <- fromJSON(fromJSON('inst/config/single_site.json'))
+
+#create the initial input list with default global options
+our_intputs <- list('options' = example_inputs$options, sites = list())
+
+# Add the Grass biome from our above selection.
+our_inputs$sites$site_1_data$Grass <- biomes_list$Grass
+
+# run the calculator, save the output data, and save a plot with "Equivalent miles driven in an average-sized car" as units.
+res <- calc_ghgv(our_inputs, save_output = TRUE, save_plots = TRUE, plot_units = "mi")
+```
+
+### USE CASE 2: ghgvcr as a web service
+
+Best if you'd like to allow for repeated scripted calls to a web server that contains `ghgvcr`, or run a web app that makes 'api' calls to the `ghgvcr` library. In this case, we suggest [ghgvc](https://github.com/rubyforgood/ghgvc), the ruby app we've built that takes advantage of the Rserve functionality. A working version is available at [http://www.ecosystemservicescalc.org/](http://www.ecosystemservicescalc.org/).
+
+ghgvcr can be run as a docker container, or set up by running [Rserve](https://www.rforge.net/Rserve/). To run it as a docker container, first install the zipped map data in `ghgvcD` as a sibling to `ghgvcr`. You'll need `docker` and `docker-compose` installed. Then from the ghgvcr repository, run
+
+> docker-compose build
+> docker-compose up
+
+This will start a docker daemon. `ghgvcr` can be communicated with by making Rserve calls to port 6311 from any language that supports Rserve.
+
+Alternatively, Rserve can be started from R and run as a daemon itself without the use of docker.
 
 ### Installing the ghgvcr package on the PEcAn 1.2.6 VM
+
+The below information is outdated, though the functionality is similar.
+
+------
 
 The bash and R code snippets below install dependencies, and only need to be run once.
 

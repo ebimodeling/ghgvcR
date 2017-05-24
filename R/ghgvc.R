@@ -30,7 +30,7 @@
 #'   the results.
 #' @return List of GHGVC results for each location specified in \code{eco_json}.
 #' @author Chris Schauer, David LeBauer, Nicholas Potter
-calc_ghgv <- function(eco_json,
+calc_ghgv <- function(eco,
                       is_xml = FALSE,
                       output_filename = "ghgv.csv",
                       save_output = FALSE,
