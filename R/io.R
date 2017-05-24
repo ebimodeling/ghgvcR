@@ -7,7 +7,7 @@ write_output <- function(json, output_filename) {
   format <- unlist(strsplit(output_filename, "[.]"))[2]
   
   if(format == "csv") {
-    outdf <- json2DF(json)
+    outdf <- json_to_df(json)
     outdf[outdf == 0] <- NA
     write.csv(outdf, file.path(output_filename), row.names = FALSE)
   }

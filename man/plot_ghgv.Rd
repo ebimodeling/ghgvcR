@@ -13,7 +13,7 @@ plot_ghgv(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.86)
 
 \item{units}{(character) either co2 or mi to plot in co2 equivalents or miles.}
 
-\item{crv_to_miles}{(numeric) conversion factor for crv to miles.}
+\item{crv_to_miles}{(numeric) conversion factor for crv to miles, default 1.86.}
 }
 \value{
 a ggplot2 plot object.

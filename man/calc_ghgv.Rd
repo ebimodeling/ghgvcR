@@ -4,25 +4,25 @@
 \alias{calc_ghgv}
 \title{GHGVC}
 \usage{
-calc_ghgv(eco_json, output_filename = "ghgv.csv", save_output = FALSE,
-  plot_filename = "ghgv_plot.png", plot_units = c("co2", "mi"),
-  save_plots = FALSE)
+calc_ghgv(eco, is_xml = FALSE, output_filename = "ghgv.csv",
+  save_output = FALSE, plot_filename = "ghgv_plot.png",
+  plot_units = c("co2", "mi"), save_plots = FALSE)
 }
 \arguments{
-\item{eco_json}{(json string) A JSON list of configuration settings and data parameters.}
+\item{is_xml}{(logical) indicating that eco_json is xml instead of json.}
 
 \item{output_filename}{(character) name of file to write.}
 
-\item{plot_filename}{(character) name of file to write.}
+\item{save_output}{(logical) indicating whether or not to write the results.}
 
-\item{output_format}{(character) format of output file, either json or csv.}
+\item{plot_filename}{(character) name of plot to write.}
 
-\item{write_output}{(logical) indicating whether or not to write the results.}
+\item{plot_units}{(character) units to plot in. May be contain multiple values.}
 
-\item{plot_format}{(character) format of output file, either json or csv.}
-
-\item{write_plot}{(logical) indicating whether or not to write the results.
+\item{save_plots}{(logical) indicating whether or not to save the plot images.
 the results.}
+
+\item{eco_json}{(json string) A JSON list of configuration settings and data parameters.}
 }
 \value{
 List of GHGVC results for each location specified in \code{eco_json}.

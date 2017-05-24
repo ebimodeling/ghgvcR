@@ -6,8 +6,7 @@
 file.}
 \usage{
 get_biome(latitude, longitude, data_dir = "/home/ghgvcr/data/",
-  output_filename = "biome", output_format = c("json", "csv"),
-  write_data = TRUE)
+  output_filename = "biome.csv", save_output = FALSE)
 }
 \arguments{
 \item{latitude}{the selected latitude.}
@@ -18,9 +17,7 @@ get_biome(latitude, longitude, data_dir = "/home/ghgvcr/data/",
 
 \item{output_filename}{name of file to write (without extension). Only needed if write is TRUE.}
 
-\item{output_format}{format to save data in.}
-
-\item{write_data}{boolean whether to write the data.}
+\item{save_output}{boolean whether to write the data.}
 }
 \value{
 JSON of biome data.

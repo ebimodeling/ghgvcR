@@ -1,3 +1,49 @@
+#' wrap biome data in a list for input to \code{calc_ghgv()}.
+#' 
+#' @export
+#' @param biome a biome or list of biomes from \code{get_biome()}.
+#' @param site_number (integer) default 1, site number to assign biomes to.
+#' @param options (list) list of global options to use.
+#' @return a list for use in \code{calc_ghgvc()}.
+biome_to_input <- function(biomes, site_number = 1, options = list(
+                           storage = TRUE, 
+                           flux = TRUE,
+                           disturbance = FALSE,
+                           co2 = TRUE,
+                           ch4 = TRUE,
+                           n20 = TRUE,
+                           T_A = 100,
+                           T_E = 50,
+                           r = 0)) {
+  site <- paste("site", site_number, "data", sep="_")
+  res <- list(options = options,
+              sites = list(
+                site_1_data = list(
+                  ecosystems = list()
+                )
+              )
+            )
+  
+  if ("native_eco" %in% names(biomes)) {
+    lapply(names(biomes$native_eco), function(eco) {
+      res$sites$site_1_data$ecosystems[eco] = biomes$native_eco[eco]
+    })
+  } 
+  if ("agroecosystem_eco" %in% names(biomes)) {
+    
+    lapply(names(biomes$agroecosystem_eco), function(eco) {
+      res$sites[site]$ecosystems[eco] = biomes$native_eco[eco]
+    })
+  }
+  if (!() && !()) {
+    lapply(names(biomes), function(eco) {
+      res$sites[site]$ecosystems[eco] = biomes[eco]
+    })
+    
+  }
+}
+
+
 #' Decay function for rates over time.
 #' 
 #' @param r a vector of decay rates.
@@ -120,7 +166,7 @@ extract_pool_params <- function(ecosystem) {
 #' 
 #' @param res a json object containing results from \code{ghgvc()}.
 #' @return a data frame of ghgvc results.
-json2DF <- function(json) {
+json_to_df <- function(json) {
   validate(json)
   
   json_list <- fromJSON(json)

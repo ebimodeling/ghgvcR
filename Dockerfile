@@ -14,15 +14,13 @@ RUN apt-get update \
 	&& rm -rf /var/lib/apt/lists/*
 
 # install R dependency packages
-RUN echo "install.packages(c('ggplot2', 'gridExtra', 'Hmisc', 'jsonlite', 'scales', 'tidyr', 'ncdf4', 'Rserve'), repos = 'http://cran.us.r-project.org')" > /tmp/packages.R \
-    && Rscript /tmp/packages.R
+RUN Rscript -e "install.packages(c('ggplot2', 'gridExtra', 'Hmisc', 'jsonlite', 'scales', 'tidyr', 'ncdf4', 'Rserve', 'XML'), repos = 'http://cran.us.r-project.org')"
 
 # place the ghgvcR project into the image
 COPY . $HOME
 
 # install our project packages
-RUN echo "install.packages('$HOME', repos=NULL, type='source')" > /tmp/packages.R \
-    && Rscript /tmp/packages.R
+RUN Rscript -e "install.packages('$HOME', repos=NULL, type='source')"
 
 WORKDIR $HOME
 USER ghgvcr

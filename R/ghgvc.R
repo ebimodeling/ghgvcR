@@ -291,7 +291,7 @@ calc_ghgv <- function(eco,
   #create the plots
   plots <- list() 
   for(units in plot_units) {
-    plt <- plot_ghgv(json2DF(out_json), years = num_years_analysis, units = units)
+    plt <- plot_ghgv(json_to_df(out_json), years = num_years_analysis, units = units)
     if(save_plots == TRUE) write_plot(plt, plot_filename)
     tmpfile <- tempfile(fileext = ".svg")
     write_plot(plt, tmpfile)
