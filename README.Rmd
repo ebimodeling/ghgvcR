@@ -9,7 +9,7 @@ Citation: Kristina J. Teixeira and Evan H. Delucia 2011. The greenhouse gas valu
 
 -------
 
-**ghgvcR* serves two main functions:
+**ghgvcR** serves two main functions:
 
 1. Provide an `R` package to allow calculation of climate regulating values from within R by submitting an XML or JSON file of inputs.
 
