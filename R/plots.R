@@ -9,7 +9,7 @@
 #' @param df a data.frame of output from \code{ghgvc()}.
 #' @param years (integer) years considered in the analysis.
 #' @param units (character) either co2 or mi to plot in co2 equivalents or miles.
-#' @param crv_to_miles (numeric) conversion factor for crv to miles.
+#' @param crv_to_miles (numeric) conversion factor for crv to miles, default 1.86.
 #' @return a ggplot2 plot object.
 plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.86) {
 
@@ -86,7 +86,6 @@ plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.8
     labs(fill = "") + 
     ggtitle("Biogeochemical") + 
     theme(axis.text.y = element_text(size = 12, hjust = 1)) 
-  bgc_plot 
   
   #BIOPHYS
   biophys_plot <- ghgvc_subplot(c("LE", "Rnet"), 

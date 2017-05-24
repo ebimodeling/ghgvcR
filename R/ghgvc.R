@@ -16,17 +16,22 @@
 #' 
 #' @importFrom jsonlite toJSON 
 #' @importFrom jsonlite base64_enc
+#' @importFrom XML xmlToList
+#' @importFrom XML xmlParse
 #' @export
 #' 
 #' @param eco_json (json string) A JSON list of configuration settings and data parameters. 
+#' @param is_xml (logical) indicating that eco_json is xml instead of json.
 #' @param output_filename (character) name of file to write.
 #' @param save_output (logical) indicating whether or not to write the results.
-#' @param plot_filename (character) name of file to write.
-#' @param save_plots (logical) indicating whether or not to write the results.
+#' @param plot_filename (character) name of plot to write.
+#' @param plot_units (character) units to plot in. May be contain multiple values.
+#' @param save_plots (logical) indicating whether or not to save the plot images.
 #'   the results.
 #' @return List of GHGVC results for each location specified in \code{eco_json}.
 #' @author Chris Schauer, David LeBauer, Nicholas Potter
 calc_ghgv <- function(eco_json,
+                      is_xml = FALSE,
                       output_filename = "ghgv.csv",
                       save_output = FALSE,
                       plot_filename = "ghgv_plot.png",
@@ -38,7 +43,7 @@ calc_ghgv <- function(eco_json,
   plot_units <- match.arg(plot_units, several.ok = TRUE)
   
   #convert from json to list
-  eco_params <- fromJSON(eco_json)
+  eco_params <- if(is_xml) xmlToList(eco) else fromJSON(eco)
    
   #get config information
   options <- eco_params$options
@@ -93,6 +98,8 @@ calc_ghgv <- function(eco_json,
   out <- list()
   for (site in site_names) {
     site_params <- eco_params$sites[[site]]
+    if(!("lat" %in% names(site_params))) site_params$lat <- NA
+    if(!("lng" %in% names(site_params))) site_params$lng <- NA
     
     # loop through ecosystems
     for(ecosystem in names(site_params$ecosystems)) {
