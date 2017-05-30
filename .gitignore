@@ -1,3 +1,7 @@
 .Rproj.user
 .Rhistory
 .RData
+
+#allow zip files that are ignored globally
+!*.zip
+
