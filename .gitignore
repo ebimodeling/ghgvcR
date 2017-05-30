@@ -3,5 +3,5 @@
 .RData
 
 #allow zip files that are ignored globally
-!inst/extdata/*.zip
+!inst/extdata/app_data.zip
 
