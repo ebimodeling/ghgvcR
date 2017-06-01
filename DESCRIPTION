@@ -17,7 +17,8 @@ Imports:
     jsonlite,
     ncdf4,
     scales,
-    tidyr
+    tidyr,
+    XML
 Suggests:
     knitr,
     readr,
