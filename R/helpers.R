@@ -32,10 +32,10 @@ biome_to_input <- function(biomes, site_number = 1, options = list(
   if ("agroecosystem_eco" %in% names(biomes)) {
     
     lapply(names(biomes$agroecosystem_eco), function(eco) {
-      res$sites[site]$ecosystems[eco] = biomes$native_eco[eco]
+      res$sites[site]$ecosystems[eco] = biomes$agroecosystem_eco[eco]
     })
   }
-  if (!() && !()) {
+  if (!(any(c("native_eco", "agroecosystem_eco") %in% names(biomes)))) {
     lapply(names(biomes), function(eco) {
       res$sites[site]$ecosystems[eco] = biomes[eco]
     })
