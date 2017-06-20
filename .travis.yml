@@ -4,10 +4,13 @@ language: R
 sudo: false
 cache: packages
 
-
 addons:
   apt:
     packages:
       - libnetcdf-dev
       - libudunits2-dev
       - netcdf-bin
+      - libnetcdf-dev
+      - libxml2
+      - libxml2-dev
+      - libssl-dev
