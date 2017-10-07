@@ -5,7 +5,7 @@ R implementation of the Greenhouse Gas Value Calculator
 
 Citation: Kristina J. Teixeira and Evan H. Delucia 2011. The greenhouse gas value of ecosystems. Global Change Biology. 17(1):425–438 doi: 10.1111/j.1365-2486.2010.02220.x
 
-[![Travis-CI Build Status](https://travis-ci.org/ebimodeling/ghgvcR.svg?branch=master)](https://travis-ci.org/ebimodeling/ghgvcR)
+[![Travis-CI Build Status](https://travis-ci.org/jaydorsey/ghgvcR.svg?branch=master)](https://travis-ci.org/jaydorsey/ghgvcR)
 
 -------
 
@@ -17,7 +17,7 @@ Citation: Kristina J. Teixeira and Evan H. Delucia 2011. The greenhouse gas valu
 
 ### Installation
 
-If you like rstudio and `devtools`, simply `devtools::install_github("ebimodeling/ghgvcr")` will handle installation. Alternatively, clone this repository, then in a terminal at the root of the repository type `R CMD INSTALL .`. 
+If you like rstudio and `devtools`, simply `devtools::install_github("ebimodeling/ghgvcr")` will handle installation. Alternatively, clone this repository, then in a terminal at the root of the repository type `R CMD INSTALL .`.
 
 
 ### USE CASE 1: ghgvcR as an R package for CRV calculation
@@ -101,7 +101,7 @@ options(warn=FALSE)
 
 config_file <- system.file("config/config.xml", package = "ghgvcr")
 
-config <- xmlToList(xmlParse(config_file, validate=F))  
+config <- xmlToList(xmlParse(config_file, validate=F))
 
 #Calculator
 ghgvc_output <- ghgvc(config, , make_plots = FALSE, write_data = FALSE)
