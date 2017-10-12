@@ -26,7 +26,7 @@ RUN mkdir -p /home/ghgvcr/lib
 ENV R_LIBS_USER /home/ghgvcr/lib
 
 # install R dependency packages
-RUN Rscript -e "install.packages(c('ggplot2', 'gridExtra', 'Hmisc', 'jsonlite', 'scales', 'tidyr', 'ncdf4', 'Rserve', 'XML'), repos = 'http://cran.us.r-project.org')"
+RUN Rscript -e "install.packages(c('ggplot2', 'gridExtra', 'Hmisc', 'jsonlite', 'scales', 'tidyr', 'ncdf4', 'Rserve', 'XML', 'readr', 'rmarkdown', 'testthat'), repos = 'http://cran.us.r-project.org')"
 
 # place the ghgvcR project into the image
 COPY . $HOME

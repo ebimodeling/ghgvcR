@@ -145,3 +145,13 @@ project.
              --name ghgvcr-serve \ # name the running container
              ebimodeling/ghgvcr    # the tag given during `docker build ...`
 ```
+
+## Running R tests for local development
+
+1. Remove `tests/` from `.dockerignore` if it is present
+2. Run `docker build .` in the project's root directory
+3. Get a shell into the container with `docker run -it <id from step 2> /bin/bash`
+4. Inside the container, run `R CMD build .` to generate the tarball used by the checker
+(note the trailing `.`)
+5. Run `R CMD check ghgvcr_2.0.tar.gz --as-cran --no-manual --no-manual` This checks the
+R code, and should report no errors.
