@@ -20,4 +20,3 @@ a ggplot2 object.
 Creates a ggplot2 object using long-form data from \code{ghgcv_plot()} and
 a set of variables to plot over.
 }
-

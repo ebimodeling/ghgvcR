@@ -15,4 +15,3 @@ a data frame of ghgvc results.
 \description{
 Convert GHGVC json results to data.frame.
 }
-

@@ -15,4 +15,3 @@ vegtype_order(vegtypes)
 \description{
 Provides an integer used to order biomes by vegtype.
 }
-

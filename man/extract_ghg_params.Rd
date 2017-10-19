@@ -17,4 +17,3 @@ a matrix of greenhouse gas parameters.
 \description{
 Extract GHG parameters into a matrix.
 }
-
