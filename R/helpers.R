@@ -46,6 +46,8 @@ biome_to_input <- function(biomes, site_number = 1, options = list(
 
 #' Decay function for rates over time.
 #' 
+#' @export
+#' 
 #' @param r a vector of decay rates.
 #' @param t a sequential vector of time steps.
 #' @return a matrix of decay fluxes for each time moment. 
@@ -56,6 +58,8 @@ decay <- function(r, t) {
 
 
 #' Decay Kinetics.
+#' 
+#' @export
 #' 
 #' @param time_vector a vector of time moments.
 #' @return a matrix of decay kinetics for each time moment.
@@ -71,6 +75,8 @@ kinetic_decay <- function(time_vector) {
 
 
 #' Extract GHG parameters into a matrix.
+#'  
+#' @export
 #'  
 #' @param ecosystem a named list of ecosystem traits.
 #' @param inclAnth boolean whether to include Anthro flux
@@ -119,6 +125,8 @@ extract_ghg_params <- function(ecosystem, include_anth = TRUE) {
 
 
 #' Extract pool parameters into a matrix.
+#' 
+#' @export
 #' 
 #' @param ecosystem a list of ecosystem traits.
 #' @return a matrix.
@@ -213,6 +221,8 @@ json_to_df <- function(json) {
 
 #' Remap latitude and longitude ranges.
 #' 
+#' @export
+#' 
 #' @param input the value to remap.
 #' @param input_min minimum input value.
 #' @param input_max maximum input value.
@@ -232,6 +242,8 @@ remap_range <- function(input, input_min, input_max, output_min, output_max) {
 
 
 #' Convert string to logical or numeric.
+#'
+#' @export
 #'
 #' @param x (character) a string
 #' @return a logical or numeric value
@@ -255,6 +267,8 @@ str2LogicalOrNumeric <- function(string) {
 #' Determine factor order of a vegtype.
 #' 
 #' Provides an integer used to order biomes by vegtype.
+#' 
+#' @export
 #' 
 #' @param vegtypes (character list) list or array of vegtype names.
 #' @return (integer list) order factor.

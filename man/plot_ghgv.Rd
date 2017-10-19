@@ -21,4 +21,3 @@ a ggplot2 plot object.
 \description{
 Plot Greenhouse Gas values.
 }
-

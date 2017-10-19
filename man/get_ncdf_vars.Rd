@@ -15,4 +15,3 @@ list of variable names.
 \description{
 Wrapper to simplify checking variables in a netcdf file.
 }
-

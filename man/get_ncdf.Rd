@@ -24,4 +24,3 @@ JSON of netcdf results.
 \description{
 Get biome data from a netCDF file.
 }
-
