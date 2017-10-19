@@ -17,4 +17,3 @@ a matrix of decay fluxes for each time moment.
 \description{
 Decay function for rates over time.
 }
-

@@ -15,4 +15,3 @@ a matrix.
 \description{
 Extract pool parameters into a matrix.
 }
-

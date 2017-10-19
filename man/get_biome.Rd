@@ -26,4 +26,3 @@ JSON of biome data.
 Get biome data from netcdf and json files and return and/or write a config 
 file.
 }
-

@@ -22,4 +22,3 @@ Convert string to logical or numeric.
   str2LogicalOrNumeric("NaN") # -> "NaN"
 }
 }
-

@@ -4,10 +4,15 @@
 \alias{biome_to_input}
 \title{wrap biome data in a list for input to \code{calc_ghgv()}.}
 \usage{
-biome_to_input(biome, options = list(storage = TRUE, flux = TRUE, disturbance
-  = FALSE, co2 = TRUE, ch4 = TRUE, n20 = TRUE, T_A = 100, T_E = 50, r = 0))
+biome_to_input(biomes, site_number = 1, options = list(storage = TRUE, flux
+  = TRUE, disturbance = FALSE, co2 = TRUE, ch4 = TRUE, n20 = TRUE, T_A = 100,
+  T_E = 50, r = 0))
 }
 \arguments{
+\item{site_number}{(integer) default 1, site number to assign biomes to.}
+
+\item{options}{(list) list of global options to use.}
+
 \item{biome}{a biome or list of biomes from \code{get_biome()}.}
 }
 \value{
@@ -16,4 +21,3 @@ a list for use in \code{calc_ghgvc()}.
 \description{
 wrap biome data in a list for input to \code{calc_ghgv()}.
 }
-

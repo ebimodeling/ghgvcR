@@ -36,4 +36,3 @@ R function implementation of GHGV_calculator_web.m
 \author{
 Chris Schauer, David LeBauer, Nicholas Potter
 }
-

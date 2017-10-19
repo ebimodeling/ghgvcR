@@ -17,4 +17,3 @@ TRUE if written with no errors.
 \description{
 Writes a json string to a json or csv file.
 }
-

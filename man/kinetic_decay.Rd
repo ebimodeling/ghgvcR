@@ -15,4 +15,3 @@ a matrix of decay kinetics for each time moment.
 \description{
 Decay Kinetics.
 }
-
