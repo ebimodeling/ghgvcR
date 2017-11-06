@@ -19,7 +19,8 @@ Imports:
     scales,
     tidyr,
     XML,
-    grid
+    grid,
+    scales
 Suggests:
     knitr,
     readr,
