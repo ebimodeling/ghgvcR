@@ -45,7 +45,7 @@ out_multi <- list(
 
 test_that("calc_ghgv works with single site json",{
   eco <- fromJSON(single_json_file)
-  out_json <- calc_ghgv(toJSON(eco, auto_unbox = FALSE))
+  out_json <- calc_ghgv(eco)
   
   #validate the json
   validate(out_json)
