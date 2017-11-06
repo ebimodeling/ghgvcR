@@ -40,10 +40,10 @@ calc_ghgv <- function(eco,
                       ) {
   
   #set options from parameters
-  plot_units <- match.arg(plot_units, several.ok = TRUE)
+  plot_units <- match.arg(plot_units, plot_units, several.ok = TRUE)
   
   #convert from json to list
-  eco_params <- if(is_xml) xmlToList(eco) else fromJSON(eco)
+  eco_params <- if(is_xml) xmlToList(eco) else eco
    
   #get config information
   options <- eco_params$options
