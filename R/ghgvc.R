@@ -95,6 +95,9 @@ calc_ghgv <- function(eco,
   #sites <- names(eco_params)[-which(names(eco_params) %in% "options")]
   site_names <- names(eco_params$sites)
   
+  # all variables names (need them to have object of same length at the end)
+  all_variable <-  unique(unlist(lapply(eco_params$sites, function(x) lapply(x$ecosystems, names))))
+  
   out <- list()
   for (site in site_names) {
     site_params <- eco_params$sites[[site]]
@@ -104,6 +107,11 @@ calc_ghgv <- function(eco,
     # loop through ecosystems
     for(ecosystem in names(site_params$ecosystems)) {
       ecosystem_data <- lapply(site_params$ecosystems[[ecosystem]], str2LogicalOrNumeric)
+      
+      # add variable that don't exist
+      for(v in all_variable){
+        if(!v %in% names(ecosystem_data)) ecosystem_data[v] <- NA
+      }
       
       #There should be no "MAP" values, but replace with 0 if so.
       ecosystem_data[ecosystem_data == "MAP"] <- 0
