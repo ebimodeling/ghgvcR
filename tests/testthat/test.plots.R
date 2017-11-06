@@ -5,8 +5,8 @@ library("jsonlite")
 context("test that plots work without generating errors.")
 
 test_that("plots are generated without errors", {
-  config_file <- system.file("multisite_config2.xml", package = "ghgvcr")
-  if (!file.exists(config_file)) config_file <- "/opt/ghgvc/ghgvcR/inst/config/multisite_config2.xml"
+  config_file <- system.file("multi_site.xml", package = "ghgvcr")
+  if (!file.exists(config_file)) config_file <- "/opt/ghgvc/ghgvcR/inst/config/multi_site.xml"
   
   config <- XML::xmlToList(XML::xmlParse(config_file))  
   
