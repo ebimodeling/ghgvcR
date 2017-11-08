@@ -18,9 +18,7 @@ Imports:
     ncdf4,
     scales,
     tidyr,
-    XML,
-    grid,
-    scales
+    XML
 Suggests:
     knitr,
     readr,

@@ -1,24 +1,31 @@
-# The ghgvcr-base image installs R and all the dependencies needed to run
-# the scripts
-FROM jaydorsey/ghgvcr-base
+# our R base image
+FROM r-base
 
-# Copy the ghgvc R code into the image
-#
-# TODO: Once the Docker for mac client is updated, use this syntax to reduce
-# the number of layers
-#
-# COPY . $APP_PATH --chown=$USER:$USER
-USER root
-COPY . $APP_PATH
-RUN chown -R $USER:$USER $APP_PATH
+# create an R user
+ENV HOME /home/ghgvcr
+RUN useradd --create-home --home-dir $HOME ghgvcr \
+    && mkdir $HOME/data \
+    && chown -R ghgvcr:ghgvcr $HOME
 
-USER $USER
+# install distro libraries for R dependencies
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends \
+		libnetcdf-dev \
+	&& rm -rf /var/lib/apt/lists/*
 
-# Install our project package
-RUN Rscript -e "install.packages('$APP_PATH', repos=NULL, type='source')"
+# install R dependency packages
+RUN Rscript -e "install.packages(c('ggplot2', 'gridExtra', 'Hmisc', 'jsonlite', 'scales', 'tidyr', 'ncdf4', 'Rserve', 'XML'), repos = 'http://cran.us.r-project.org')"
 
-ENTRYPOINT ["bin/docker-entrypoint.sh"]
+# place the ghgvcR project into the image
+COPY . $HOME
+
+# install our project packages
+RUN Rscript -e "install.packages('$HOME', repos=NULL, type='source')"
+
+WORKDIR $HOME
+USER ghgvcr
 
 EXPOSE 6311
 
-CMD ["bin/start-server.sh"]
+# set the command
+CMD Rscript start.R
