@@ -1,5 +1,7 @@
 #' Writes a json string to a json or csv file.
 #' 
+#' @export
+#' 
 #' @param json a json object of the ghgv output.
 #' @param output_filename (character) the filename to output, extension included.
 #' @return TRUE if written with no errors.
@@ -17,6 +19,8 @@ write_output <- function(json, output_filename) {
 }
 
 #' Writes a json string to a json or csv file.
+#' 
+#' @export
 #' 
 #' @import grid
 #' @import gridExtra

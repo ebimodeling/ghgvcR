@@ -45,7 +45,7 @@ out_multi <- list(
 
 test_that("calc_ghgv works with single site json",{
   eco <- fromJSON(single_json_file)
-  out_json <- calc_ghgv(toJSON(eco, auto_unbox = FALSE))
+  out_json <- calc_ghgv(eco)
   
   #validate the json
   validate(out_json)
@@ -56,7 +56,7 @@ test_that("calc_ghgv works with single site json",{
   
   #test actual results match w/in error range
   lapply(setdiff(names(out$results$site_1_data$Tropical_Forest), c("name")), function(key) {
-    expect_true((out$results$site_1_data$Tropical_Forest[[key]] - out_test[[key]])^2 < 1e-6)
+    expect_true(ifelse(is.na(out$results$site_1_data$Tropical_Forest[[key]]), is.na(out_single[[key]]), (out$results$site_1_data$Tropical_Forest[[key]] - out_single[[key]])^2 < 1e-6))
   })
 })
   
@@ -73,13 +73,13 @@ test_that("calc_ghgv works with single site xml",{
   
   #test actual results match w/in error range
   lapply(setdiff(names(out$results$site_1_data$Tropical_Forest), c("name")), function(key) {
-    expect_true((out$results$site_1_data$Tropical_Forest[[key]] - out_test[[key]])^2 < 1e-6)
+    expect_true(ifelse(is.na(out$results$site_1_data$Tropical_Forest[[key]]), is.na(out_single[[key]]), (out$results$site_1_data$Tropical_Forest[[key]] - out_single[[key]])^2 < 1e-6))
   })
 })
 
 test_that("calc_ghgv works with multi site json",{
   eco <- fromJSON(multi_json_file)
-  out_json <- calc_ghgv(toJSON(eco, auto_unbox = FALSE))
+  out_json <- calc_ghgv(eco)
   
   #validate the json
   validate(out_json)
@@ -90,7 +90,7 @@ test_that("calc_ghgv works with multi site json",{
   
   #test actual results match w/in error range
   lapply(setdiff(names(out$results$site_1_data$Tropical_Forest), c("name")), function(key) {
-    expect_true((out$results$site_1_data$Tropical_Forest[[key]] - out_test[[key]])^2 < 1e-6)
+    expect_true(ifelse(is.na(out$results$site_1_data$Tropical_Forest[[key]]), is.na(out_multi[[key]]), (out$results$site_1_data$Tropical_Forest[[key]] - out_multi[[key]])^2 < 1e-6))
   })
 })
 
@@ -107,7 +107,7 @@ test_that("calc_ghgv works with multi site xml",{
   
   #test actual results match w/in error range
   lapply(setdiff(names(out$results$site_1_data$Tropical_Forest), c("name")), function(key) {
-    expect_true((out$results$site_1_data$Tropical_Forest[[key]] - out_test[[key]])^2 < 1e-6)
+    expect_true(ifelse(is.na(out$results$site_1_data$Tropical_Forest[[key]]), is.na(out_multi[[key]]), (out$results$site_1_data$Tropical_Forest[[key]] - out_multi[[key]])^2 < 1e-6))
   })
 })
 

@@ -5,7 +5,7 @@ R implementation of the Greenhouse Gas Value Calculator
 
 Citation: Kristina J. Teixeira and Evan H. Delucia 2011. The greenhouse gas value of ecosystems. Global Change Biology. 17(1):425–438 doi: 10.1111/j.1365-2486.2010.02220.x
 
-[![Travis-CI Build Status](https://travis-ci.org/ebimodeling/ghgvcR.svg?branch=master)](https://travis-ci.org/ebimodeling/ghgvcR)
+[![Travis-CI Build Status](https://travis-ci.org/jaydorsey/ghgvcR.svg?branch=master)](https://travis-ci.org/jaydorsey/ghgvcR)
 
 -------
 
@@ -17,7 +17,7 @@ Citation: Kristina J. Teixeira and Evan H. Delucia 2011. The greenhouse gas valu
 
 ### Installation
 
-If you like rstudio and `devtools`, simply `devtools::install_github("ebimodeling/ghgvcr")` will handle installation. Alternatively, clone this repository, then in a terminal at the root of the repository type `R CMD INSTALL .`. 
+If you like rstudio and `devtools`, simply `devtools::install_github("ebimodeling/ghgvcr")` will handle installation. Alternatively, clone this repository, then in a terminal at the root of the repository type `R CMD INSTALL .`.
 
 
 ### USE CASE 1: ghgvcR as an R package for CRV calculation
@@ -101,14 +101,12 @@ options(warn=FALSE)
 
 config_file <- system.file("config/config.xml", package = "ghgvcr")
 
-config <- xmlToList(xmlParse(config_file, validate=F))  
+config <- xmlToList(xmlParse(config_file, validate=F))
 
 #Calculator
 ghgvc_output <- ghgvc(config, , make_plots = FALSE, write_data = FALSE)
 
 ghgvc_output.json <- toJSON(ghgvc_output)
-
-
 ```
 
 ```{r results='hide', comment=NA, warning=FALSE}
@@ -119,29 +117,55 @@ x2 <- ghgvc(multipft_config.list, make_plots = FALSE, write_data = FALSE)
 
 writeLines(x2, "inst/extdata/multipft_output.json")
 write.csv(as.data.frame(fromJSON(x2)), "inst/extdata/multipft_output.csv")
-
 ```
 
-# DOCKER!
+### Docker
 
-## Building a Docker image of the Calculator
+For Calculator development, use Docker-compose.
+
+#### Using Docker Compose
+
+Docker Compose is the easiest way to develop & use the Calculator locally.
 
 ```
-> docker build --rm --force-rm          \ # build a docker image, don't keep temp stuff
-               --tag ebimodeling/ghgvcr \ # tag the resulting image with owner and name
-               .                          # build the current directory
+> docker-compose build && docker-compose up
 ```
 
-## Run the Calculator in a container
+The first time you run these commands the container will take a few minutes to
+start up. This is because it's downloading and caching the map files in a
+persistent volume.
+
+
+#### Using Docker
+
+Use Docker Compose (above) unless you need to modify the Docker image itself.
+
+
+##### Building and tagging the image
+
+```
+> docker build . --rm --force-rm -t jaydorsey/ghgvcr
+```
+
+##### Run the Calculator in a container
 
 You can run the R calculator in a container this way or, when paired with the
 `ghgvc` Rails application, via the docker-compose configuration defined in that
 project.
 
 ```
-> docker run -it --rm     \ # run, attach to the container, destroy it when exit
-             --volume /path/to/the/data:/home/ghgvcr/data \ # mount the tons of data
-             --publish 6311:6311 \ # forward the container's port 6311 to localhost 6311
-             --name ghgvcr-serve \ # name the running container
-             ebimodeling/ghgvcr    # the tag given during `docker build ...`
+> docker run -it --rm -v ~/data:/app/data -p 6311:6311 --name ghgvcr-serve jaydorsey/ghgvcr
+```
+
+You'll want to mount the `/app/data` folder so it persists across container
+restarts
+
+#### Running R tests for local development
+
+```
+# Create a container (or connect to your existing)
+> docker-compose build && docker-compose run ghgvcr /bin/bash
+
+# Inside your container
+> R CMD check .
 ```

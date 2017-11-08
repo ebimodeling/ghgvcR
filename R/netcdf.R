@@ -92,6 +92,8 @@ get_ncdf <- function(data_dir, ncfile, latitude, longitude, variables = "all") {
 #' 
 #' @importFrom ncdf4 nc_open nc_close
 #' 
+#' @export
+#' 
 #' @param file_name file name (relative to working directory).
 #' @return list of variable names. 
 get_ncdf_vars <- function(file_name) {
