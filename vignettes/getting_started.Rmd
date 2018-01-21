@@ -14,12 +14,14 @@ The Greenhouse Gas Value Calculator ([GHGVC](http://www.ecosystemservicescalc.or
 Citation: Kristina J. Teixeira and Evan H. Delucia 2011. The greenhouse gas value of ecosystems. Global Change Biology. 17(1):425438 doi: 10.1111/j.1365-2486.2010.02220.x
 
 ####Overview
-`ghgvcR` has two principal functions:
+`ghgvcR` has several principal functions:
 
-1. `get_ncdf()` reads in netcdf biome data.
-2. `ghgvcr()` calculates the greenhouse gas emissions of a specific ecosystem. 
+1. `get_biome()` determines the biomes available at a given latitude and longitude. 
+1. `get_ncdf()` reads in netcdf biome data for a given latitude and longitude.
+2. `calc_ghgv()` calculates the greenhouse gas emissions of a specific ecosystem. 
+3. `plot_ghgv()` creates plots of greenhouse gas emissions seen on the GHGVC app.
 
-These functions are implemented in two scripts in the `inst/scripts` directory of the `ghgvcR` package: `get_biome.R` and `calc_ghgv.R`. `get_biome.R` is used by GHGVC to load biome data from netcdf4 files. `calc_ghgv.R` is used by GHGVC to calculate greenhouse gas emissions and write the results to a json file.
+`ghgvcR` talks to the GHGVC web app by receiving json parameters and passing back json results. However it also works as a stand alone estimator of greenhouse gas emissions at a specific location.
 
 ####Quick Example
 Several example ecosystem data files are kept in `inst/config_examples/`. These can be used in place of biome data to run the calculator entirely within R:
@@ -32,14 +34,14 @@ config_file <- system.file("config/multi_site.xml", package = "ghgvcr")
 config <- XML::xmlToList(XML::xmlParse(config_file))  
 
 #Calculate 
-#res <- calc_ghgvc(config, write_data=FALSE, make_plots=FALSE)
+#res <- calc_ghgv(config, write_data=FALSE, make_plots=FALSE)
 
 #Write the data to a file:
 #outdir <- "./"
 #write_json(res, outdir, filename = "ghgvc_example", format="json")
 ```
 
-`ghgvcR` can also plot the greenhouse gas values that are returned by `ghgvc()`:
+`ghgvcR` can also plot the greenhouse gas values that are returned by `calc_ghgv()`:
 
 ``` {r, fig.show='hold'}
 #df <- as.data.frame(res$site_1_data)
@@ -68,7 +70,7 @@ netcdf_dir <- "<data directory>"
 #head(biome)
 
 #Calculate GHGV
-#res <- ghgvc(biome)
+#res <- calc_ghgv(biome)
 ```
 
 ####Working with GHGVC
