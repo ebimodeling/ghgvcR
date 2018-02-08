@@ -30,12 +30,10 @@ Several example ecosystem data files are kept in `inst/config_examples/`. These 
 library(ghgvcr)
 
 #load example config data
-config_file <- system.file("config/multi_site.xml", package = "ghgvcr")
-config <- XML::xmlToList(XML::xmlParse(config_file))
+config_file <- system.file("config/single_site.json", package = "ghgvcr")
 
 #Calculate
-#res <- calc_ghgv(config, write_data=FALSE, make_plots=FALSE)
-res <- ghgvc(config, write_data=FALSE, make_plots=FALSE)
+res <- calc_ghgv(system.file("config/single_site.json", package = "ghgvcr"))
 
 #Write the data to a file:
 #outdir <- "./"
