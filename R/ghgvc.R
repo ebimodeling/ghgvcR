@@ -166,9 +166,16 @@ calc_ghgv <- function(eco,
       
       #Disturbance, Dx, Eq. 6:
       #First the flux disturbance
-      flux_disturb <- c(1:disturb_years, 
-                        rep(disturb_years, 
-                            num_years_emissions - 1)) *
+      
+      # this was giving warnings
+      # flux_disturb <- c(1:disturb_years, 
+      #                   rep(disturb_years, 
+      #                       num_years_emissions - 1)) *
+      #   t(ghg_params['FR',] - t(flux))
+      
+      # I fixed the warning like that
+      
+      flux_disturb <- c(0:(disturb_years-1),disturb_years:num_years_emissions) *
         t(ghg_params['FR',] - t(flux))
       
       #storage disturbance

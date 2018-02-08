@@ -18,7 +18,8 @@ Imports:
     ncdf4,
     scales,
     tidyr,
-    XML
+    XML,
+    rmarkdown
 Suggests:
     knitr,
     readr,
