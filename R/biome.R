@@ -1,6 +1,6 @@
-#' Get biome data from netcdf and json files and return and/or write a config 
+#' Get biome data from netcdf and json files and return and/or write a config
 #' file.
-#' 
+#'
 #' @export
 #' @importFrom jsonlite toJSON fromJSON
 #'
@@ -9,20 +9,20 @@
 #' @param data_dir path of the netcdf and map csv data files.
 #' @param output_filename name of file to write (without extension). Only needed if write is TRUE.
 #' @param save_output boolean whether to write the data.
-#' @return JSON of biome data. 
-get_biome <- function(latitude, 
+#' @return JSON of biome data.
+get_biome <- function(latitude,
                       longitude,
-                      data_dir = "/home/ghgvcr/data/",
+                      data_dir = "/app/data/",
                       output_filename = "biome.csv",
                       save_output = FALSE) {
-  
+
   #convert lat/lon to floats if they are strings
   if(typeof(latitude)=="character") latitude <- as.numeric(latitude)
   if(typeof(longitude)=="character") longitude <- as.numeric(longitude)
-  
+
   #results are a list
   res <- list()
-  
+
   #list of data sources
   variable_query_list <- list(
     "saatchi_agb_num" = list(
@@ -120,7 +120,7 @@ get_biome <- function(latitude,
       ncfile = "brazil_soyb_fractional_10yr_avg.nc",
       variable = "brzsoyrast"
     ),
-    "braz_soybean_num" = list( 
+    "braz_soybean_num" = list(
       #note there was an error in previous code that pointed this to sugarcane
       ncdir = "GCS/Crops/Brazil/Soybean/",
       ncfile = "brazil_soyb_latent_10yr_avg.nc",
@@ -238,61 +238,61 @@ get_biome <- function(latitude,
       variable = "AGB_Mg_ha"
     )
   )
-  
-  #iterate through the list of data sources and 
+
+  #iterate through the list of data sources and
   #load the data for the lat/lon pair.
-  res <- lapply(variable_query_list, function(x) { 
+  res <- lapply(variable_query_list, function(x) {
     get_ncdf(paste0(data_dir, "netcdf/", x$ncdir), x$ncfile, latitude, longitude, x$variable)[[x$variable]][[1]]
   })
-  
+
   ### specific calculations based on loaded data
   # US Latent (LE)
-  res$us_switch_latent_heat_flux_diff <- res$us_switch_latent_heat_flux_num - 
+  res$us_switch_latent_heat_flux_diff <- res$us_switch_latent_heat_flux_num -
     res$global_bare_latent_heat_flux_num
-  res$us_corn_latent_heat_flux_diff <- res$us_corn_latent_heat_flux_num  - 
+  res$us_corn_latent_heat_flux_diff <- res$us_corn_latent_heat_flux_num  -
     res$global_bare_latent_heat_flux_num
-  res$us_soy_latent_heat_flux_diff <- res$us_soy_latent_heat_flux_num - 
+  res$us_soy_latent_heat_flux_diff <- res$us_soy_latent_heat_flux_num -
     res$global_bare_latent_heat_flux_num
-  res$us_misc_latent_heat_flux_diff <- res$us_misc_latent_heat_flux_num  - 
+  res$us_misc_latent_heat_flux_diff <- res$us_misc_latent_heat_flux_num  -
     res$global_bare_latent_heat_flux_num
-  
+
   # US Net (Rnet)
-  res$us_misc_net_radiation_diff <- res$us_misc_net_radiation_num - 
+  res$us_misc_net_radiation_diff <- res$us_misc_net_radiation_num -
     res$global_bare_net_radiation_num
-  res$us_soy_net_radiation_diff <- res$us_soy_net_radiation_num - 
+  res$us_soy_net_radiation_diff <- res$us_soy_net_radiation_num -
     res$global_bare_net_radiation_num
-  res$us_switch_net_radiation_diff <- res$us_switch_net_radiation_num - 
+  res$us_switch_net_radiation_diff <- res$us_switch_net_radiation_num -
     res$global_bare_net_radiation_num
-  res$us_corn_net_radiation_diff <- res$us_corn_net_radiation_num - 
+  res$us_corn_net_radiation_diff <- res$us_corn_net_radiation_num -
     res$global_bare_net_radiation_num
-  
+
   # BR Latent
-  res$br_sugc_latent_heat_flux_diff <- res$br_sugc_latent_heat_flux_num  - 
+  res$br_sugc_latent_heat_flux_diff <- res$br_sugc_latent_heat_flux_num  -
     res$br_bare_sugc_latent_heat_flux_num
-  
+
   # BR Net
-  res$br_sugc_net_radiation_diff <- res$br_sugc_net_radiation_num - 
-    res$br_bare_sugc_net_radiation_num 
-  
+  res$br_sugc_net_radiation_diff <- res$br_sugc_net_radiation_num -
+    res$br_bare_sugc_net_radiation_num
+
   ###### Get the appropriate biome (new method)
   #read in the map data
-  map_vegtypes <- read.csv(paste0(data_dir, "maps/map_vegtypes.csv"), stringsAsFactors = FALSE) 
-  koppen_biomes <- read.csv(paste0(data_dir, "maps/koppen_biomes.csv"), stringsAsFactors = FALSE) 
-  fao_biomes <- read.csv(paste0(data_dir, "maps/fao_biomes.csv"), stringsAsFactors = FALSE) 
-  biome_defaults <- read.csv(paste0(data_dir, "maps/biome_defaults.csv"), stringsAsFactors = FALSE) 
-  
+  map_vegtypes <- read.csv(paste0(data_dir, "maps/map_vegtypes.csv"), stringsAsFactors = FALSE)
+  koppen_biomes <- read.csv(paste0(data_dir, "maps/koppen_biomes.csv"), stringsAsFactors = FALSE)
+  fao_biomes <- read.csv(paste0(data_dir, "maps/fao_biomes.csv"), stringsAsFactors = FALSE)
+  biome_defaults <- read.csv(paste0(data_dir, "maps/biome_defaults.csv"), stringsAsFactors = FALSE)
+
   vegtype_names <- names(map_vegtypes)[4:14]
-  
+
   #Get vegtypes based on map values
   synmap_vegtypes_df <- subset(map_vegtypes, Value == res$synmap & Map == "SYNMAP")
   koppen_vegtypes_df <- subset(map_vegtypes, Value == res$koppen & Map == "KOPPEN")
   fao_vegtypes_df <- subset(map_vegtypes, Value == tolower(res$fao) & Map == "FAO")
   ibis_vegtypes_df <- subset(map_vegtypes, Value == res$ibis & Map == "IBIS")
   #ramankutty_vegtypes <- subset(map_vegtypes, Value == res$ramankutty & Map == "RAMANKUTTY")
-  
+
   koppen_code <- koppen_vegtypes_df$Category
   synmap_category <- synmap_vegtypes_df$Category
-  
+
   # 1. get vegtypes for each map
   synmap_vegtypes <- vegtype_names[as.logical(array(synmap_vegtypes_df[4:14]))]
   koppen_vegtypes <- vegtype_names[as.logical(array(koppen_vegtypes_df[4:14]))]
@@ -300,15 +300,15 @@ get_biome <- function(latitude,
   ibis_vegtypes <- vegtype_names[as.logical(array(ibis_vegtypes_df[4:14]))]
   #ramankutty_vegtypes <- vegtype_names[as.logical(array(ramankutty_vegtypes_df[4:14]))]
   vegtypes <- na.omit(unique(c(synmap_vegtypes, koppen_vegtypes, fao_vegtypes, ibis_vegtypes)))
-  
+
   biome_codes <- subset(koppen_biomes, Zone == koppen_code)[vegtypes]
-  
+
   ### GET BIOME DATA
   biome_data <- list(
     "native_eco" = list(),
     "agroecosystem_eco" = list()
   )
-  
+
   #Iterate through each biome code to load the default biome data and apply
   #other logic as needed according to:
   #"Overview of biomes mapping & assignment of default values.docx"
@@ -316,26 +316,26 @@ get_biome <- function(latitude,
     biome_code <- biome_codes[[i]]
     vegtype <- gsub("\\.", " ", vegtypes[[i]])
     biome <- gsub(" ", "_", vegtype)
-    
+
     #Use FAO for Grass/Pasture Types
     if(biome_code %in% c("APX", "GX")) {
       biome_code <- subset(fao_biomes, CODE == tolower(res$fao))[[biome_code]]
     }
-     
+
     #biome default data, depending on above selected code
     biome_default <- as.list(as.character(biome_defaults[[biome_code]])) #values
 
     #fix for blank biomes that are selected - hopefully remove
-    if(length(biome_default) == 0) biome_default <- as.list(rep(0, nrow(biome_defaults))) 
-    
+    if(length(biome_default) == 0) biome_default <- as.list(rep(0, nrow(biome_defaults)))
+
     #continue on...
     names(biome_default) <- biome_defaults[['variable']] #keys
     biome_default$code <- biome_code      #keep code name for posterity
     biome_default$vegtype <- vegtype  #keep vegetation type name for posterity
     biome_default$name <- biome
-    
+
     #Calculate OM
-    hwsd_soc <- ((res$hwsd_toc/100) * 0.3 * res$hwsd_trefbulk + 
+    hwsd_soc <- ((res$hwsd_toc/100) * 0.3 * res$hwsd_trefbulk +
                    (res$hwsd_soc/100) * 0.7 * res$hwsd_srefbulk) * 10000
     if(biome == "Cropland") {
       biome_default$OM_SOM <- 0.43*hwsd_soc
@@ -349,43 +349,43 @@ get_biome <- function(latitude,
       biome_default$LiDAR_AGB_Boreal_Eurasia <- res$LiDAR_AGB_Boreal_Eurasia
       biome_default$SOC <- res$SOC * 17.2413793103448
     }
-    
+
     #SW Radiative Forcing
     ### Biophysical
     # If ibis_vegtypes is the same length as synmap_vegtypes, so for that vegtype
-    # 
+    #
     if(vegtypes[[i]] %in% ibis_vegtypes) {
-      biome_default$sw_radiative_forcing <- (res$global_potVeg_rnet_num - 
+      biome_default$sw_radiative_forcing <- (res$global_potVeg_rnet_num -
                                                res$global_bare_net_radiation_num) / 51007200000*1000000000
-      biome_default$latent <- (res$global_potVeg_latent_num - 
+      biome_default$latent <- (res$global_potVeg_latent_num -
                                  res$global_bare_latent_heat_flux_num) / 51007200000*1000000000
-      biome_default$biophysical_net <- biome_default$latent 
-    } 
+      biome_default$biophysical_net <- biome_default$latent
+    }
     else {
       biome_default$sw_radiative_forcing <- 0
       biome_default$latent <- 0
       biome_default$biophysical_net <- 0
     }
-    
+
     #Set biome type
     if(biome %in% c("Pasture", "Cropland")) {
       biome_type <- "agroecosystem_eco"
       biome_default$sw_radiative_forcing <- 0
       biome_default$latent <- 0
-    } 
-    else { 
+    }
+    else {
       biome_type <- "native_eco"
     }
-    
+
     ### Various fixes
     # naming
     if(biome == "Pasture") biome <- "Grassland_Pasture"
-    
+
     # add synmap flag
     biome_default$in_synmap <- (vegtypes[[i]] %in% synmap_vegtypes)
-    
+
     ### Add to our list of biome data
-    # Add to the list of exclusions here if needed. If all exclusions don't 
+    # Add to the list of exclusions here if needed. If all exclusions don't
     # apply, the biome is added to the biome_data.
     if(biome_default$vegtype == "Savanna" && biome_default$code != "S1") {
       #dont include if savannah and not S1 since we don't have data.
@@ -393,12 +393,12 @@ get_biome <- function(latitude,
       biome_data[[biome_type]][[biome]] <- biome_default
     }
   }
-  
+
   ### ADD "OTHER" biomes if needed
   # TODO - note that in this line:
   # if(synmap_vegtypes$Other == 1) { stuff here... }
-  
-  
+
+
   ### Agricultural ecosystems
   name_indexed_file <- paste0(data_dir, "name_indexed_ecosystems.json")
   name_indexed_ecosystems <- fromJSON(file(name_indexed_file))
@@ -408,38 +408,38 @@ get_biome <- function(latitude,
   if (!is.na(res$us_soybean_num) && res$us_soybean_num > 0.01) {
     biome_data$agroecosystem_eco["Soybean"] <- name_indexed_ecosystems["US soy"]
   }
-  if (res$braz_fractional_soybean_num == 1 & 
+  if (res$braz_fractional_soybean_num == 1 &
       !is.na(res$br_sugc_latent_heat_flux_diff)) {
     biome_data$agroecosystem_eco["Soybean"] <- name_indexed_ecosystems["BR soy"]
   }
-  if (!is.na(res$braz_sugarcane_num) & 
-      res$braz_sugarcane_num > 0.01 & 
+  if (!is.na(res$braz_sugarcane_num) &
+      res$braz_sugarcane_num > 0.01 &
       res$braz_sugarcane_num < 110.0) {
     biome_data$agroecosystem_eco["Sugarcane"] <- name_indexed_ecosystems["BR sugarcane"]
   }
-  if (res$braz_fractional_sugarcane_num == 1 & 
+  if (res$braz_fractional_sugarcane_num == 1 &
       !is.na(res$br_sugc_latent_heat_flux_diff)) {
     biome_data$agroecosystem_eco["Sugarcane"] <- name_indexed_ecosystems["BR sugarcane"]
   }
   if (!is.na(res$us_misc_latent_heat_flux_diff) == 1) {
     biome_data$agroecosystem_eco["Miscanthus"] <- name_indexed_ecosystems["miscanthus"]
     biome_data$biofuel_eco["Miscanthus"] <- name_indexed_ecosystems["miscanthus"]
-  } 
+  }
   if (!is.na(res$us_switch_latent_heat_flux_diff) == 1) {
     biome_data$agroecosystem_eco["Switchgrass"] <- name_indexed_ecosystems["switchgrass"]
     biome_data$biofuel_eco["Switchgrass"] <- name_indexed_ecosystems["switchgrass"]
-  } 
-   
+  }
+
   # Set 0 values
   for(eco in names(biome_data$agroecosystem_eco)) {
     biome_data$agroecosystem_eco[[eco]]$OM_SOM <- 0
     biome_data$agroecosystem_eco[[eco]]$latent <- 0
     biome_data$agroecosystem_eco[[eco]]$sw_radiative_forcing <- 0
   }
-  
+
   #write the data to a file if specified
-  if (save_output == TRUE) { 
-    write_output(toJSON(biome_data), 
+  if (save_output == TRUE) {
+    write_output(toJSON(biome_data),
                  output_filename)
   }
 
