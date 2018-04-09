@@ -9,6 +9,8 @@ calc_ghgv(eco, is_xml = FALSE, output_filename = "ghgv.csv",
   plot_units = c("co2", "mi"), save_plots = FALSE)
 }
 \arguments{
+\item{eco}{(json/xml string) A JSON/XML list of configuration settings and data parameters.}
+
 \item{is_xml}{(logical) indicating that eco_json is xml instead of json.}
 
 \item{output_filename}{(character) name of file to write.}
@@ -21,8 +23,6 @@ calc_ghgv(eco, is_xml = FALSE, output_filename = "ghgv.csv",
 
 \item{save_plots}{(logical) indicating whether or not to save the plot images.
 the results.}
-
-\item{eco_json}{(json string) A JSON list of configuration settings and data parameters.}
 }
 \value{
 List of GHGVC results for each location specified in \code{eco_json}.

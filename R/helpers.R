@@ -1,7 +1,7 @@
 #' wrap biome data in a list for input to \code{calc_ghgv()}.
 #' 
 #' @export
-#' @param biome a biome or list of biomes from \code{get_biome()}.
+#' @param biomes a biome or list of biomes from \code{get_biome()}.
 #' @param site_number (integer) default 1, site number to assign biomes to.
 #' @param options (list) list of global options to use.
 #' @return a list for use in \code{calc_ghgvc()}.
@@ -79,7 +79,7 @@ kinetic_decay <- function(time_vector) {
 #' @export
 #'  
 #' @param ecosystem a named list of ecosystem traits.
-#' @param inclAnth boolean whether to include Anthro flux
+#' @param include_anth boolean whether to include Anthro flux
 #' @return a matrix of greenhouse gas parameters.
 extract_ghg_params <- function(ecosystem, include_anth = TRUE) {
   m = matrix(nrow = 8, ncol = 3)
@@ -172,7 +172,7 @@ extract_pool_params <- function(ecosystem) {
 #' @importFrom jsonlite validate
 #' @export
 #' 
-#' @param res a json object containing results from \code{ghgvc()}.
+#' @param json a json object containing results from \code{ghgvc()}.
 #' @return a data frame of ghgvc results.
 json_to_df <- function(json) {
   validate(json)
@@ -245,7 +245,7 @@ remap_range <- function(input, input_min, input_max, output_min, output_max) {
 #'
 #' @export
 #'
-#' @param x (character) a string
+#' @param string (character) a string
 #' @return a logical or numeric value
 #' @examples \dontrun{
 #'   str2LogicalOrNumeric("TRUE") # -> TRUE

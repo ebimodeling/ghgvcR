@@ -1,6 +1,8 @@
 library("ghgvcr")
 context("testing biome functions.")
 
+biome_file <- "../data/biome.json"
+
 # test_that("get_biome() correctly reads values from biome ncdf4 files.", {
 #   
 #   latitude <- 31

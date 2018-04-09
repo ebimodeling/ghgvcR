@@ -9,11 +9,11 @@ biome_to_input(biomes, site_number = 1, options = list(storage = TRUE, flux
   T_E = 50, r = 0))
 }
 \arguments{
+\item{biomes}{a biome or list of biomes from \code{get_biome()}.}
+
 \item{site_number}{(integer) default 1, site number to assign biomes to.}
 
 \item{options}{(list) list of global options to use.}
-
-\item{biome}{a biome or list of biomes from \code{get_biome()}.}
 }
 \value{
 a list for use in \code{calc_ghgvc()}.

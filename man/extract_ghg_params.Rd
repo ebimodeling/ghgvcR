@@ -9,7 +9,7 @@ extract_ghg_params(ecosystem, include_anth = TRUE)
 \arguments{
 \item{ecosystem}{a named list of ecosystem traits.}
 
-\item{inclAnth}{boolean whether to include Anthro flux}
+\item{include_anth}{boolean whether to include Anthro flux}
 }
 \value{
 a matrix of greenhouse gas parameters.

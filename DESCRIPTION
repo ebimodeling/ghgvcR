@@ -16,16 +16,15 @@ Imports:
     Hmisc,
     jsonlite,
     ncdf4,
+    rmarkdown,
     scales,
     tidyr,
-    XML,
-    rmarkdown
+    XML
 Suggests:
     knitr,
     readr,
-    rmarkdown,
     testthat
-License: FreeBSD + file LICENSE
+License: file LICENSE
 Copyright: Authors
 LazyLoad: yes
 LazyData: FALSE

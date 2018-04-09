@@ -3,6 +3,8 @@
 #'
 #' @export
 #' @importFrom jsonlite toJSON fromJSON
+#' @import utils
+#' @import stats
 #'
 #' @param latitude the selected latitude.
 #' @param longitude the selected longitude.
