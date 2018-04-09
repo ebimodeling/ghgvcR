@@ -17,7 +17,7 @@ Citation: Kristina J. Teixeira and Evan H. Delucia 2011. The greenhouse gas valu
 
 ### Installation
 
-If you like rstudio and `devtools`, simply `devtools::install_github("ebimodeling/ghgvcr")` will handle installation. Alternatively, clone this repository, then in a terminal at the root of the repository type `R CMD INSTALL .`. 
+If you like rstudio and `devtools`, simply `devtools::install_github("ebimodeling/ghgvcr")` will handle installation. Alternatively, clone this repository, then in a terminal at the root of the repository type `R CMD INSTALL .`.
 
 
 ### USE CASE 1: ghgvcR as an R package for CRV calculation
@@ -26,7 +26,7 @@ If you like rstudio and `devtools`, simply `devtools::install_github("ebimodelin
 
 `get_biome()` takes a lat/lng pair and returns a list of likely ecosystems at that location, as well as parameters that determine the CRV calculation for each. The ecosystems can be easily used to create a list of locations and ecosystems to submit as an input to `calc_ghgv()`, which will return a JSON string of CRV values and can optionally write results to a CSV file and save plot images.
 
-`get_biome()` requires a significant number of files to run. Those files are avialable as a zip file from [here](TODO: paste link). Unzipped they require nearly 10GB of disk space. By default this data is assumed to reside inside `/home/ghgvcr/data`, but the directory can be changed by specifying `data_dir` as a parameter passed to `get_biome()`. See the function documentation for more information on available parameters.
+`get_biome()` requires a significant number of files to run. Those files are avialable as a zip file from [here](TODO: paste link). Unzipped they require nearly 10GB of disk space. By default this data is assumed to reside inside `/app/data`, but the directory can be changed by specifying `data_dir` as a parameter passed to `get_biome()`. See the function documentation for more information on available parameters.
 
 #### A Simple Example
 
@@ -101,7 +101,7 @@ options(warn=FALSE)
 
 config_file <- system.file("config/config.xml", package = "ghgvcr")
 
-config <- xmlToList(xmlParse(config_file, validate=F))  
+config <- xmlToList(xmlParse(config_file, validate=F))
 
 #Calculator
 ghgvc_output <- ghgvc(config, , make_plots = FALSE, write_data = FALSE)
@@ -122,26 +122,34 @@ write.csv(as.data.frame(fromJSON(x2)), "inst/extdata/multipft_output.csv")
 
 ```
 
-# DOCKER!
+# Docker
 
-## Building a Docker image of the Calculator
+## Using Docker Compose
 
-```
-> docker build --rm --force-rm          \ # build a docker image, don't keep temp stuff
-               --tag ebimodeling/ghgvcr \ # tag the resulting image with owner and name
-               .                          # build the current directory
-```
+After cloning this repo, use docker-compose during development and testing.
 
-## Run the Calculator in a container
+The first time you run the container, use the `download-netcdf.sh` script
+to download the required netcdf files.
 
-You can run the R calculator in a container this way or, when paired with the
-`ghgvc` Rails application, via the docker-compose configuration defined in that
-project.
+    > docker-compose run --rm ghgvcr ./download-netcdf.sh
 
-```
-> docker run -it --rm     \ # run, attach to the container, destroy it when exit
-             --volume /path/to/the/data:/home/ghgvcr/data \ # mount the tons of data
-             --publish 6311:6311 \ # forward the container's port 6311 to localhost 6311
-             --name ghgvcr-serve \ # name the running container
-             ebimodeling/ghgvcr    # the tag given during `docker build ...`
-```
+For testing and development, you can drop into an interactive bash shell.
+
+    > docker-compose run --rm ghgvcr bash # drop into a bash shell
+
+You can also run one-off shell commands.
+
+    > docker-compose run --rm ghgvcr Rscript -e "devtools::check()"
+
+## Building a Docker image
+
+Build & push should occur automatically via travis, but you may want to
+build and/or push an image directly up to docker hub.
+
+To build the image, use the `docker build` command.
+
+    > docker build -t ebimodeling/ghgvcr .
+
+To push to Docker Hub, after logging in, use `docker push`
+
+    > docker push ebimodeling/ghgvcr

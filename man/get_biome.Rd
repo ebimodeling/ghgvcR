@@ -2,10 +2,10 @@
 % Please edit documentation in R/biome.R
 \name{get_biome}
 \alias{get_biome}
-\title{Get biome data from netcdf and json files and return and/or write a config 
+\title{Get biome data from netcdf and json files and return and/or write a config
 file.}
 \usage{
-get_biome(latitude, longitude, data_dir = "/home/ghgvcr/data/",
+get_biome(latitude, longitude, data_dir = "/app/data/",
   output_filename = "biome.csv", save_output = FALSE)
 }
 \arguments{
@@ -23,6 +23,6 @@ get_biome(latitude, longitude, data_dir = "/home/ghgvcr/data/",
 JSON of biome data.
 }
 \description{
-Get biome data from netcdf and json files and return and/or write a config 
+Get biome data from netcdf and json files and return and/or write a config
 file.
 }

@@ -1,0 +1,18 @@
+version: "3"
+
+volumes:
+  netcdf-data:
+    driver: local
+
+services:
+  ghgvcr:
+    build:
+      context: .
+    entrypoint: /app/docker-entrypoint.sh
+    ports:
+      - "127.0.0.1:6311:6311"
+    volumes:
+      - netcdf-data:/app/data:cached
+      - .:/app
+    stdin_open: true
+    tty: true

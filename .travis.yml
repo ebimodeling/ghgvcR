@@ -1,17 +1,18 @@
-# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+sudo: required
 
-language: R
-sudo: false
-cache: packages
-r_check_args: "--no-vignettes"
+language: generic
 
-addons:
-  apt:
-    packages:
-      - libnetcdf-dev
-      - libudunits2-dev
-      - netcdf-bin
-      - libnetcdf-dev
-      - libxml2
-      - libxml2-dev
-      - libssl-dev
+services:
+  - docker
+
+# Build & run tests
+before_install:
+  - docker build -t ebimodeling/ghgvcr .
+  - docker run ebimodeling/ghgvcr /bin/sh -c "Rscript -e \"devtools::check()\""
+
+# Only deploy on master
+deploy:
+  provider: script
+  script: bash docker-push.sh
+  on:
+    branch: master
