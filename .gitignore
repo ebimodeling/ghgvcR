@@ -2,6 +2,8 @@
 .Rhistory
 .RData
 
+tests/testthat/Rplots.pdf
+
 #allow zip files that are ignored globally
 !inst/extdata/app_data.zip
 
