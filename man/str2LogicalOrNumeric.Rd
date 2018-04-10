@@ -7,7 +7,7 @@
 str2LogicalOrNumeric(string)
 }
 \arguments{
-\item{x}{(character) a string}
+\item{string}{(character) a string}
 }
 \value{
 a logical or numeric value

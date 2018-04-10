@@ -20,7 +20,7 @@
 #' @importFrom XML xmlParse
 #' @export
 #' 
-#' @param eco_json (json string) A JSON list of configuration settings and data parameters. 
+#' @param eco (json/xml string) A JSON/XML list of configuration settings and data parameters. 
 #' @param is_xml (logical) indicating that eco_json is xml instead of json.
 #' @param output_filename (character) name of file to write.
 #' @param save_output (logical) indicating whether or not to write the results.

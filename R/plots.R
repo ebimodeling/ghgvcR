@@ -81,7 +81,7 @@ plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.8
                             baseplot = baseplot)
   bgc_plot <- bgc_plot + 
 
-    scale_fill_manual(values= brewer_pal(pal = "Greens")(6)[c(4,6)], 
+    scale_fill_manual(values= brewer_pal(palette = "Greens")(6)[c(4,6)], 
                       labels = c("Ongoing Exchange", "Storage")) + 
     labs(fill = "") + 
     ggtitle("Biogeochemical") + 
@@ -92,7 +92,7 @@ plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.8
                                 data = longdata,
                                 baseplot = baseplot) 
   biophys_plot <- biophys_plot + 
-    scale_fill_manual(values = brewer_pal(pal = "Blues")(6)[c(4,6)], 
+    scale_fill_manual(values = brewer_pal(palette = "Blues")(6)[c(4,6)], 
                       labels = c(expression("Latent Heat Flux", "Net Radiation"))) + 
     labs(fill = "") + 
     ggtitle("Biophysical")
@@ -106,8 +106,8 @@ plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.8
                              data = longdata,
                              baseplot = baseplot) 
   crv_plot <- crv_plot +
-    scale_fill_manual(values= c(brewer_pal(pal = "Greens")(6)[5], 
-                                brewer_pal(pal = "Blues")(6)[5]), 
+    scale_fill_manual(values= c(brewer_pal(palette = "Greens")(6)[5], 
+                                brewer_pal(palette = "Blues")(6)[5]), 
                       labels = c("Biogeochemical", "Biophysical")) + 
     labs(fill = "") +
     ggtitle("Climate Regulating Value")
@@ -158,7 +158,7 @@ plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.8
 #' @import ggplot2 
 #' 
 #' @param vars a list of variables to plot.
-#' @param longdata long form data.frame of data from \code{ghgcv()}.
+#' @param data long form data.frame of data from \code{ghgcv()}.
 #' @param baseplot a ggplot2 object as the base plot.
 #' @return a ggplot2 object.
 ghgvc_subplot <- function(vars, data, baseplot) {

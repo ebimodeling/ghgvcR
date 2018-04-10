@@ -1,4 +1,4 @@
 library(testthat)
 library(ghgvcr)
 
-test_package("ghgvcr")
+test_check("ghgvcr")

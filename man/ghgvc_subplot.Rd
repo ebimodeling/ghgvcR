@@ -9,9 +9,9 @@ ghgvc_subplot(vars, data, baseplot)
 \arguments{
 \item{vars}{a list of variables to plot.}
 
-\item{baseplot}{a ggplot2 object as the base plot.}
+\item{data}{long form data.frame of data from \code{ghgcv()}.}
 
-\item{longdata}{long form data.frame of data from \code{ghgcv()}.}
+\item{baseplot}{a ggplot2 object as the base plot.}
 }
 \value{
 a ggplot2 object.

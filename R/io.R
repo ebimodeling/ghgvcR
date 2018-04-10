@@ -17,7 +17,8 @@ write_output <- function(json, output_filename) {
 }
 
 #' Writes a json string to a json or csv file.
-#' 
+#'
+#' @import grDevices 
 #' @import grid
 #' @import gridExtra
 #'

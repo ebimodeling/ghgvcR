@@ -7,7 +7,7 @@
 json_to_df(json)
 }
 \arguments{
-\item{res}{a json object containing results from \code{ghgvc()}.}
+\item{json}{a json object containing results from \code{ghgvc()}.}
 }
 \value{
 a data frame of ghgvc results.
