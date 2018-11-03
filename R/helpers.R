@@ -253,7 +253,8 @@ remap_range <- function(input, input_min, input_max, output_min, output_max) {
 #'   str2LogicalOrNumeric("NaN") # -> "NaN"
 #' }
 str2LogicalOrNumeric <- function(string) {
-  if (string == "") x <- NA
+  if (is.na(string)) x <- NA
+  else if (string == "") x <- NA
   else if (string == "NA") x <- NA
   else if (string == "null") x <- NA
   else if (string == "NaN") x <- NaN
