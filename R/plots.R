@@ -42,6 +42,7 @@ plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.8
   plotdata$CRV_NET <- plotdata$CRV_BGC + plotdata$CRV_BIOPHYS
  
   #If units are in miles, convert
+  print(units)
   if (units == "mi") {
     for (crv in c("CRV_BGC", "CRV_BIOPHYS", "CRV_NET")) {
       plotdata[crv] <- plotdata[crv] * crv_to_miles
