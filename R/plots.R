@@ -15,7 +15,7 @@ plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.8
 
   # set plot units
   units <- match.arg(units)
-  
+  cat("Drawing plots: units=",units) 
   ### Format biome name
   # first remove underscores and concatenate
   Biome <- capitalize(paste(gsub("_", " ", df$Biome), "Site", df$Location))
@@ -42,10 +42,11 @@ plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.8
   plotdata$CRV_NET <- plotdata$CRV_BGC + plotdata$CRV_BIOPHYS
  
   #If units are in miles, convert
-  for (crv in c("CRV_BGC", "CRV_BIOPHYS", "CRV_NET")) {
-    plotdata[crv] <- plotdata[crv] * crv_to_miles
-  }
-  
+  if (units == "mi") {
+    for (crv in c("CRV_BGC", "CRV_BIOPHYS", "CRV_NET")) {
+      plotdata[crv] <- plotdata[crv] * crv_to_miles
+    }
+  }  
   #Replace NA/0 with 0
   plotdata[is.na(plotdata)] <- 0
   plotdata$CRV_BGC[plotdata$CRV_NET == 0] <- 0

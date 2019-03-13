@@ -38,7 +38,7 @@ calc_ghgv <- function(eco,
                       plot_units = c("co2", "mi"),
                       save_plots = FALSE
                       ) {
-  
+  print("Entering calc_ghgv")  
   #set options from parameters
   plot_units <- match.arg(plot_units, several.ok = TRUE)
   
