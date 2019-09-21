@@ -60,7 +60,8 @@ plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.8
 
   #Don't plot CRV_NET if BIOPHYS is 0, and
   #Don't plot CRV_BGC if Ongoing_Exchange is 0
-  plotdata$CRV_NET[plotdata$CRV_BIOPHYS == 0] <- NA
+  plotdata$CRV_NET[plotdata$LE == 0] <- NA
+  plotdata$CRV_NET[plotdata$Rnet == 0] <- NA
   plotdata$CRV_BGC[plotdata$Ongoing_Exchange == 0] <- NA
 
   ## Build data for subplots
@@ -105,9 +106,9 @@ plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.8
     labs(fill = "") +
     ggtitle("Local Biophysical Forcings")
 
-  biophys_plot <- biophys_plot +
-    geom_point(data = subset(longdata, variable == "CRV_NET"),
-               aes(x = Biome, y = value))
+  #biophys_plot <- biophys_plot +
+  #  geom_point(data = subset(longdata, variable == "CRV_NET"),
+  #             aes(x = Biome, y = value))
 
   #CRV
   crv_plot <-  ghgvc_subplot(c("BGC_NET", "CRV_BIOPHYS"),
