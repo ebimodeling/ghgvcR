@@ -39,7 +39,7 @@ plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.8
   plotdata$BGC_NET <- plotdata$Storage + plotdata$Ongoing_Exchange
 
   plotdata$CRV_BIOPHYS <- plotdata$Rnet + plotdata$LE
-  plotdata$CRV_NET <- plotdata$CRV_BGC + plotdata$CRV_BIOPHYS
+  plotdata$CRV_NET <- plotdata$BGC_NET + plotdata$CRV_BIOPHYS
 
 
   #If units are in miles, convert
@@ -92,7 +92,7 @@ plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.8
     scale_fill_manual(values= brewer_pal(palette = "Greens")(6)[c(4,6)],
                       labels = c("Ongoing Exchange", "Storage")) +
     labs(fill = "") +
-    ggtitle("Biogeochemical") +
+    ggtitle("Greenhouse Gas Value") +
     theme(axis.text.y = element_text(size = 12, hjust = 1))
 
   #BIOPHYS
@@ -103,14 +103,14 @@ plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.8
     scale_fill_manual(values = brewer_pal(palette = "Blues")(6)[c(4,6)],
                       labels = c(expression("Latent Heat Flux", "Net Radiation"))) +
     labs(fill = "") +
-    ggtitle("Biophysical")
+    ggtitle("Local Biophysical Forcings")
 
   biophys_plot <- biophys_plot +
     geom_point(data = subset(longdata, variable == "CRV_NET"),
                aes(x = Biome, y = value))
 
   #CRV
-  crv_plot <-  ghgvc_subplot(c("BGC_NET", "BIOPHYS_NET"),
+  crv_plot <-  ghgvc_subplot(c("BGC_NET", "CRV_BIOPHYS"),
                              data = longdata,
                              baseplot = baseplot)
   crv_plot <- crv_plot +
@@ -128,7 +128,7 @@ plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.8
 
   #Add the net Biophysical point
   biophys_plot <- biophys_plot +
-    geom_point(data = subset(longdata, variable == "BIOPHYS_NET"),
+    geom_point(data = subset(longdata, variable == "CRV_BIOPHYS"),
                aes(x = Biome, y = value))
 
 
