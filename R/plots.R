@@ -35,10 +35,16 @@ plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.8
     LE = df$latent)
 
   #Create sums
-  plotdata$CRV_BGC <- plotdata$Storage + plotdata$Ongoing_Exchange
+  ############################################
+  ###***Calculating Net Values for Plots***###
+  ############################################
+  #Becomes BGC Bar on CRV_Plot
   plotdata$BGC_NET <- plotdata$Storage + plotdata$Ongoing_Exchange
 
+  #this becomes the biophys bar on the CRV plot
   plotdata$CRV_BIOPHYS <- plotdata$Rnet + plotdata$LE
+
+  #this becomes the point on the CRV plot
   plotdata$CRV_NET <- plotdata$BGC_NET + plotdata$CRV_BIOPHYS
 
 
@@ -47,24 +53,35 @@ plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.8
   print("PlotData:::::::::::::::::::::::::::::::::::::::::::::::::")
   print(plotdata)
   if (units == "mi") {
-    for (crv in c("CRV_BGC", "CRV_BIOPHYS", "CRV_NET", "BGC_NET","Rnet","LE","Ongoing_Exchange","Storage")) {
+    for (crv in c("CRV_BIOPHYS", "CRV_NET", "BGC_NET","Rnet","LE","Ongoing_Exchange","Storage")) {
       plotdata[crv] <- plotdata[crv] * crv_to_miles
     }
   }
 
+  #this becomes the point on the biophys plot
+  plotdata$CRV_BIOPHYS_POINT <- plotdata$CRV_BIOPHYS
+
+  #This becomes BGC_NET point on bgc_plot
+  plotdata$BGC_NET_POINT <- plotdata$BGC_NET
+
+  #############################################
+  ###***Setting NA for non-plotted values***###
+  #############################################
+
   #Replace NA/0 with 0
   plotdata[is.na(plotdata)] <- 0
-  plotdata$CRV_BGC[plotdata$CRV_NET == 0] <- 0
-  plotdata$CRV_BIOPHYS[plotdata$CRV_NET == 0] <- 0
   plotdata$CRV_NET[plotdata$CRV_NET == 0] <- NA
 
-  #Don't plot CRV_NET if BIOPHYS is 0, and
-  #Don't plot CRV_BGC if Ongoing_Exchange is 0
-  plotdata$CRV_NET[plotdata$LE == 0] <- NA
-  plotdata$CRV_NET[plotdata$Rnet == 0] <- NA
-  plotdata$BGC_NET[plotdata$LE == 0] <- NA
-  plotdata$BGC_NET[plotdata$Rnet == 0] <- NA
-  plotdata$CRV_BGC[plotdata$Ongoing_Exchange == 0] <- NA
+  #Don't plot CRV_NET point if BIOPHYS is 0, or BGC_NET is 0
+  plotdata$CRV_NET[plotdata$CRV_BIOPHYS == 0] <- NA
+  plotdata$CRV_NET[plotdata$BGC_NET == 0] <- NA
+  #Don't plot biophys net point if net biophys is 0
+  plotdata$CRV_BIOPHYS_POINT[plotdata$CRV_BIOPHYS == 0] <- NA
+  #Don't ploy BGC net point if net bgc is 0
+  plotdata$BGC_NET_POINT[plotdata$BGC_NET == 0] <- NA
+  #Don't plot BGC_NET or CRV_BIOPHYS on crv_plot if the other is 0
+  plotdata$BGC_NET[plotdata$CRV_BIOPHYS == 0] <- NA
+  plotdata$CRV_BIOPHYS[plotdata$BGC_NET == 0] <- NA
 
   ## Build data for subplots
   longdata <- gather(plotdata, variable, value, -Biome, -Location, -Order)
@@ -108,37 +125,38 @@ plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.8
     labs(fill = "") +
     ggtitle("Local Biophysical Forcings")
 
-  #biophys_plot <- biophys_plot +
-  #  geom_point(data = subset(longdata, variable == "CRV_NET"),
-  #             aes(x = Biome, y = value))
 
   #CRV
-  crv_plot <-  ghgvc_subplot(c("BGC_NET", "CRV_BIOPHYS"),
-                             data = longdata,
-                             baseplot = baseplot)
-  crv_plot <- crv_plot +
-    scale_fill_manual(values= c(brewer_pal(palette = "Greens")(6)[5],
-                                brewer_pal(palette = "Blues")(6)[5]),
-                      labels = c("Biogeochemical", "Biophysical")) +
-    labs(fill = "") +
-    ggtitle("Climate Regulating Value")
-
 
   #Add the net Biogeochemical point
+  #this should only execute when LE and Rnet are not 0. Issue is using a vector in an if statement does not seem to work
   bgc_plot <- bgc_plot +
-    geom_point(data = subset(longdata, variable == "BGC_NET"),
+    geom_point(data = subset(longdata, variable == "BGC_NET_POINT"),
                aes(x = Biome, y = value))
 
   #Add the net Biophysical point
   biophys_plot <- biophys_plot +
-    geom_point(data = subset(longdata, variable == "CRV_BIOPHYS"),
-               aes(x = Biome, y = value))
+    geom_point(data = subset(longdata, variable == "CRV_BIOPHYS_POINT"),
+                      aes(x = Biome, y = value))
 
+  crv_plot <-  ghgvc_subplot(c("BGC_NET", "CRV_BIOPHYS"),
+                    data = longdata,
+                    baseplot = baseplot)
+  crv_plot <- crv_plot +
+  scale_fill_manual(values= c(brewer_pal(palette = "Greens")(6)[5],
+                       brewer_pal(palette = "Blues")(6)[5]),
+             labels = c("Biogeochemical", "Biophysical")) +
+  labs(fill = "") +
+  ggtitle("Climate Regulating Value")
 
-  #Add the net CRV point only if there is biophysical
   crv_plot <- crv_plot +
     geom_point(data = subset(longdata, variable == "CRV_NET"),
                aes(x = Biome, y = value))
+
+
+#this last no condition is meaningless, but the no condition cannot be blank
+
+  #Add the net CRV point only if there is biophysical
 
   #Create the x label
   if(units == "mi") {
