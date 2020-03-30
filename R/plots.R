@@ -49,9 +49,6 @@ plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 3) 
 
 
   #If units are in miles, convert
-  print(units)
-  print("PlotData:::::::::::::::::::::::::::::::::::::::::::::::::")
-  print(plotdata)
   if (units == "mi") {
     for (crv in c("CRV_BIOPHYS", "CRV_NET", "BGC_NET","Rnet","LE","Ongoing_Exchange","Storage")) {
       plotdata[crv] <- plotdata[crv] * crv_to_miles
@@ -89,8 +86,6 @@ plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 3) 
   longdata$label <- gsub(" Site", "\nSite", longdata$Biome)
   longdata$Biome <- with(longdata, factor(Biome, levels = unique(Biome), ordered = TRUE))
 
-  print("LongData:::::::::::::::::::::::::::::::::::::::::::::::::")
-  print(longdata)
   #baseplot for use in grid plots
   baseplot <- ggplot(data = plotdata) +
     geom_hline(aes(yintercept = 0)) +      #horizontal line
