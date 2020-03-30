@@ -321,10 +321,10 @@ get_biome <- function(latitude,
 
     #Use FAO for Grass/Pasture Types
     if(biome_code %in% c("APX", "GX")) {
-      print(res$fao)
       if(res$fao == "NA") {
         #TODO: select a correct or best guess biome_code when res$fao is unavailable
         print("Error, no value found in res$fao for selected coordinates.")
+        return('{ "Message" :"Error, no value found in res$fao for selected coordinates.", "code" :"404"}')
       }
       else {
         biome_code <- subset(fao_biomes, CODE == tolower(res$fao))[[biome_code]]
