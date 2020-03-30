@@ -319,11 +319,26 @@ get_biome <- function(latitude,
     vegtype <- gsub("\\.", " ", vegtypes[[i]])
     biome <- gsub(" ", "_", vegtype)
 
+
+    cat("Biome Codes at biome.R:323\n",biome_code,"\n")
     #Use FAO for Grass/Pasture Types
     if(biome_code %in% c("APX", "GX")) {
-      biome_code <- subset(fao_biomes, CODE == tolower(res$fao))[[biome_code]]
+      print(res$fao)
+      if(res$fao == "NA") {
+        #TODO: select a correct or best guess biome_code when res$fao is unavailable
+        print("Error, no value found in res$fao for selected coordinates.")
+      }
+      else {
+        biome_code <- subset(fao_biomes, CODE == tolower(res$fao))[[biome_code]]
+      }
+      #cat("biomes::::::::::::::::::\n")
+      #print(fao_biomes)
+      #cat("codes:::::::\n")
+      #print(subset(fao_biomes, CODE == 'tar')[[biome_code]])
+      #cat("res$fao::::::::::::::\n")
+      #print(res)
     }
-
+    cat("Biome Codes at biome.R:329\n",biome_code,"\n\n")
     #biome default data, depending on above selected code
     biome_default <- as.list(as.character(biome_defaults[[biome_code]])) #values
 
@@ -447,6 +462,3 @@ get_biome <- function(latitude,
 
   return(toJSON(biome_data))
 }
-
-
-
