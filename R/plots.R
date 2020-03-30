@@ -11,7 +11,7 @@
 #' @param units (character) either co2 or mi to plot in co2 equivalents or miles.
 #' @param crv_to_miles (numeric) conversion factor for crv to miles, default 1.86.
 #' @return a ggplot2 plot object.
-plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.86) {
+plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 3) {
 
   # set plot units
   units <- match.arg(units)
@@ -160,7 +160,7 @@ plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 1.8
 
   #Create the x label
   if(units == "mi") {
-    xlabels <- as.expression(bquote(paste("Miles driven per 100 ft"^{2}, " cleared")))
+    xlabels <- as.expression(bquote(paste("miles driven per parking space area (135 ft"^{2}, ")")))
   }
   else {
     xlabels <- as.expression(bquote(paste("CO"[2], " Emission Equivalents (Mg CO"[2],"-eq ha"^{-1}, " ", .(years)," yrs"^{-1},")")))
