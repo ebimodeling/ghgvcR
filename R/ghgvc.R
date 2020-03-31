@@ -61,7 +61,7 @@ calc_ghgv <- function(eco,
   w <- 1 / (1 + annual_discount_rate)**(1:num_years_analysis)
 
   ghg_radiative_efficiency <- 10^9 *
-    c(1.4*10^-5, 3.7*10^-4*4/3, 3.03*10^-3)
+    c(1.37*10^-5, 3.63*10^-4*1.65, 3.00*10^-3) #current values from IPCC AR5
 
   names(ghg_radiative_efficiency) <- c("co2", "ch4", "n2o")
   A <- 1.78e8 #TODO rename
