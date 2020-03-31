@@ -155,7 +155,7 @@ plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 3) 
 
   #Create the x label
   if(units == "mi") {
-    xlabels <- as.expression(bquote(paste("miles driven per parking space area (135 ft"^{2}, ")")))
+    xlabels <- as.expression(bquote(paste("Miles driven per parking space area (135 ft"^{2}, ")")))
   }
   else {
     xlabels <- as.expression(bquote(paste("CO"[2], " Emission Equivalents (Mg CO"[2],"-eq ha"^{-1}, " ", .(years)," yrs"^{-1},")")))

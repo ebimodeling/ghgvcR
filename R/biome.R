@@ -332,7 +332,6 @@ get_biome <- function(latitude,
     }
     #biome default data, depending on above selected code
     biome_default <- as.list(as.character(biome_defaults[[biome_code]])) #values
-
     #fix for blank biomes that are selected - hopefully remove
     if(length(biome_default) == 0) biome_default <- as.list(rep(0, nrow(biome_defaults)))
 
@@ -341,7 +340,6 @@ get_biome <- function(latitude,
     biome_default$code <- biome_code      #keep code name for posterity
     biome_default$vegtype <- vegtype  #keep vegetation type name for posterity
     biome_default$name <- biome
-
     #Calculate OM
     hwsd_soc <- ((res$hwsd_toc/100) * 0.3 * res$hwsd_trefbulk +
                    (res$hwsd_soc/100) * 0.7 * res$hwsd_srefbulk) * 10000
@@ -388,7 +386,12 @@ get_biome <- function(latitude,
     ### Various fixes
     # naming
     if(biome == "Pasture") biome <- "Grassland_Pasture"
-
+    if(biome == "Barren") {
+      biome_default$sw_radiative_forcing <- 0
+      biome_default$latent <- 0
+      biome_default$biophysical_net <- 0
+      biome_default$SOC <- 0
+    }
     # add synmap flag
     biome_default$in_synmap <- (vegtypes[[i]] %in% synmap_vegtypes)
 
@@ -450,6 +453,5 @@ get_biome <- function(latitude,
     write_output(toJSON(biome_data),
                  output_filename)
   }
-
   return(toJSON(biome_data))
 }
