@@ -390,7 +390,7 @@ get_biome <- function(latitude,
       biome_default$sw_radiative_forcing <- 0
       biome_default$latent <- 0
       biome_default$biophysical_net <- 0
-      biome_default$SOC <- 0
+      #biome_default$SOC <- 0
     }
     # add synmap flag
     biome_default$in_synmap <- (vegtypes[[i]] %in% synmap_vegtypes)
