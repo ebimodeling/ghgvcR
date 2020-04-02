@@ -62,14 +62,14 @@ decay <- function(r, t) {
 #' @export
 #' 
 #' @param time_vector a vector of time moments.
-#' @return a matrix of decay kinetics for each time moment.
+#' @return a matrix of decay kinetics for each time moment (parameters from IPCC AR5)
 kinetic_decay <- function(time_vector) {
-  t(matrix(c(.217 +
-               .259 * exp(-time_vector / 172.9) +
-               .338 * exp(-time_vector / 18.51) +
-               .186 * exp(-time_vector / 1.186), 
-             exp(-time_vector / 12), 
-             exp(-time_vector / 114)),
+  t(matrix(c(0.2173 +
+               0.2240 * exp(-time_vector / 394.4) +
+               0.2824 * exp(-time_vector / 36.54) +
+               0.2763 * exp(-time_vector / 4.304), 
+             exp(-time_vector / 12.4), 
+             exp(-time_vector / 121.0)),
            nrow = 3, byrow = TRUE))
 }
 
