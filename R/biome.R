@@ -42,11 +42,11 @@ get_biome <- function(latitude,
       ncfile = "nbcd.nc",
       variable = "reprojx1"
     ),
-    "soc_num" = list(
-      ncdir = "",
-      ncfile = "SoilCarbonDataS.nc",
-      variable = "HWSDa_OC_Dens_Sub_5min.rst"
-    ),
+    # "soc_num" = list(
+    #   ncdir = "",
+    #   ncfile = "SoilCarbonDataS.nc",
+    #   variable = "HWSDa_OC_Dens_Sub_5min.rst"
+    # ),
     "global_bare_latent_heat_flux_num" = list(
       ncdir = "GCS/PotVeg/Bare/",
       ncfile = "global_bare_latent_10yr_avg.nc",
@@ -158,26 +158,26 @@ get_biome <- function(latitude,
       ncfile = "global_veg_rnet_10yr_avg.nc",
       variable = "rnet"
     ),
-    "hwsd_toc" = list(
-      ncdir = "GCS/Maps/",
-      ncfile = "hwsd.nc",
-      variable = "t_oc"
-    ),
-    "hwsd_trefbulk" = list(
-      ncdir = "GCS/Maps/",
-      ncfile = "hwsd.nc",
-      variable = "t_ref_bulk"
-    ),
-    "hwsd_soc" = list(
-      ncdir = "GCS/Maps/",
-      ncfile = "hwsd.nc",
-      variable = "s_oc"
-    ),
-    "hwsd_srefbulk" = list(
-      ncdir = "GCS/Maps/",
-      ncfile = "hwsd.nc",
-      variable = "s_ref_bulk"
-    ),
+    # "hwsd_toc" = list(
+    #   ncdir = "GCS/Maps/",
+    #   ncfile = "hwsd.nc",
+    #   variable = "t_oc"
+    # ),
+    # "hwsd_trefbulk" = list(
+    #   ncdir = "GCS/Maps/",
+    #   ncfile = "hwsd.nc",
+    #   variable = "t_ref_bulk"
+    # ),
+    # "hwsd_soc" = list(
+    #   ncdir = "GCS/Maps/",
+    #   ncfile = "hwsd.nc",
+    #   variable = "s_oc"
+    # ),
+    # "hwsd_srefbulk" = list(
+    #   ncdir = "GCS/Maps/",
+    #   ncfile = "hwsd.nc",
+    #   variable = "s_ref_bulk"
+    # ),
     #Disabled per request in ruby code
     # "us_springwheat_num" = list(
     #   ncdir = "GCS/Crops/US/SpringWheat/fractioncover/",
@@ -209,36 +209,36 @@ get_biome <- function(latitude,
       ncfile = "vegtype.nc",
       variable = "vegtype"
     ),
-    "IPCC_AGB__Mg_ha" = list(
-      ncdir = "",
-      ncfile = "IPCC_AGB_Mg_ha.nc",
-      variable = "ipcc"
-    ),
-    "NACP_FI_AGB_US" = list(
-      ncdir = "",
-      ncfile = "NACP_FI_AGB_US.nc",
-      variable = "biomass"
-    ),
-    "NACP_LiDAR_Boreal_AGB" = list(
-      ncdir = "",
-      ncfile = "NACP_LiDAR_Boreal_AGB.nc",
-      variable = "AGB_Mg_ha"
-    ),
-    "US_Forest biomass data" = list(
-      ncdir = "",
-      ncfile = "US_Forest_biomass_data.nc",
-      variable = "biomass"
-    ),
-    "SOC" = list(
+    # "IPCC_AGB__Mg_ha" = list( # will never be used
+    #   ncdir = "",
+    #   ncfile = "IPCC_AGB_Mg_ha.nc",
+    #   variable = "ipcc"
+    # ),
+    # "NACP_FI_AGB_US" = list(
+    #   ncdir = "",
+    #   ncfile = "NACP_FI_AGB_US.nc",
+    #   variable = "biomass"
+    # ),
+    # "NACP_LiDAR_Boreal_AGB" = list(
+    #   ncdir = "",
+    #   ncfile = "NACP_LiDAR_Boreal_AGB.nc",
+    #   variable = "AGB_Mg_ha"
+    # ),
+    # "US_Forest biomass data" = list(
+    #   ncdir = "",
+    #   ncfile = "US_Forest_biomass_data.nc",
+    #   variable = "biomass"
+    # ),
+    "SOC" = list( # pull in C in top meter of soil from SOC.nc (Sanderman NoLU map)
       ncdir = "",
       ncfile = "SOC.nc",
-      variable = "soc"
-    ),
-    "LiDAR_AGB_Boreal_Eurasia" = list(
-      ncdir = "",
-      ncfile = "LiDAR_AGB_Boreal_Eurasia.nc",
-      variable = "AGB_Mg_ha"
-    )
+      variable = "SOCS_0_100cm_year_NoLU_10km"
+    ) # ,
+    # "LiDAR_AGB_Boreal_Eurasia" = list(
+    #   ncdir = "",
+    #   ncfile = "LiDAR_AGB_Boreal_Eurasia.nc",
+    #   variable = "AGB_Mg_ha"
+    # )
   )
 
   #iterate through the list of data sources and
@@ -343,20 +343,25 @@ get_biome <- function(latitude,
     biome_default$name <- biome
 
     #Calculate OM
-    hwsd_soc <- ((res$hwsd_toc/100) * 0.3 * res$hwsd_trefbulk +
-                   (res$hwsd_soc/100) * 0.7 * res$hwsd_srefbulk) * 10000
-    if(biome == "Cropland") {
-      biome_default$OM_SOM <- 0.43*hwsd_soc
-    }
-    else {
-      biome_default$OM_SOM <- 0.3*hwsd_soc
-      biome_default$IPCC_AGB_Mg_ha <- res$IPCC_AGB_Mg_ha
-      biome_default$NACP_FI_AGB_US <- res$NACP_FI_AGB_US * 0.1736111111
-      biome_default$NACP_LiDAR_Boreal_AGB <- res$NACP_LiDAR_Boreal_AGB
-      biome_default$US_Forest_biomass_data <- res$US_Forest_biomass_data * 2.241244
-      biome_default$LiDAR_AGB_Boreal_Eurasia <- res$LiDAR_AGB_Boreal_Eurasia
-      biome_default$SOC <- res$SOC * 17.2413793103448
-    }
+    # hwsd_soc <- ((res$hwsd_toc/100) * 0.3 * res$hwsd_trefbulk +
+    #                (res$hwsd_soc/100) * 0.7 * res$hwsd_srefbulk) * 10000
+    
+    SOM <- res$soc * 17.2413793103448 # convert to soil organic matter (SOM)
+    
+    
+    biome_default$OM_SOM <-  biome_default$f_vSOC * SOM
+    # if(biome == "Cropland") {
+    #   biome_default$OM_SOM <- 0.43*hwsd_soc
+    # }
+    # else {
+    #   biome_default$OM_SOM <- 0.3*hwsd_soc
+    #   biome_default$IPCC_AGB_Mg_ha <- res$IPCC_AGB_Mg_ha # will never be used
+    #   biome_default$NACP_FI_AGB_US <- res$NACP_FI_AGB_US * 0.1736111111
+    #   biome_default$NACP_LiDAR_Boreal_AGB <- res$NACP_LiDAR_Boreal_AGB
+    #   biome_default$US_Forest_biomass_data <- res$US_Forest_biomass_data * 2.241244
+    #   biome_default$LiDAR_AGB_Boreal_Eurasia <- res$LiDAR_AGB_Boreal_Eurasia
+    #   biome_default$SOC <- res$SOC * 17.2413793103448
+    # }
 
     #SW Radiative Forcing
     ### Biophysical
