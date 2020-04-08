@@ -346,7 +346,7 @@ get_biome <- function(latitude,
     # hwsd_soc <- ((res$hwsd_toc/100) * 0.3 * res$hwsd_trefbulk +
     #                (res$hwsd_soc/100) * 0.7 * res$hwsd_srefbulk) * 10000
     
-    SOM <- res$soc * 17.2413793103448 # convert to soil organic matter (SOM)
+    SOM <- res$soc * 1.72413793103448 # convert to soil organic matter (SOM)
     
     
     biome_default$OM_SOM <-  biome_default$f_vSOC * SOM
