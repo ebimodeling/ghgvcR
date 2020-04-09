@@ -27,21 +27,21 @@ get_biome <- function(latitude,
 
   #list of data sources
   variable_query_list <- list(
-    "saatchi_agb_num" = list(
-      ncdir = "",
-      ncfile = "saatchi.nc",
-      variable = "agb_1km"
-    ),
-    "saatchi_bgb_num" = list(
-      icdir = "",
-      ncfile = "saatchi.nc",
-      variable = "bgb_1km"
-    ),
-    "nbcd_num" = list(
-      ncdir = "",
-      ncfile = "nbcd.nc",
-      variable = "reprojx1"
-    ),
+    # "saatchi_agb_num" = list(
+    #   ncdir = "",
+    #   ncfile = "saatchi.nc",
+    #   variable = "agb_1km"
+    # ),
+    # "saatchi_bgb_num" = list(
+    #   icdir = "",
+    #   ncfile = "saatchi.nc",
+    #   variable = "bgb_1km"
+    # ),
+    # "nbcd_num" = list(
+    #   ncdir = "",
+    #   ncfile = "nbcd.nc",
+    #   variable = "reprojx1"
+    # ),
     # "soc_num" = list(
     #   ncdir = "",
     #   ncfile = "SoilCarbonDataS.nc",
@@ -57,87 +57,87 @@ get_biome <- function(latitude,
       ncfile = "global_bare_rnet_10yr_avg.nc",
       variable = "rnet"
     ),
-    "us_corn_latent_heat_flux_num" = list(
-      ncdir = "GCS/Crops/US/Corn/",
-      ncfile = "us_corn_latent_10yr_avg.nc",
-      variable = "latent"
-    ),
-    "us_corn_net_radiation_num" = list(
-      ncdir = "GCS/Crops/US/Corn/",
-      ncfile = "us_corn_rnet_10yr_avg.nc",
-      variable = "netrad"
-    ),
-    "us_misc_latent_heat_flux_num" = list(
-      ncdir = "GCS/Crops/US/MXG/",
-      ncfile = "us_mxg_latent_10yr_avg.nc",
-      variable = "latent"
-    ),
-    "us_misc_net_radiation_num" = list(
-      ncdir = "GCS/Crops/US/MXG/",
-      ncfile = "us_mxg_rnet_10yr_avg.nc",
-      variable = "netrad"
-    ),
-    "us_soy_latent_heat_flux_num" = list(
-      ncdir = "GCS/Crops/US/Soybean/",
-      ncfile = "us_soyb_latent_10yr_avg.nc",
-      variable = "latent"
-    ),
-    "us_switch_latent_heat_flux_num" = list(
-      ncdir = "GCS/Crops/US/Switch/",
-      ncfile = "us_switch_latent_10yr_avg.nc",
-      variable = "latent"
-    ),
-    "us_soybean_num" = list(
-      ncdir = "GCS/Crops/US/Soybean/fractioncover/",
-      ncfile = "fsoy_2.7_us.0.5deg.nc",
-      variable = "fsoy"
-    ),
-    "us_corn_num" = list(
-      ncdir = "GCS/Crops/US/Corn/fractioncover/",
-      ncfile = "fcorn_2.7_us.0.5deg.nc",
-      variable = "fcorn"
-    ),
-    "br_sugc_latent_heat_flux_num" = list(
-      ncdir = "GCS/Crops/Brazil/Sugarcane/",
-      ncfile = "brazil_sugc_latent_10yr_avg.nc",
-      variable = "latent"
-    ),
-    "br_bare_sugc_net_radiation_num" = list(
-      ncdir = "GCS/Crops/Brazil/Bare/",
-      ncfile = "brazil_bare_sugc_rnet_10yr_avg.nc",
-      variable = "rn"
-    ),
-    "br_bare_sugc_latent_heat_flux_num" = list(
-      ncdir = "GCS/Crops/Brazil/Bare/",
-      ncfile = "brazil_bare_sugc_latent_10yr_avg.nc",
-      variable = "latent"
-    ),
-    "br_sugc_latent_heat_flux_num" = list(
-      ncdir = "GCS/Crops/Brazil/Sugarcane/",
-      ncfile = "brazil_sugc_latent_10yr_avg.nc",
-      variable = "latent"
-    ),
-    "braz_fractional_soybean_num" = list(
-      ncdir = "GCS/Crops/Brazil/Soybean/",
-      ncfile = "brazil_soyb_fractional_10yr_avg.nc",
-      variable = "brzsoyrast"
-    ),
-    "braz_soybean_num" = list(
-      #note there was an error in previous code that pointed this to sugarcane
-      ncdir = "GCS/Crops/Brazil/Soybean/",
-      ncfile = "brazil_soyb_latent_10yr_avg.nc",
-      variable = "latent"
-    ),
-    "braz_fractional_sugarcane_num" = list(
-      ncdir = "GCS/Crops/Brazil/Sugarcane/",
-      ncfile = "brazil_sugc_fractional_10yr_avg.nc",
-      variable = "brzSGrast"
-    ),
-    "braz_sugarcane_num" = list(
-      ncdir = "GCS/Crops/Brazil/Sugarcane/",
-      ncfile = "brazil_sugc_latent_10yr_avg.nc",
-      variable = "latent"
-    ),
+    # "us_corn_latent_heat_flux_num" = list(
+    #   ncdir = "GCS/Crops/US/Corn/",
+    #   ncfile = "us_corn_latent_10yr_avg.nc",
+    #   variable = "latent"
+    # ),
+    # "us_corn_net_radiation_num" = list(
+    #   ncdir = "GCS/Crops/US/Corn/",
+    #   ncfile = "us_corn_rnet_10yr_avg.nc",
+    #   variable = "netrad"
+    # ),
+    # "us_misc_latent_heat_flux_num" = list(
+    #   ncdir = "GCS/Crops/US/MXG/",
+    #   ncfile = "us_mxg_latent_10yr_avg.nc",
+    #   variable = "latent"
+    # ),
+    # "us_misc_net_radiation_num" = list(
+    #   ncdir = "GCS/Crops/US/MXG/",
+    #   ncfile = "us_mxg_rnet_10yr_avg.nc",
+    #   variable = "netrad"
+    # ),
+    # "us_soy_latent_heat_flux_num" = list(
+    #   ncdir = "GCS/Crops/US/Soybean/",
+    #   ncfile = "us_soyb_latent_10yr_avg.nc",
+    #   variable = "latent"
+    # ),
+    # "us_switch_latent_heat_flux_num" = list(
+    #   ncdir = "GCS/Crops/US/Switch/",
+    #   ncfile = "us_switch_latent_10yr_avg.nc",
+    #   variable = "latent"
+    # ),
+    # "us_soybean_num" = list(
+    #   ncdir = "GCS/Crops/US/Soybean/fractioncover/",
+    #   ncfile = "fsoy_2.7_us.0.5deg.nc",
+    #   variable = "fsoy"
+    # ),
+    # "us_corn_num" = list(
+    #   ncdir = "GCS/Crops/US/Corn/fractioncover/",
+    #   ncfile = "fcorn_2.7_us.0.5deg.nc",
+    #   variable = "fcorn"
+    # ),
+    # "br_sugc_latent_heat_flux_num" = list(
+    #   ncdir = "GCS/Crops/Brazil/Sugarcane/",
+    #   ncfile = "brazil_sugc_latent_10yr_avg.nc",
+    #   variable = "latent"
+    # ),
+    # "br_bare_sugc_net_radiation_num" = list(
+    #   ncdir = "GCS/Crops/Brazil/Bare/",
+    #   ncfile = "brazil_bare_sugc_rnet_10yr_avg.nc",
+    #   variable = "rn"
+    # ),
+    # "br_bare_sugc_latent_heat_flux_num" = list(
+    #   ncdir = "GCS/Crops/Brazil/Bare/",
+    #   ncfile = "brazil_bare_sugc_latent_10yr_avg.nc",
+    #   variable = "latent"
+    # ),
+    # "br_sugc_latent_heat_flux_num" = list(
+    #   ncdir = "GCS/Crops/Brazil/Sugarcane/",
+    #   ncfile = "brazil_sugc_latent_10yr_avg.nc",
+    #   variable = "latent"
+    # ),
+    # "braz_fractional_soybean_num" = list(
+    #   ncdir = "GCS/Crops/Brazil/Soybean/",
+    #   ncfile = "brazil_soyb_fractional_10yr_avg.nc",
+    #   variable = "brzsoyrast"
+    # ),
+    # "braz_soybean_num" = list(
+    #   #note there was an error in previous code that pointed this to sugarcane
+    #   ncdir = "GCS/Crops/Brazil/Soybean/",
+    #   ncfile = "brazil_soyb_latent_10yr_avg.nc",
+    #   variable = "latent"
+    # ),
+    # "braz_fractional_sugarcane_num" = list(
+    #   ncdir = "GCS/Crops/Brazil/Sugarcane/",
+    #   ncfile = "brazil_sugc_fractional_10yr_avg.nc",
+    #   variable = "brzSGrast"
+    # ),
+    # "braz_sugarcane_num" = list(
+    #   ncdir = "GCS/Crops/Brazil/Sugarcane/",
+    #   ncfile = "brazil_sugc_latent_10yr_avg.nc",
+    #   variable = "latent"
+    # ),
     "global_pasture_num" = list(
       ncdir = "GCS/",
       ncfile = "Pasture2000_5min.nc",
@@ -247,34 +247,34 @@ get_biome <- function(latitude,
     get_ncdf(paste0(data_dir, "netcdf/", x$ncdir), x$ncfile, latitude, longitude, x$variable)[[x$variable]][[1]]
   })
 
-  ### specific calculations based on loaded data
-  # US Latent (LE)
-  res$us_switch_latent_heat_flux_diff <- res$us_switch_latent_heat_flux_num -
-    res$global_bare_latent_heat_flux_num
-  res$us_corn_latent_heat_flux_diff <- res$us_corn_latent_heat_flux_num  -
-    res$global_bare_latent_heat_flux_num
-  res$us_soy_latent_heat_flux_diff <- res$us_soy_latent_heat_flux_num -
-    res$global_bare_latent_heat_flux_num
-  res$us_misc_latent_heat_flux_diff <- res$us_misc_latent_heat_flux_num  -
-    res$global_bare_latent_heat_flux_num
-
-  # US Net (Rnet)
-  res$us_misc_net_radiation_diff <- res$us_misc_net_radiation_num -
-    res$global_bare_net_radiation_num
-  res$us_soy_net_radiation_diff <- res$us_soy_net_radiation_num -
-    res$global_bare_net_radiation_num
-  res$us_switch_net_radiation_diff <- res$us_switch_net_radiation_num -
-    res$global_bare_net_radiation_num
-  res$us_corn_net_radiation_diff <- res$us_corn_net_radiation_num -
-    res$global_bare_net_radiation_num
-
-  # BR Latent
-  res$br_sugc_latent_heat_flux_diff <- res$br_sugc_latent_heat_flux_num  -
-    res$br_bare_sugc_latent_heat_flux_num
-
-  # BR Net
-  res$br_sugc_net_radiation_diff <- res$br_sugc_net_radiation_num -
-    res$br_bare_sugc_net_radiation_num
+  # ### specific calculations based on loaded data
+  # # US Latent (LE)
+  # res$us_switch_latent_heat_flux_diff <- res$us_switch_latent_heat_flux_num -
+  #   res$global_bare_latent_heat_flux_num
+  # res$us_corn_latent_heat_flux_diff <- res$us_corn_latent_heat_flux_num  -
+  #   res$global_bare_latent_heat_flux_num
+  # res$us_soy_latent_heat_flux_diff <- res$us_soy_latent_heat_flux_num -
+  #   res$global_bare_latent_heat_flux_num
+  # res$us_misc_latent_heat_flux_diff <- res$us_misc_latent_heat_flux_num  -
+  #   res$global_bare_latent_heat_flux_num
+  # 
+  # # US Net (Rnet)
+  # res$us_misc_net_radiation_diff <- res$us_misc_net_radiation_num -
+  #   res$global_bare_net_radiation_num
+  # res$us_soy_net_radiation_diff <- res$us_soy_net_radiation_num -
+  #   res$global_bare_net_radiation_num
+  # res$us_switch_net_radiation_diff <- res$us_switch_net_radiation_num -
+  #   res$global_bare_net_radiation_num
+  # res$us_corn_net_radiation_diff <- res$us_corn_net_radiation_num -
+  #   res$global_bare_net_radiation_num
+  # 
+  # # BR Latent
+  # res$br_sugc_latent_heat_flux_diff <- res$br_sugc_latent_heat_flux_num  -
+  #   res$br_bare_sugc_latent_heat_flux_num
+  # 
+  # # BR Net
+  # res$br_sugc_net_radiation_diff <- res$br_sugc_net_radiation_num -
+  #   res$br_bare_sugc_net_radiation_num
 
   ###### Get the appropriate biome (new method)
   #read in the map data
@@ -412,36 +412,36 @@ get_biome <- function(latitude,
   # if(synmap_vegtypes$Other == 1) { stuff here... }
 
 
-  ### Agricultural ecosystems
-  name_indexed_file <- paste0(data_dir, "name_indexed_ecosystems.json")
-  name_indexed_ecosystems <- fromJSON(file(name_indexed_file))
-  if (!is.na(res$us_corn_num) && res$us_corn_num > 0.01) {
-    biome_data$agroecosystem_eco["Maize"] <- name_indexed_ecosystems["US corn"]
-  }
-  if (!is.na(res$us_soybean_num) && res$us_soybean_num > 0.01) {
-    biome_data$agroecosystem_eco["Soybean"] <- name_indexed_ecosystems["US soy"]
-  }
-  if (res$braz_fractional_soybean_num == 1 &
-      !is.na(res$br_sugc_latent_heat_flux_diff)) {
-    biome_data$agroecosystem_eco["Soybean"] <- name_indexed_ecosystems["BR soy"]
-  }
-  if (!is.na(res$braz_sugarcane_num) &
-      res$braz_sugarcane_num > 0.01 &
-      res$braz_sugarcane_num < 110.0) {
-    biome_data$agroecosystem_eco["Sugarcane"] <- name_indexed_ecosystems["BR sugarcane"]
-  }
-  if (res$braz_fractional_sugarcane_num == 1 &
-      !is.na(res$br_sugc_latent_heat_flux_diff)) {
-    biome_data$agroecosystem_eco["Sugarcane"] <- name_indexed_ecosystems["BR sugarcane"]
-  }
-  if (!is.na(res$us_misc_latent_heat_flux_diff) == 1) {
-    biome_data$agroecosystem_eco["Miscanthus"] <- name_indexed_ecosystems["miscanthus"]
-    biome_data$biofuel_eco["Miscanthus"] <- name_indexed_ecosystems["miscanthus"]
-  }
-  if (!is.na(res$us_switch_latent_heat_flux_diff) == 1) {
-    biome_data$agroecosystem_eco["Switchgrass"] <- name_indexed_ecosystems["switchgrass"]
-    biome_data$biofuel_eco["Switchgrass"] <- name_indexed_ecosystems["switchgrass"]
-  }
+  # ### Agricultural ecosystems
+  # name_indexed_file <- paste0(data_dir, "name_indexed_ecosystems.json")
+  # name_indexed_ecosystems <- fromJSON(file(name_indexed_file))
+  # if (!is.na(res$us_corn_num) && res$us_corn_num > 0.01) {
+  #   biome_data$agroecosystem_eco["Maize"] <- name_indexed_ecosystems["US corn"]
+  # }
+  # if (!is.na(res$us_soybean_num) && res$us_soybean_num > 0.01) {
+  #   biome_data$agroecosystem_eco["Soybean"] <- name_indexed_ecosystems["US soy"]
+  # }
+  # if (res$braz_fractional_soybean_num == 1 &
+  #     !is.na(res$br_sugc_latent_heat_flux_diff)) {
+  #   biome_data$agroecosystem_eco["Soybean"] <- name_indexed_ecosystems["BR soy"]
+  # }
+  # if (!is.na(res$braz_sugarcane_num) &
+  #     res$braz_sugarcane_num > 0.01 &
+  #     res$braz_sugarcane_num < 110.0) {
+  #   biome_data$agroecosystem_eco["Sugarcane"] <- name_indexed_ecosystems["BR sugarcane"]
+  # }
+  # if (res$braz_fractional_sugarcane_num == 1 &
+  #     !is.na(res$br_sugc_latent_heat_flux_diff)) {
+  #   biome_data$agroecosystem_eco["Sugarcane"] <- name_indexed_ecosystems["BR sugarcane"]
+  # }
+  # if (!is.na(res$us_misc_latent_heat_flux_diff) == 1) {
+  #   biome_data$agroecosystem_eco["Miscanthus"] <- name_indexed_ecosystems["miscanthus"]
+  #   biome_data$biofuel_eco["Miscanthus"] <- name_indexed_ecosystems["miscanthus"]
+  # }
+  # if (!is.na(res$us_switch_latent_heat_flux_diff) == 1) {
+  #   biome_data$agroecosystem_eco["Switchgrass"] <- name_indexed_ecosystems["switchgrass"]
+  #   biome_data$biofuel_eco["Switchgrass"] <- name_indexed_ecosystems["switchgrass"]
+  # }
 
   # Set 0 values
   for(eco in names(biome_data$agroecosystem_eco)) {
