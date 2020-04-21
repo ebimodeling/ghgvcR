@@ -278,10 +278,10 @@ get_biome <- function(latitude,
 
   ###### Get the appropriate biome (new method)
   #read in the map data
-  map_vegtypes <- read.csv(paste0(data_dir, "maps/map_vegtypes.csv"), stringsAsFactors = FALSE)
-  koppen_biomes <- read.csv(paste0(data_dir, "maps/koppen_biomes.csv"), stringsAsFactors = FALSE)
-  fao_biomes <- read.csv(paste0(data_dir, "maps/fao_biomes.csv"), stringsAsFactors = FALSE)
-  biome_defaults <- read.csv(paste0(data_dir, "maps/biome_defaults.csv"), stringsAsFactors = FALSE)
+  map_vegtypes <- read.csv(paste0(data_dir, "map_vegtypes.csv"), stringsAsFactors = FALSE)
+  koppen_biomes <- read.csv(paste0(data_dir, "koppen_biomes.csv"), stringsAsFactors = FALSE)
+  fao_biomes <- read.csv(paste0(data_dir, "fao_biomes.csv"), stringsAsFactors = FALSE)
+  biome_defaults <- read.csv(paste0(data_dir, "biome_defaults.csv"), stringsAsFactors = FALSE)
 
   vegtype_names <- names(map_vegtypes)[4:14]
 
