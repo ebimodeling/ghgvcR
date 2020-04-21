@@ -346,10 +346,12 @@ get_biome <- function(latitude,
     # hwsd_soc <- ((res$hwsd_toc/100) * 0.3 * res$hwsd_trefbulk +
     #                (res$hwsd_soc/100) * 0.7 * res$hwsd_srefbulk) * 10000
 
-    SOM <- res$soc * 1.72413793103448 # convert to soil organic matter (SOM)
+    print(c(res))
+    SOM <- res$SOC * 1.72413793103448 # convert to soil organic matter (SOM)
 
-
-    biome_default$OM_SOM <-  biome_default$f_vSOC * SOM
+    print(c(biome_default$f_vSOC, " * ", SOM))
+    biome_default$OM_SOM <-  as.numeric(biome_default$f_vSOC) * SOM
+    print(biome_default$OM_SOM)
     # if(biome == "Cropland") {
     #   biome_default$OM_SOM <- 0.43*hwsd_soc
     # }
