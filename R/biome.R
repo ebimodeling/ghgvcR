@@ -257,7 +257,7 @@ get_biome <- function(latitude,
   #   res$global_bare_latent_heat_flux_num
   # res$us_misc_latent_heat_flux_diff <- res$us_misc_latent_heat_flux_num  -
   #   res$global_bare_latent_heat_flux_num
-  # 
+  #
   # # US Net (Rnet)
   # res$us_misc_net_radiation_diff <- res$us_misc_net_radiation_num -
   #   res$global_bare_net_radiation_num
@@ -267,21 +267,21 @@ get_biome <- function(latitude,
   #   res$global_bare_net_radiation_num
   # res$us_corn_net_radiation_diff <- res$us_corn_net_radiation_num -
   #   res$global_bare_net_radiation_num
-  # 
+  #
   # # BR Latent
   # res$br_sugc_latent_heat_flux_diff <- res$br_sugc_latent_heat_flux_num  -
   #   res$br_bare_sugc_latent_heat_flux_num
-  # 
+  #
   # # BR Net
   # res$br_sugc_net_radiation_diff <- res$br_sugc_net_radiation_num -
   #   res$br_bare_sugc_net_radiation_num
 
   ###### Get the appropriate biome (new method)
   #read in the map data
-  map_vegtypes <- read.csv(paste0(data_dir, "maps/map_vegtypes.csv"), stringsAsFactors = FALSE)
-  koppen_biomes <- read.csv(paste0(data_dir, "maps/koppen_biomes.csv"), stringsAsFactors = FALSE)
-  fao_biomes <- read.csv(paste0(data_dir, "maps/fao_biomes.csv"), stringsAsFactors = FALSE)
-  biome_defaults <- read.csv(paste0(data_dir, "maps/biome_defaults.csv"), stringsAsFactors = FALSE)
+  map_vegtypes <- read.csv(paste0(data_dir, "map_vegtypes.csv"), stringsAsFactors = FALSE)
+  koppen_biomes <- read.csv(paste0(data_dir, "koppen_biomes.csv"), stringsAsFactors = FALSE)
+  fao_biomes <- read.csv(paste0(data_dir, "fao_biomes.csv"), stringsAsFactors = FALSE)
+  biome_defaults <- read.csv(paste0(data_dir, "biome_defaults.csv"), stringsAsFactors = FALSE)
 
   vegtype_names <- names(map_vegtypes)[4:14]
 
@@ -345,11 +345,13 @@ get_biome <- function(latitude,
     #Calculate OM
     # hwsd_soc <- ((res$hwsd_toc/100) * 0.3 * res$hwsd_trefbulk +
     #                (res$hwsd_soc/100) * 0.7 * res$hwsd_srefbulk) * 10000
-    
-    SOM <- res$soc * 1.72413793103448 # convert to soil organic matter (SOM)
-    
-    
-    biome_default$OM_SOM <-  biome_default$f_vSOC * SOM
+
+    print(c(res))
+    SOM <- res$SOC * 1.72413793103448 # convert to soil organic matter (SOM)
+
+    print(c(biome_default$f_vSOC, " * ", SOM))
+    biome_default$OM_SOM <-  as.numeric(biome_default$f_vSOC) * SOM
+    print(biome_default$OM_SOM)
     # if(biome == "Cropland") {
     #   biome_default$OM_SOM <- 0.43*hwsd_soc
     # }
