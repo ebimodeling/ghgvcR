@@ -72,10 +72,14 @@ plot_ghgv <- function(df, years = 50, units = c("co2", "mi"), crv_to_miles = 3) 
   #Don't plot CRV_NET point if BIOPHYS is 0, or BGC_NET is 0
   plotdata$CRV_NET[plotdata$CRV_BIOPHYS == 0] <- NA
   plotdata$CRV_NET[plotdata$BGC_NET == 0] <- NA
-  #Don't plot biophys net point if net biophys is 0
+  #Don't plot biophys net point if net biophys is 0 or either biophys value is 0
   plotdata$CRV_BIOPHYS_POINT[plotdata$CRV_BIOPHYS == 0] <- NA
-  #Don't ploy BGC net point if net bgc is 0
+  plotdata$CRV_BIOPHYS_POINT[plotdata$LE == 0] <- NA
+  plotdata$CRV_BIOPHYS_POINT[plotdata$Rnet == 0] <- NA
+  #Don't ploy BGC net point if net bgc is 0 or either bgc value is 0
   plotdata$BGC_NET_POINT[plotdata$BGC_NET == 0] <- NA
+  plotdata$BGC_NET_POINT[plotdata$Ongoing_Exchange == 0] <- NA
+  plotdata$BGC_NET_POINT[plotdata$Storage == 0] <- NA
   #Don't plot BGC_NET or CRV_BIOPHYS on crv_plot if the other is 0
   plotdata$BGC_NET[plotdata$CRV_BIOPHYS == 0] <- NA
   plotdata$CRV_BIOPHYS[plotdata$BGC_NET == 0] <- NA
