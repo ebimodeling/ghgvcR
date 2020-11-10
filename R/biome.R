@@ -346,12 +346,9 @@ get_biome <- function(latitude,
     # hwsd_soc <- ((res$hwsd_toc/100) * 0.3 * res$hwsd_trefbulk +
     #                (res$hwsd_soc/100) * 0.7 * res$hwsd_srefbulk) * 10000
 
-    print(c(res))
     SOM <- res$SOC * 1.72413793103448 # convert to soil organic matter (SOM)
 
-    print(c(biome_default$f_vSOC, " * ", SOM))
     biome_default$OM_SOM <-  as.numeric(biome_default$f_vSOC) * SOM
-    print(biome_default$OM_SOM)
     # if(biome == "Cropland") {
     #   biome_default$OM_SOM <- 0.43*hwsd_soc
     # }
@@ -375,6 +372,11 @@ get_biome <- function(latitude,
       biome_default$latent <- (res$global_potVeg_latent_num -
                                  res$global_bare_latent_heat_flux_num) / 51007200000*1000000000
       biome_default$biophysical_net <- biome_default$latent
+    }
+    if(vegtypes == "Barren") {
+      biome_default$sw_radiative_forcing <- 0
+      biome_default$latent <- 0
+      biome_default$biophysical_net <- 0
     }
     else {
       biome_default$sw_radiative_forcing <- 0
